@@ -1,0 +1,230 @@
+.sidebar {
+  background-image: url('../img/camaflauge.PNG');
+  color: #171616; /* color of content in it*/
+  width: 250px;
+  height: calc(100vh - 60px);
+  background-color: #c2bf85;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 70px;
+  left: 0;
+  transition: width 0.3s;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 40px;
+}
+
+.toggle-button {
+  position: absolute;
+  top: 20px;
+  right: -20px;
+  width: 40px;
+  height: 40px;
+  background-color: #f4f4f4;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.sidebar-content {
+  display: block;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-content.collapsed {
+  display: none;
+}
+
+  .dropdown {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  
+  .dropdown-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+
+    
+  }
+
+
+.dropdown-content {
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 200px;
+  border: 1px solid #ccc;
+  display: none;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.dropdown-content button:hover {
+  background-color: #f2f2f2;
+}
+
+.tool-description {
+  font-size: 12px;
+  color: #666666;
+  margin-left: 10px;
+}
+
+
+
+ 
+.sidebar-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-content li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.sidebar-content li:hover {
+  background-color: #f2f2f2;
+}
+
+.sidebar-content li:last-child {
+  border-bottom: none;
+}
+
+.sidebar-content button {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.sidebar-content button:hover {
+  background-color: #3e8e41;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.coordinate-converter form {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 55vh;
+  width: 250px;
+  background: #ebcf81;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.coordinate-converter label {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  color: #333;
+}
+
+.coordinate-converter input {
+  padding: 2px;
+  font-size: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.coordinate-converter button {
+  padding: 10px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.coordinate-converter button:hover {
+  background-color: #45a049;
+}
+
+.coordinate-converter h4 {
+  margin-top: 5px;
+  color: #333;
+}
+
+.coordinate-converter {
+  /* Styles for the overall converter component */
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.conversion-type {
+  /* Styles for the section that lets the user choose the conversion type */
+  margin-bottom: 10px;
+}
+
+.conversion-type button {
+  /* Styles for the buttons that let the user choose the conversion type */
+  margin-right: 10px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.row label {
+  margin-right: 10px;
+}
+
+.h4 {
+  font-weight: bold;
+  font-size: 10px;
+  margin-bottom: 10px;
+  color: #dcd806;
+}
+
+.p {
+  font-size: 10px;
+  margin-bottom: 20px;
+  color: #666;
+}

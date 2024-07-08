@@ -1,0 +1,103 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    background: linear-gradient(to right, #3e4240, #838e80);
+
+    color: #fff;
+    padding: 10px 20px;
+    width: 100%;
+    position: fixed;
+    height: 50px;
+    z-index: 1000; /* add a high z-index to ensure it's on top of other elements */
+
+  }
+  .logo-container {
+    margin-right: 20px;
+  }
+  
+  .logo-container video {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  /*
+  .header h2 {
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    align-content:start;
+  }
+    */
+  .nav-icons {
+    display: flex;
+    gap: 10px;
+    margin-right: 20px;
+  }
+  
+  .nav-icons button {
+    background: none;
+    border: none;
+    /*color: rgb(83, 117, 52);*/
+    /*color:rgb(130, 197, 143);*/
+    color:#d1e6d2;
+    font-size: 1.5em;
+    cursor: pointer;
+    position: relative;
+    margin: 0 5px; 
+  }
+  
+  .nav-icons button:hover {
+    color: rgb(65, 74, 54);
+  }
+  
+  .popup {
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 60px;
+    z-index: 1000;
+  }
+  
+
+
+  .measurement-popup {
+    background-image: url('../img/camaflauge.PNG');
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    /*background-color: #f7f7f7;*/
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .measurement-popup button {
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .measurement-popup button:hover {
+    background-color: #3e8e41;
+  }
+  
+  .measurement-popup button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .measurement-popup .icon {
+    margin-right: 10px;
+  }

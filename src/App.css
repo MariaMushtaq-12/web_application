@@ -1,0 +1,96 @@
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+.map-container {
+  flex-grow: 1;
+  margin-left: 250px;
+  margin-top: 75px;
+  border-top: 1px solid #1c1717; /* add a border-top to create a visual separation */
+  transition: margin-left 0.3s;
+ 
+    border-right: 1px solid #1c1717;
+    border-bottom: 1px solid #1c1717;
+    border-left: 1px solid #1c1717;
+
+    position: relative;
+}
+#map {
+  flex: 1;
+
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border: 1px solid #a52929;
+  box-shadow: 0 0 0 1px #0e0d0d; /* add a border around the map using box-shadow */
+}
+
+
+.sidebar.collapsed + .map-container {
+  margin-left: 60px;
+}
+
+
+
+
+
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.close-btn {
+  align-self: flex-end;
+  cursor: pointer;
+}
+
+
+
+
+
+
+.ol-tooltip {
+  position: relative;
+  background: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.ol-tooltip-measure {
+  position: absolute;
+  background: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ol-tooltip-static {
+  background-color: #ffcc33;
+  color: black;
+  border: 1px solid white;
+  font-weight: bold;
+}
