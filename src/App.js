@@ -68,7 +68,7 @@ const App = () => {
     }
   };
 
-//////////////jump to location function/////////////////
+//-----------------------------------jump to location function---------------------------------------------------------------------------
   const handleJumpToLocation = (latitude, longitude) => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -119,7 +119,7 @@ const App = () => {
     }
   };
 
-/////////line of sight//////////////////////
+//--------------------------------------------------------line of sight------------------------------------------------
 useEffect(() => {
   if (lineOfSightParams) {
     axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
@@ -169,13 +169,14 @@ useEffect(() => {
    
   }
 }, [lineOfSightParams]);
-////popup
+
+//-------------------popup of elevation profile--------------------------------------------------------------------
 const handlePopupClose = () => {
   setElevationData(null);
 };
 
 
-////////////returning all the functions///////////////
+//--------------------------------returning all the functions----------------------------------------------------
   return (
     <div className="app-container">
       <Header 
