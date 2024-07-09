@@ -3,7 +3,11 @@ import ViewshedTool from './Viewshed'; // Ensure this is the correct path to the
 import BufferTool from './Buffer'; // Ensure this is the correct path to the Buffer component
 import LineOfSightTool from './LineOfSight';
 import RangeRingsTool from './RangeRings';
-const Form = ({ activeTool, setActiveTool, setViewshedParams, clickedCoordinates,setBufferParams, setLineOfSightParams, setRangeRingsParams }) => {
+import Eptool from './Eptool';
+const Form = ({ activeTool, setActiveTool, setViewshedParams, clickedCoordinates,setBufferParams, setLineOfSightParams, setRangeRingsParams,
+  setEpToolParams,
+  setElevationData // Add this prop
+  }) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
   };
@@ -41,7 +45,13 @@ const Form = ({ activeTool, setActiveTool, setViewshedParams, clickedCoordinates
             clickedCoordinates={clickedCoordinates} 
           />
         )}
-
+  {activeTool === 'Elevation Profile' && (
+          <Eptool
+            setEpToolParams={setEpToolParams}
+            clickedCoordinates={clickedCoordinates}
+            setElevationData={setElevationData} // Pass this prop
+          />
+        )}
         {/* Add more conditions for other tools if needed */}
 
         <button className="close-btn" onClick={handleClose}>Close</button>
