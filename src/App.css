@@ -1,7 +1,7 @@
 
 .app-container {
   display: flex;
-  height: 100vh;
+  height: 97vh;
 }
 .map-container {
   flex-grow: 1;
