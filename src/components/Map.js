@@ -21,7 +21,9 @@ import { Feature } from 'ol';
 import { getArea, getLength } from 'ol/sphere';
 import { Circle as CircleGeom } from 'ol/geom';
 import { remove } from 'ol/array';
-
+import Chart from 'chart.js/auto';
+import {Point} from 'ol/geom';
+import {LineString} from 'ol/geom';
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -44,7 +46,7 @@ const formatArea = (polygon) => {
   }
   return output;
 };
-const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers,rangeRingsParams }) => {
+const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers,rangeRingsParams,  epToolParams, setElevationData }) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
   const [vectorLayer] = useState(
@@ -71,6 +73,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const [modify, setModify] = useState(null);
   const [measureTooltipElement, setMeasureTooltipElement] = useState(null);
   const [measureTooltip, setMeasureTooltip] = useState(null);
+  const markerRef = useRef(null); // Reference for the moving marker
 
   useEffect(() => {
   const projection = getProjection('EPSG:4326');
@@ -335,6 +338,100 @@ useEffect(() => {
   }
 }, [rangeRingsParams, vectorSource, map]);
 
+////elevation profile
+useEffect(() => {
+  if (epToolParams) {
+    const { start, end } = epToolParams;
+    if (start && end) {
+      addMarkerPin(map, start, 'Start Point');
+      addMarkerPin(map, end, 'End Point');
+      drawStraightLine(map, start, end);
+      fetchElevationProfile(start, end);
+    }
+  }
+}, [epToolParams]);
+
+const addMarkerPin = (map, coords, label) => {
+  const marker = new Feature({
+    geometry: new Point(fromLonLat(coords)),
+    name: label,
+  });
+
+  const markerStyle = new Style({
+    image: new Circle({
+      radius: 7,
+      fill: new Fill({
+        color: 'rgba(255, 0, 0, 0.9)',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+    text: new Text({
+      text: label,
+      offsetY: -25,
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+  });
+
+  marker.setStyle(markerStyle);
+  vectorSource.addFeature(marker);
+};
+
+const drawStraightLine = (map, startCoords, endCoords) => {
+  const lineFeature = new Feature({
+    geometry: new LineString([fromLonLat(startCoords), fromLonLat(endCoords)]),
+  });
+
+  const lineStyle = new Style({
+    stroke: new Stroke({
+      color: 'rgba(255, 0, 0, 1)',
+      width: 2,
+    }),
+  });
+
+  lineFeature.setStyle(lineStyle);
+  vectorSource.addFeature(lineFeature);
+};
+
+const fetchElevationProfile = async (start, end) => {
+  try {
+    const response = await fetch('http://127.0.0.1:5001/elevation_profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        start: {
+          lat: start[1],
+          lon: start[0],
+        },
+        end: {
+          lat: end[1],
+          lon: end[0],
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    setElevationData(data);
+  } 
+  
+  catch (error) {
+    console.error('Error fetching elevation profile:', error);
+  }
+};
 
 
 useEffect(() => {
