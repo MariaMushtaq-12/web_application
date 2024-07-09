@@ -2,8 +2,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
-    background: linear-gradient(to right, #3e4240, #838e80);
+    background-color: #030303;
+   
 
     color: #fff;
     padding: 10px 20px;
@@ -41,7 +41,7 @@
     border: none;
     /*color: rgb(83, 117, 52);*/
     /*color:rgb(130, 197, 143);*/
-    color:#d1e6d2;
+    color:#ffffff;
     font-size: 1.5em;
     cursor: pointer;
     position: relative;
@@ -49,7 +49,7 @@
   }
   
   .nav-icons button:hover {
-    color: rgb(65, 74, 54);
+    color: rgb(201, 203, 199);
   }
   
   .popup {
