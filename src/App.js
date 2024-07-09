@@ -21,6 +21,7 @@ import Feature from 'ol/Feature';
 import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
+import Popup from './components/popup';
 
 const App = () => {
   const [activeTool, setActiveTool] = useState(null);
@@ -31,6 +32,9 @@ const App = () => {
   const [bufferParams, setBufferParams] = useState(null);
  const [lineOfSightParams, setLineOfSightParams] = useState(null);
  const [rangeRingsParams, setRangeRingsParams] = useState(null);
+ const [epToolParams, setEpToolParams] = useState(null);
+ const [elevationData, setElevationData] = useState(null); // Elevation
+  
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
   
@@ -165,6 +169,11 @@ useEffect(() => {
    
   }
 }, [lineOfSightParams]);
+////popup
+const handlePopupClose = () => {
+  setElevationData(null);
+};
+
 
 ////////////returning all the functions///////////////
   return (
@@ -189,6 +198,8 @@ useEffect(() => {
           clearDrawings={clearDrawings}
           rangeRingsParams={rangeRingsParams}
           layers={layers}
+          epToolParams={epToolParams}
+          setElevationData={setElevationData}
         />
         <Form 
           activeTool={activeTool} 
@@ -198,7 +209,9 @@ useEffect(() => {
           clickedCoordinates={clickedCoordinates}
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
+          setEpToolParams={setEpToolParams}
         />
+          {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
       </div>
     </div>
   );
