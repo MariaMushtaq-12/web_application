@@ -1,9 +1,10 @@
 .sidebar {
-  background-image: url('../img/camaflauge.PNG');
-  color: #171616; /* color of content in it*/
+ 
+  background-color: #2d2c2c;
+  color: #000000; /* color of content in it*/
   width: 250px;
   height: calc(100vh - 60px);
-  background-color: #c2bf85;
+ 
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 70px;
