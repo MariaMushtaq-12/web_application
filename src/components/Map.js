@@ -74,7 +74,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const [measureTooltipElement, setMeasureTooltipElement] = useState(null);
   const [measureTooltip, setMeasureTooltip] = useState(null);
   const markerRef = useRef(null); // Reference for the moving marker
-
+//-----------------map layers------------------------------------------------
   useEffect(() => {
   const projection = getProjection('EPSG:4326');
   const projectionExtent = projection.getExtent();
@@ -162,7 +162,7 @@ console.log(layers);
     newMap.setTarget(null);
   };
 }, []);
-
+//-------------------------------------measurements of length and area--------------------------------------------------------------------------------
   useEffect(() => {
     if (draw) {
       map.removeInteraction(draw);
@@ -231,7 +231,7 @@ console.log(layers);
 
  
   
-
+//--------------viewshed-----------------------------------------------------------------------------------------------
   useEffect(() => {
     if (viewshedParams) {
         const geojsonFormat = new GeoJSON();
@@ -287,7 +287,7 @@ vectorSource.clear();
 }, [viewshedParams]);
 
 
-
+//--------------------------------------------buffer--------------------------------------------------------------------------------
 useEffect(() => {
   if (bufferParams) {
     const { latitude, longitude, radius } = bufferParams;
@@ -312,6 +312,7 @@ useEffect(() => {
   }
 }, [bufferParams]);
 
+//---------------------range rings------------------------------------------------------------------------------------------------------------
 useEffect(() => {
   if (rangeRingsParams) {
     const { latitude, longitude, radius, rings } = rangeRingsParams;
@@ -338,7 +339,7 @@ useEffect(() => {
   }
 }, [rangeRingsParams, vectorSource, map]);
 
-////elevation profile
+//------------------------elevation profile-----------------------------------------------------------------------------
 useEffect(() => {
   if (epToolParams) {
     const { start, end } = epToolParams;
@@ -433,7 +434,7 @@ const fetchElevationProfile = async (start, end) => {
   }
 };
 
-
+//-----------------layer switcher--------------------------------------------------------------------------------------------
 useEffect(() => {
   if (map) {
     layers.forEach(layer => {
