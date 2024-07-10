@@ -89,7 +89,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const countries = new ImageLayer({
     source: new ImageWMS({
       ratio: 1,
-      url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
       params: {
         'FORMAT': 'image/jpeg',
         'VERSION': '1.1.1',
@@ -101,7 +101,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
   const world = new TileLayer({
     source: new TileWMS({
-      url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
       params: {
         'FORMAT': 'image/jpeg',
         'VERSION': '1.1.1',
@@ -113,6 +113,59 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   });
 
 
+  // ///////////
+  // const pak = new ImageLayer({
+  //   source: new ImageWMS({
+  //     ratio: 1,
+  //     url: 'http://192.168.1.200:8080/geoserver/pak/wms/wmts?request=GetCapabilities',
+  //     params: {
+  //       'FORMAT': 'image/jpeg',
+  //       'VERSION': '1.1.1',
+  //       'STYLES': '',
+  //       'LAYERS': 'pak:pak',
+  //     },
+  //   }),
+  // });
+  
+  // const roads = new TileLayer({
+  //   source: new TileWMS({
+  //     url: 'http://192.168.1.200:8080/geoserver/osm/wms/wmts?request=GetCapabilities',
+  //     params: {
+  //       'FORMAT': 'image/jpeg',
+  //       'VERSION': '1.1.1',
+  //       'tiled': true,
+  //       'STYLES': '',
+  //       'LAYERS': 'osm:road',
+  //     },
+  //   }),
+  // });
+  
+  // const pak_Waterways = new ImageLayer({
+  //   source: new ImageWMS({
+  //     ratio: 1,
+  //     url: 'http://192.168.1.200:8080/geoserver/osm/wms/wmts?request=GetCapabilities',
+  //     params: {
+  //       'FORMAT': 'image/jpeg',
+  //       'VERSION': '1.1.1',
+  //       'STYLES': '',
+  //       'LAYERS': 'osm:Waterways',
+  //     },
+  //   }),
+  // });
+  
+  // const pak_dem = new ImageLayer({
+  //   source: new ImageWMS({
+  //     ratio: 1,
+  //     url: 'http://192.168.1.200:8080/geoserver/dem/wms/wmts?request=GetCapabilities',
+  //     params: {
+  //       'FORMAT': 'image/jpeg',
+  //       'VERSION': '1.1.1',
+  //       'STYLES': '',
+  //       'LAYERS': 'dem:dem',
+  //     },
+  //   }),
+  // });
+  
   const newMap = new Map({
     target: internalMapRef.current,
     layers: [countries, world,  vectorLayer], //add their the additional layers name
@@ -122,14 +175,19 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       zoom: 5,
     }),
   });
+//   // Add the layers to the map
+// newMap.addLayer(pak);
+// newMap.addLayer(roads);
+// newMap.addLayer(pak_Waterways);
+// newMap.addLayer(pak_dem);
 console.log(layers);
   onLayerChange([
     { name: 'countries', visible: true },
     { name: 'world', visible: true },
-//    { name: 'pak', visible: true },
-//   { name: 'roads', visible: true },
-//  { name: 'pak_osm', visible: true },
-// { name: 'pak_dem', visible: true },
+//     { name: 'pak', visible: true },
+//    { name: 'roads', visible: true },
+//   { name: 'pak_Waterways', visible: true },
+//  { name: 'pak_dem', visible: true },
   ]);
 
   newMap.on('click', (evt) => {
@@ -153,83 +211,108 @@ console.log(layers);
     offset: [0, -15],
     positioning: 'bottom-center',
   });
+
+ 
+    
   newMap.addOverlay(measureTooltip);
   setMeasureTooltipElement(measureTooltipElement);
   setMeasureTooltip(measureTooltip);
+  
  
 
   return () => {
     newMap.setTarget(null);
   };
 }, []);
+
+//-----------------layer switcher--------------------------------------------------------------------------------------------
+useEffect(() => {
+  if (map) {
+    layers.forEach(layer => {
+      const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
+      if (mapLayer) {
+        mapLayer.setVisible(layer.visible);
+      }
+    });
+  }
+}, [layers]);
+
 //-------------------------------------measurements of length and area--------------------------------------------------------------------------------
-  useEffect(() => {
-    if (draw) {
-      map.removeInteraction(draw);
+const clearTooltips = () => {
+  const tooltips = document.querySelectorAll('.ol-tooltip-static');
+  tooltips.forEach((tooltip) => {
+    tooltip.parentNode.removeChild(tooltip);
+  });
+};
+  
+useEffect(() => {
+  if (draw) {
+    map.removeInteraction(draw);
+  }
+
+  clearTooltips(); // Clear existing tooltips
+
+  if (activeMeasurement) {
+    if (activeMeasurement === 'clear') {
+      clearDrawings();
+      return;
     }
 
-    if (activeMeasurement) {
-      if (activeMeasurement === 'clear') {
-        clearDrawings();
-        return;
-      }
+    let type;
+    if (activeMeasurement === 'length') {
+      type = 'LineString';
+    } else if (activeMeasurement === 'area') {
+      type = 'Polygon';
+    }
 
-      let type;
-      if (activeMeasurement === 'length') {
-        type = 'LineString';
-      } else if (activeMeasurement === 'area') {
-        type = 'Polygon';
-      }
+    const drawInteraction = new Draw({
+      source: vectorSource,
+      type: type,
+    });
+  
+    drawInteraction.on('drawstart', (evt) => {
+      const sketch = evt.feature;
+      let tooltipCoord = evt.coordinate;
 
-      const drawInteraction = new Draw({
-        source: vectorSource,
-        type: type,
+      sketch.getGeometry().on('change', (event) => {
+        const geom = event.target;
+        let output;
+        if (geom.getType() === 'Polygon') {
+          output = formatArea(geom);
+          tooltipCoord = geom.getInteriorPoint().getCoordinates();
+        } else if (geom.getType() === 'LineString') {
+          output = formatLength(geom);
+          tooltipCoord = geom.getLastCoordinate();
+        }
+        measureTooltipElement.innerHTML = output;
+        measureTooltip.setPosition(tooltipCoord);
       });
+    });
 
-      drawInteraction.on('drawstart', (evt) => {
-        const sketch = evt.feature;
-        let tooltipCoord = evt.coordinate;
-
-        sketch.getGeometry().on('change', (event) => {
-          const geom = event.target;
-          let output;
-          if (geom.getType() === 'Polygon') {
-            output = formatArea(geom);
-            tooltipCoord = geom.getInteriorPoint().getCoordinates();
-          } else if (geom.getType() === 'LineString') {
-            output = formatLength(geom);
-            tooltipCoord = geom.getLastCoordinate();
-          }
-          measureTooltipElement.innerHTML = output;
-          measureTooltip.setPosition(tooltipCoord);
+    drawInteraction.on('drawend', () => {
+      measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
+      measureTooltip.setOffset([0, -7]);
+      setMeasureTooltipElement(null);
+      setMeasureTooltip(null);
+      setTimeout(() => {
+        const newMeasureTooltipElement = document.createElement('div');
+        newMeasureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
+        const newMeasureTooltip = new Overlay({
+          element: newMeasureTooltipElement,
+          offset: [0, -15],
+          positioning: 'bottom-center',
         });
-      });
+        map.addOverlay(newMeasureTooltip);
+        setMeasureTooltipElement(newMeasureTooltipElement);
+        setMeasureTooltip(newMeasureTooltip);
+      }, 10);
+    });
 
-      drawInteraction.on('drawend', () => {
-        measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
-        measureTooltip.setOffset([0, -7]);
-        setMeasureTooltipElement(null);
-        setMeasureTooltip(null);
-        setTimeout(() => {
-          const newMeasureTooltipElement = document.createElement('div');
-          newMeasureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
-          const newMeasureTooltip = new Overlay({
-            element: newMeasureTooltipElement,
-            offset: [0, -15],
-            positioning: 'bottom-center',
-          });
-          map.addOverlay(newMeasureTooltip);
-          setMeasureTooltipElement(newMeasureTooltipElement);
-          setMeasureTooltip(newMeasureTooltip);
-        }, 10);
-      });
+    map.addInteraction(drawInteraction);
+    setDraw(drawInteraction);
+  }
+}, [activeMeasurement]);
 
-      map.addInteraction(drawInteraction);
-      setDraw(drawInteraction);
-    }
-  }, [activeMeasurement]);
-
- 
   
 //--------------viewshed-----------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -434,17 +517,6 @@ const fetchElevationProfile = async (start, end) => {
   }
 };
 
-//-----------------layer switcher--------------------------------------------------------------------------------------------
-useEffect(() => {
-  if (map) {
-    layers.forEach(layer => {
-      const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
-      if (mapLayer) {
-        mapLayer.setVisible(layer.visible);
-      }
-    });
-  }
-}, [layers]);
 
 
   return (
