@@ -152,7 +152,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   };
 
   return (
-    <header className="flex flex-col justify-between items-center bg-transparent text-white p-2.5 fixed w-12 h-screen mt-12 z-50">
+    <header className="flex flex-col justify-between items-center bg-transparent text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
       <nav className="flex flex-col gap-3 mt-12">
         <button title="Legend" onClick={() => handleIconClick('legend')} className="text-black text-2xl cursor-pointer">
           <FaList />
@@ -198,7 +198,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
             })()
           }}
         >
-          <div className="popup-content relative">
+          <div className="popup-content left-0 relative">
             <button className="absolute top-2 right-2 text-black" onClick={handleClosePopup}>
               X
             </button>
