@@ -42,7 +42,7 @@ const App = () => {
     { name: 'world', visible: true },
     { name: 'pak', visible: true },
     { name: 'roads', visible: true },
-    { name: 'pak_osm', visible: true },
+    { name: 'pak_Waterways', visible: true },
     { name: 'pak_dem', visible: true },
   ]);
 
