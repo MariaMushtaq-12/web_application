@@ -7,13 +7,12 @@ import './css/Navbar.css';
 import './App.css';
 import './css/Sidebar.css';
 import VectorLayer from 'ol/layer/Vector';
-import SearchBar from './components/Searchbar';
 import { LineString } from 'ol/geom';
 
-import { fromLonLat} from 'ol/proj';
+import { fromLonLat } from 'ol/proj';
 
 import VectorSource from 'ol/source/Vector';
-import { Vector , Fill, Stroke, Style } from 'ol/style';
+import { Vector, Fill, Stroke, Style } from 'ol/style';
 // Import required components in WMTSComponent.js
 import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
@@ -30,14 +29,14 @@ const App = () => {
   const [activeMeasurement, setActiveMeasurement] = useState(null);
   const mapRef = useRef();
   const [bufferParams, setBufferParams] = useState(null);
- const [lineOfSightParams, setLineOfSightParams] = useState(null);
- const [rangeRingsParams, setRangeRingsParams] = useState(null);
- const [epToolParams, setEpToolParams] = useState(null);
- const [elevationData, setElevationData] = useState(null); // Elevation
-  
+  const [lineOfSightParams, setLineOfSightParams] = useState(null);
+  const [rangeRingsParams, setRangeRingsParams] = useState(null);
+  const [epToolParams, setEpToolParams] = useState(null);
+  const [elevationData, setElevationData] = useState(null); // Elevation
+
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
-  
+
     { name: 'countries', visible: true },
     { name: 'world', visible: true },
     { name: 'pak', visible: true },
@@ -56,7 +55,7 @@ const App = () => {
   const handleLayerChange = (newLayers) => {
     setLayers(newLayers);
   };
-////////clear drawings////////////
+  ////////clear drawings////////////
   const clearDrawings = () => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -68,7 +67,11 @@ const App = () => {
     }
   };
 
+<<<<<<< Updated upstream
 //////////////jump to location function/////////////////
+=======
+  //-----------------------------------jump to location function---------------------------------------------------------------------------
+>>>>>>> Stashed changes
   const handleJumpToLocation = (latitude, longitude) => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -119,49 +122,63 @@ const App = () => {
     }
   };
 
+<<<<<<< Updated upstream
 /////////line of sight//////////////////////
 useEffect(() => {
   if (lineOfSightParams) {
     axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
       .then(response => {
         const { features } = response.data;
+=======
+  //--------------------------------------------------------line of sight------------------------------------------------
+  useEffect(() => {
+    if (lineOfSightParams) {
+      axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
+        .then(response => {
+          const { features } = response.data;
+>>>>>>> Stashed changes
 
-        // Remove existing Line of Sight layers
-        if (mapRef.current) {
-          const map = mapRef.current;
-          const layers = map.getLayers().getArray();
-          layers.forEach(layer => {
-            if (layer.get('name') === 'lineOfSight') {
-              map.removeLayer(layer);
+          // Remove existing Line of Sight layers
+          if (mapRef.current) {
+            const map = mapRef.current;
+            const layers = map.getLayers().getArray();
+            layers.forEach(layer => {
+              if (layer.get('name') === 'lineOfSight') {
+                map.removeLayer(layer);
+              }
+            });
+          }
+
+          // Add new Line of Sight layers
+          features.forEach(feature => {
+            const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
+            const lineString = new LineString(coordinates);
+            const vectorSource = new VectorSource({
+              features: [new Feature({ geometry: lineString })],
+            });
+
+            const style = new Style({
+              stroke: new Stroke({
+                color: feature.properties.visible ? 'red' : 'green',
+                width: 4,
+              }),
+            });
+
+            const vectorLayer = new VectorLayer({
+              source: vectorSource,
+              style: style,
+              name: 'lineOfSight',
+            });
+
+            if (mapRef.current) {
+              mapRef.current.addLayer(vectorLayer);
             }
           });
-        }
-
-        // Add new Line of Sight layers
-        features.forEach(feature => {
-          const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
-          const lineString = new LineString(coordinates);
-          const vectorSource = new VectorSource({
-            features: [new Feature({ geometry: lineString })],
-          });
-
-          const style = new Style({
-            stroke: new Stroke({
-              color: feature.properties.visible ? 'red' : 'green',
-              width: 4,
-            }),
-          });
-
-          const vectorLayer = new VectorLayer({
-            source: vectorSource,
-            style: style,
-            name: 'lineOfSight',
-          });
-
-          if (mapRef.current) {
-            mapRef.current.addLayer(vectorLayer);
-          }
+        })
+        .catch(error => {
+          console.error('There was an error calculating the Line of Sight!', error);
         });
+<<<<<<< Updated upstream
       })
       .catch(error => {
         console.error('There was an error calculating the Line of Sight!', error);
@@ -176,19 +193,40 @@ const handlePopupClose = () => {
 
 
 ////////////returning all the functions///////////////
+=======
+
+    }
+  }, [lineOfSightParams]);
+
+  //-------------------popup of elevation profile--------------------------------------------------------------------
+  const handlePopupClose = () => {
+    setElevationData(null);
+  };
+
+
+  //--------------------------------returning all the functions----------------------------------------------------
+>>>>>>> Stashed changes
   return (
     <div className="app-container">
-      <Header 
-       layers={layers}
-        setActiveMeasurement={setActiveMeasurement} 
-        clearDrawings={clearDrawings}
-        onLayerToggle={handleLayerToggle}
-      />
-      <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} />
-    
+
+      {/* <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} /> */}
+
       <div className="map-container">
-      <SearchBar onJumpToLocation={handleJumpToLocation} />
+        <Header
+          layers={layers}
+          setActiveMeasurement={setActiveMeasurement}
+          clearDrawings={clearDrawings}
+          onLayerToggle={handleLayerToggle}
+          onLayerChange={handleJumpToLocation}
+        />
+        {/* <SearchBar onJumpToLocation={handleJumpToLocation} /> */}
+        <Sidebar 
+        layers={layers}
+        activeTool={activeTool} 
+        setActiveTool={setActiveTool} 
+        />
         <WMTSComponent
+          className="z-100"
           mapRef={mapRef}
           onLayerChange={handleLayerChange}
           viewshedParams={viewshedParams}
@@ -201,17 +239,17 @@ const handlePopupClose = () => {
           epToolParams={epToolParams}
           setElevationData={setElevationData}
         />
-        <Form 
-          activeTool={activeTool} 
-          setActiveTool={setActiveTool} 
-          setViewshedParams={setViewshedParams} 
+        <Form
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          setViewshedParams={setViewshedParams}
           setBufferParams={setBufferParams}
           clickedCoordinates={clickedCoordinates}
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
         />
-          {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
+        {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
       </div>
     </div>
   );
