@@ -36,19 +36,7 @@ const App = () => {
  const [elevationData, setElevationData] = useState(null); // Elevation
   
   /////////////add use state of the layers ////////////////////
-<<<<<<< Updated upstream
-  const [layers, setLayers] = useState([
-  
-    { name: 'countries', visible: true },
-    { name: 'world', visible: true },
-    { name: 'pak', visible: true },
-    { name: 'roads', visible: true },
-    { name: 'pak_Waterways', visible: true },
-    { name: 'pak_dem', visible: true },
-  ]);
-=======
   const [layers, setLayers] = useState();
->>>>>>> Stashed changes
 
   const handleLayerToggle = (layerName) => {
     const updatedLayers = layers.map(layer =>

@@ -89,7 +89,7 @@
 //   const countries = new ImageLayer({
 //     source: new ImageWMS({
 //       ratio: 1,
-//       url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+//       url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
 //       params: {
 //         'FORMAT': 'image/jpeg',
 //         'VERSION': '1.1.1',
@@ -98,10 +98,10 @@
 //       },
 //     }),
 //   });
-// //http://192.168.1.200:8080/geoserver/ne/wms?service=WMS&version=1.1.0&request=GetMap&layers=ne%3Adem&bbox=60.899436949999995%2C23.70291500000001%2C77.84323050942798%2C37.097011566000106&width=768&height=607&srs=EPSG%3A4326&styles=&format=application/openlayers
+
 //   const world = new TileLayer({
 //     source: new TileWMS({
-//       url: 'http://localhost:8080/geoserver/ne/wms?request=GetCapabilities',
+//       url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
 //       params: {
 //         'FORMAT': 'image/jpeg',
 //         'VERSION': '1.1.1',
@@ -162,20 +162,6 @@
 //     newMap.setTarget(null);
 //   };
 // }, []);
-
-
-// useEffect(() => {
-//   if (map) {
-//     layers.forEach(layer => {
-//       const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
-//       if (mapLayer) {
-//         mapLayer.setVisible(layer.visible);
-//       }
-//     });
-//   }
-// }, [layers]);
-
-
 
 //   useEffect(() => {
 //     if (draw) {
@@ -448,6 +434,16 @@
 // };
 
 
+// useEffect(() => {
+//   if (map) {
+//     layers.forEach(layer => {
+//       const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
+//       if (mapLayer) {
+//         mapLayer.setVisible(layer.visible);
+//       }
+//     });
+//   }
+// }, [layers]);
 
 
 //   return (
@@ -464,10 +460,6 @@
 
 
 
-
-
-
-//perfectly working with all tools
 import React, { useEffect, useRef, useState } from 'react';
 import 'ol/ol.css';
 import Map from 'ol/Map';
@@ -702,19 +694,7 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    if (draw) {
-      map.removeInteraction(draw);
-    }
-
-    if (activeMeasurement) {
-      if (activeMeasurement === 'clear') {
-        clearDrawings();
-        return;
-      }
-    });
-  }
-}, [layers]);
+  
 
 //-------------------------------------measurements of length and area--------------------------------------------------------------------------------
 const clearTooltips = () => {
