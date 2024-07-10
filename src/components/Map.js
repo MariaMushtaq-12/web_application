@@ -570,11 +570,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
   const dem = new TileLayer({
     source: new TileWMS({
-<<<<<<< Updated upstream
-      url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-=======
       url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
->>>>>>> Stashed changes
       params: {
         'FORMAT': 'image/jpeg',
         'VERSION': '1.1.1',
@@ -634,63 +630,6 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   });
 
 
-<<<<<<< Updated upstream
-  // ///////////
-  // const pak = new ImageLayer({
-  //   source: new ImageWMS({
-  //     ratio: 1,
-  //     url: 'http://192.168.1.200:8080/geoserver/pak/wms/wmts?request=GetCapabilities',
-  //     params: {
-  //       'FORMAT': 'image/jpeg',
-  //       'VERSION': '1.1.1',
-  //       'STYLES': '',
-  //       'LAYERS': 'pak:pak',
-  //     },
-  //   }),
-  // });
-  
-  // const roads = new TileLayer({
-  //   source: new TileWMS({
-  //     url: 'http://192.168.1.200:8080/geoserver/osm/wms/wmts?request=GetCapabilities',
-  //     params: {
-  //       'FORMAT': 'image/jpeg',
-  //       'VERSION': '1.1.1',
-  //       'tiled': true,
-  //       'STYLES': '',
-  //       'LAYERS': 'osm:road',
-  //     },
-  //   }),
-  // });
-  
-  // const pak_Waterways = new ImageLayer({
-  //   source: new ImageWMS({
-  //     ratio: 1,
-  //     url: 'http://192.168.1.200:8080/geoserver/osm/wms/wmts?request=GetCapabilities',
-  //     params: {
-  //       'FORMAT': 'image/jpeg',
-  //       'VERSION': '1.1.1',
-  //       'STYLES': '',
-  //       'LAYERS': 'osm:Waterways',
-  //     },
-  //   }),
-  // });
-  
-  // const pak_dem = new ImageLayer({
-  //   source: new ImageWMS({
-  //     ratio: 1,
-  //     url: 'http://192.168.1.200:8080/geoserver/dem/wms/wmts?request=GetCapabilities',
-  //     params: {
-  //       'FORMAT': 'image/jpeg',
-  //       'VERSION': '1.1.1',
-  //       'STYLES': '',
-  //       'LAYERS': 'dem:dem',
-  //     },
-  //   }),
-  // });
-  
-=======
-
->>>>>>> Stashed changes
   const newMap = new Map({
     target: internalMapRef.current,
     layers: [base, Waterways,dem,road, railway,osm, vectorLayer], //add their the additional layers name
@@ -700,21 +639,6 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       zoom: 5,
     }),
   });
-<<<<<<< Updated upstream
-//   // Add the layers to the map
-// newMap.addLayer(pak);
-// newMap.addLayer(roads);
-// newMap.addLayer(pak_Waterways);
-// newMap.addLayer(pak_dem);
-console.log(layers);
-  onLayerChange([
-    { name: 'countries', visible: true },
-    { name: 'world', visible: true },
-//     { name: 'pak', visible: true },
-//    { name: 'roads', visible: true },
-//   { name: 'pak_Waterways', visible: true },
-//  { name: 'pak_dem', visible: true },
-=======
 
   
 console.log(layers);
@@ -728,7 +652,6 @@ console.log(layers);
    { name: 'osm', visible: false },
 //  { name: 'pak_osm', visible: true },  //add here original layer name it will fetch it directly from geoserver
 // { name: 'pak_dem', visible: true },
->>>>>>> Stashed changes
   ]);
 
   newMap.on('click', (evt) => {
@@ -766,19 +689,12 @@ console.log(layers);
   };
 }, []);
 
-<<<<<<< Updated upstream
-//-----------------layer switcher--------------------------------------------------------------------------------------------
-=======
-
->>>>>>> Stashed changes
 useEffect(() => {
   if (map) {
     layers.forEach(layer => {
       const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
       if (mapLayer) {
         mapLayer.setVisible(layer.visible);
-<<<<<<< Updated upstream
-=======
       }
     });
   }
@@ -795,7 +711,6 @@ useEffect(() => {
       if (activeMeasurement === 'clear') {
         clearDrawings();
         return;
->>>>>>> Stashed changes
       }
     });
   }
@@ -1082,10 +997,6 @@ const fetchElevationProfile = async (start, end) => {
 };
 
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
