@@ -1,12 +1,10 @@
 
 .app-container {
   display: flex;
-  height: 97vh;
+  height: 100vh;
 }
 .map-container {
   flex-grow: 1;
-  margin-left: 250px;
-  margin-top: 75px;
   border-top: 1px solid #1c1717; /* add a border-top to create a visual separation */
   transition: margin-left 0.3s;
  
@@ -16,7 +14,7 @@
 
     position: relative;
 }
-#map {
+#map {  
   flex: 1;
 
   height: 100%;

@@ -6,7 +6,7 @@ import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-import '../css/popup.css';
+// import '../css/popup.css';
 
 const Popup = ({ elevationData, handleClose, map }) => {
   const chartRef = useRef(null);
