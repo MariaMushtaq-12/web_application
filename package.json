@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://192.168.1.200:5000/",
   "proxy1": "http://192.168.1.200:5001/",
+  "proxy2":"http://127.0.0.1:5001",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
