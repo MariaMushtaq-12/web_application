@@ -558,55 +558,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:base',
       },
     }),
-  });
-
-  const dem = new TileLayer({
-    source: new TileWMS({
-      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-      params: {
-        'FORMAT': 'image/jpeg',
-        'VERSION': '1.1.1',
-        'tiled': true,
-        'STYLES': '',
-        'LAYERS': 'ne:dem',
-      },
-    }),
-  });
-  const Waterways = new TileLayer({
-    source: new TileWMS({
-      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-      params: {
-        'FORMAT': 'image/jpeg',
-        'VERSION': '1.1.1',
-        'tiled': true,
-        'STYLES': '',
-        'LAYERS': 'ne:Waterways',
-      },
-    }),
-  });
-  const road = new TileLayer({
-    source: new TileWMS({
-      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-      params: {
-        'FORMAT': 'image/jpeg',
-        'VERSION': '1.1.1',
-        'tiled': true,
-        'STYLES': '',
-        'LAYERS': 'ne:road',
-      },
-    }),
-  });
-  const railway = new TileLayer({
-    source: new TileWMS({
-      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-      params: {
-        'FORMAT': 'image/jpeg',
-        'VERSION': '1.1.1',
-        'tiled': true,
-        'STYLES': '',
-        'LAYERS': 'ne:railway',
-      },
-    }),
+    opacity: 1,
   });
   const osm = new TileLayer({
     source: new TileWMS({
@@ -619,12 +571,69 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:osm',
       },
     }),
+    opacity: 0.5,
+
   });
+  const DEM = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:DEM',
+      },
+    }),
+    opacity: 0.7,
+  });
+
+  const ROAD = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:ROAD',
+      },
+    }),
+    opacity: 0.7,
+  });
+  const WATER = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:WATER',
+      },
+    }),
+    opacity: 0.7,
+  });
+  const RAIL = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:RAIL',
+      },
+    }),
+    opacity: 0.7,
+
+  });
+  
 
 
   const newMap = new Map({
     target: internalMapRef.current,
-    layers: [base, Waterways,dem,road, railway,osm, vectorLayer], //add their the additional layers name
+    layers: [base,DEM,osm, ROAD,WATER, RAIL, vectorLayer], //add their the additional layers name
     view: new View({
       projection: projection,
       center: [70, 30],
@@ -635,13 +644,16 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   
 console.log(layers);
   onLayerChange([
-    { name: 'base', visible: true },
-    { name: 'Waterways', visible: false },
-    { name: 'dem', visible: false },
     
-    { name: 'road', visible: false },
-    { name: 'railway', visible: false },
-   { name: 'osm', visible: false },
+    { name: 'base', visible: true },
+    { name: 'DEM', visible: false },
+    { name: 'osm', visible: false },
+    
+   
+    { name: 'ROAD', visible: false },
+    { name: 'WATER', visible: false },
+    { name: 'RAIL', visible: false },
+    
 //  { name: 'pak_osm', visible: true },  //add here original layer name it will fetch it directly from geoserver
 // { name: 'pak_dem', visible: true },
   ]);
