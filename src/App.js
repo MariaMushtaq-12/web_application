@@ -48,6 +48,18 @@ const App = () => {
   const handleLayerChange = (newLayers) => {
     setLayers(newLayers);
   };
+
+  // const handleLayerToggle = (layerName) => {
+  //   setLayers(layers.map(layer => 
+  //     layer.name === layerName ? { ...layer, visible: !layer.visible } : layer
+  //   ));
+  // };
+
+  const handleLayerOpacityChange = (layerName, opacity) => {
+    setLayers(layers.map(layer => 
+      layer.name === layerName ? { ...layer, opacity } : layer
+    ));
+  };
 ////////clear drawings////////////
   const clearDrawings = () => {
     if (mapRef.current) {
@@ -176,6 +188,7 @@ const handlePopupClose = () => {
         setActiveMeasurement={setActiveMeasurement} 
         clearDrawings={clearDrawings}
         onLayerToggle={handleLayerToggle}
+        onLayerOpacityChange={handleLayerOpacityChange}
       />
       <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} />
     
