@@ -12,7 +12,7 @@ import { fromLonLat } from 'ol/proj';
 import { Draw } from 'ol/interaction';
 import { Style, Fill, Stroke } from 'ol/style';
 
-const Header = ({ layers, setActiveMeasurement, clearDrawings,onLayerToggle }) => {
+const Header = ({ layers, setActiveMeasurement, clearDrawings,onLayerToggle, onLayerOpacityChange}) => {
   const [activePopup, setActivePopup] = useState(null);
 
   const handleIconClick = (popupName) => {
@@ -118,7 +118,11 @@ const convertDecimalToDms = () => {
   });
 };
 //------------------------------------layers opacity constant-------------------------------------------------
-  return (
+const handleOpacityChange = (layerName, opacity) => {
+  onLayerOpacityChange(layerName, opacity);
+};
+
+return (
     <header className="header">
       <video width="70" height="70" loop autoPlay muted>
         <source src={logo_animated} type="video/mp4" />
@@ -177,21 +181,31 @@ const convertDecimalToDms = () => {
                 */}
               </div>
             )}
-{/**-----------------------------------------------layers tool---------------------------------------- */}
+{/**-----------------------------------------------layers tool--------------------------------------------------------------- */}
 {activePopup === 'layers' && (
   <div>
     <h3>Layers</h3>
   
       {layers.map((layer, index) => (
-        <li key={index}>
-          <input 
+        <h5 key={index}>
+          <input key={index}
             type="checkbox" 
             id={`layer-${index}`} 
             checked={layer.visible} 
             onChange={() => toggleLayer(layer.name)} 
           />
-          <label htmlFor={`layer-${index}`}>{layer.name}</label>
-        </li>
+          <label htmlFor={`layer-${index}`}>{layer.name}
+            
+          </label>
+          <input 
+                      type="range" 
+                      min="0" 
+                      max="1" 
+                      step="0.01" 
+                      value={layer.opacity} 
+                      onChange={(e) => handleOpacityChange(layer.name, parseFloat(e.target.value))} 
+                    />
+        </h5>
       ))}
     
   </div>
