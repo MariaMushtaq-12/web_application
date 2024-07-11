@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaEye, FaLine, FaChartLine, FaCircle, FaCompass } from 'react-icons/fa';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import '../css/Sidebar.css';
 
-const itemVariants: Variants = {
+const itemVariants = {
   open: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 }
+    transition: { type: 'spring', stiffness: 300, damping: 24 },
   },
   closed: {
     opacity: 0,
     y: 20,
-    transition: { duration: 0.2 }
-  }
+    transition: { duration: 0.2 },
+  },
 };
 
-const menuVariants: Variants = {
+const menuVariants = {
   open: {
     clipPath: 'inset(0% 0% 0% 0% round 10px)',
     transition: {
@@ -24,17 +24,17 @@ const menuVariants: Variants = {
       bounce: 0,
       duration: 0.7,
       delayChildren: 0.3,
-      staggerChildren: 0.05
-    }
+      staggerChildren: 0.05,
+    },
   },
   closed: {
     clipPath: 'inset(10% 50% 90% 50% round 10px)',
     transition: {
       type: 'spring',
       bounce: 0,
-      duration: 0.3
-    }
-  }
+      duration: 0.3,
+    },
+  },
 };
 
 const Sidebar = ({ activeTool, setActiveTool }) => {
@@ -58,13 +58,13 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
     { id: 2, name: 'Line of Sight', icon: <FaLine />, description: 'Calculate the line of sight between two points' },
     { id: 3, name: 'Elevation Profile', icon: <FaChartLine />, description: 'Generate an elevation profile along a path' },
     { id: 4, name: 'Buffer', icon: <FaCircle />, description: 'Create a buffer zone around a feature' },
-    { id: 5, name: 'Range Rings', icon: <FaCompass />, description: 'Create range rings around a point' }
+    { id: 5, name: 'Range Rings', icon: <FaCompass />, description: 'Create range rings around a point' },
   ];
 
   return (
     <div className={`fixed top-[70px] left-0 h-[calc(100vh-60px)] shadow-md transition-width duration-300 overflow-hidden z-50 ${isCollapsed ? 'w-[40px]' : 'w-[250px]'} bg-gray-800`}>
       <div
-        className="absolute top-[20px] right-[-20px] w-[40px] h-[40px] bg-gray-300 rounded-full shadow-sm flex justify-center items-center cursor-pointer"
+        className="absolute  left-[-20px] w-[40px] h-[40px] bg-gray-300 rounded-full shadow-sm flex justify-center items-center cursor-pointer"
         onClick={toggleSidebar}
       >
         {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
@@ -85,7 +85,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
               <motion.div
                 variants={{
                   open: { rotate: 180 },
-                  closed: { rotate: 0 }
+                  closed: { rotate: 0 },
                 }}
                 transition={{ duration: 0.2 }}
                 style={{ originY: 0.55 }}
@@ -132,7 +132,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
               <motion.div
                 variants={{
                   open: { rotate: 180 },
-                  closed: { rotate: 0 }
+                  closed: { rotate: 0 },
                 }}
                 transition={{ duration: 0.2 }}
                 style={{ originY: 0.55 }}

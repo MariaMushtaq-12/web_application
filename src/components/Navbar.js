@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FaDownload,
-  FaBook,
   FaList,
   FaLayerGroup,
-  FaImage,
-  FaMapMarkerAlt,
   FaRuler,
-  FaCogs,
+  FaMapMarkerAlt,
   FaGlobe,
-  FaLine,
+  FaToolbox,
   FaDrawPolygon,
-  FaToolbox
+  FaWindowClose,
 } from 'react-icons/fa';
 import logo_animated from '../img/logo_animated.mp4';
 import Map from 'ol/Map';
@@ -129,78 +125,82 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     };
 
     return (
-      <div className="flex flex-col p-2">
+      <div className="flex flex-col justify-center p-2" >
+      <div >
         <input
           type="text"
           placeholder="Latitude"
           value={latitude}
           onChange={(e) => setLatitude(e.target.value)}
-          className="mb-2 p-2 border rounded"
+          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
         />
         <input
           type="text"
           placeholder="Longitude"
           value={longitude}
           onChange={(e) => setLongitude(e.target.value)}
-          className="mb-2 p-2 border rounded"
+          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
         />
-        <button onClick={handleJump} className="p-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-500">
+        <div className="flex justify-center w-full">
+        <button onClick={handleJump} className="relative flex justify-center w-1/2 mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
           Jump
         </button>
+        </div>
+      </div>
       </div>
     );
   };
 
   return (
-    <header className="flex flex-col justify-between items-center bg-transparent text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
+    <header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
       <nav className="flex flex-col gap-3 mt-12">
-        <button title="Legend" onClick={() => handleIconClick('legend')} className="text-black text-2xl cursor-pointer">
+        <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-300 text-2xl cursor-pointer">
           <FaList />
         </button>
-        <button title="Layers" onClick={() => handleIconClick('layers')} className="text-black text-2xl cursor-pointer">
+        <button title="Layers" onClick={() => handleIconClick('layers')} className="text-gray-300 text-2xl cursor-pointer">
           <FaLayerGroup />
         </button>
-        <button title="Measurement" onClick={() => handleIconClick('measurement')} className="text-black text-2xl cursor-pointer">
+        <button title="Measurement" onClick={() => handleIconClick('measurement')} className="text-gray-300 text-2xl cursor-pointer">
           <FaRuler />
         </button>
-        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-black text-2xl cursor-pointer">
+        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-gray-300 text-2xl cursor-pointer">
           <FaMapMarkerAlt />
         </button>
-        <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-black text-2xl cursor-pointer">
+        <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-300 text-2xl cursor-pointer">
           <FaGlobe />
         </button>
-        <button title="Tools" onClick={() => handleIconClick('tools')} className="text-black text-2xl cursor-pointer">
+        <button title="Tools" onClick={() => handleIconClick('tools')} className="text-gray-300 text-2xl cursor-pointer hover:text-lg">
           <FaToolbox />
         </button>
       </nav>
 
       {activePopup && (
         <div
-          className="absolute top-20 z-50 bg-white text-black p-5 mt-2.5 rounded shadow-lg"
-          style={{
-            left: (() => {
-              switch (activePopup) {
-                case 'legend':
-                  return '70%';
-                case 'layers':
-                  return '72%';
-                case 'measurement':
-                  return '74%';
-                case 'coordinates':
-                  return '77%';
-                case 'coordinateConverter':
-                  return '79%';
-                case 'tools':
-                  return '84%';
-                default:
-                  return '0';
-              }
-            })()
-          }}
-        >
+        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-800 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
+        style={{
+          right: (() => {
+            switch (activePopup) {
+              case 'legend':
+                return '70%';
+              case 'layers':
+                return '72%';
+              case 'measurement':
+                return '74%';
+              case 'coordinates':
+                return '77%';
+              case 'coordinateConverter':
+                return '79%';
+              case 'tools':
+                return '84%';
+              default:
+                return '0';
+            }
+          })()
+        }}
+      >
           <div className="popup-content left-0 relative">
-            <button className="absolute top-2 right-2 text-black" onClick={handleClosePopup}>
-              X
+            <button className="absolute flex justify-center right-0 rounded  hover:bg-gray-900" onClick={handleClosePopup}>
+              <FaWindowClose className="text-gray-300 hover:text-green-300"/>
             </button>
 
             {activePopup === 'legend' && (
@@ -222,11 +222,11 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 <ul>
                   {layers.map((layer, index) => (
                     <li key={index}>
-                      <input 
-                        type="checkbox" 
-                        id={`layer-${index}`} 
-                        checked={layer.visible} 
-                        onChange={() => toggleLayer(layer.name)} 
+                      <input
+                        type="checkbox"
+                        id={`layer-${index}`}
+                        checked={layer.visible}
+                        onChange={() => toggleLayer(layer.name)}
                         className="mr-2"
                       />
                       <label htmlFor={`layer-${index}`}>{layer.name}</label>
@@ -237,40 +237,44 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
             )}
 
             {activePopup === 'measurement' && (
-              <div className="flex flex-col items-center bg-cover p-5 border border-gray-300 rounded shadow-md" style={{ backgroundImage: "url('../img/camaflauge.PNG')" }}>
-                <button title="Measure Length" onClick={() => handleMeasurementClick('length')} className="mb-2.5 p-2.5 bg-green-600 text-white rounded cursor-pointer hover:bg-green-500">
-                  <FaRuler className="mr-2.5" /> Length
+              <div className="flex flex-col justify-center p-2">
+                <p className="text-white top-2 font-bold text-lg text-center">Measure</p>
+                <button title="Measure Length" onClick={() => handleMeasurementClick('length')} className="flex  mb-2 p-2.5 bg-gray-900 text-white text-center justify-center h-10 w-full rounded cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
+                  
+                  <FaRuler className="relative top-[5px] mr-1 " /> Length
                 </button>
-                <button title="Measure Area" onClick={() => handleMeasurementClick('area')} className="mb-2.5 p-2.5 bg-green-600 text-white rounded cursor-pointer hover:bg-green-500">
-                  <FaDrawPolygon className="mr-2.5" /> Area
+                <button title="Measure Area" onClick={() => handleMeasurementClick('area')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">
+                  <FaDrawPolygon className="relative top-[5px] mr-1 " /> Area
                 </button>
-                <button title="Erase all drawings" onClick={() => handleMeasurementClick('clear')} className="mb-2.5 p-2.5 bg-green-600 text-white rounded cursor-pointer hover:bg-green-500">
-                  Clear
-                </button>
+                <div className="flex justify-center w-full">
+                  <button title="Erase all drawings" onClick={() => handleMeasurementClick('clear')} className="relative flex justify-center w-full mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
+                    Clear
+                  </button>
+                </div>
               </div>
             )}
 
             {activePopup === 'coordinates' && (
-              <div>
-                <h3 className="font-bold">Jump to Location</h3>
+              <div className= "flex flex-col justify-center p-2">
+                <p className="text-white top-2 font-bold text-lg text-center">Jump to Location</p>
                 <SearchBar onJumpToLocation={onJumpToLocation} />
               </div>
             )}
 
             {activePopup === 'coordinateConverter' && (
-              <div className="coordinate-converter">
-                <h3 className="font-bold">Coordinate Converter</h3>
+              <div className="flex flex-col justify-center p-2">
+                <p className="text-white mb-2 mt-3 font-bold text-sm text-center">Coordinate Converter</p>
                 {!conversionType && (
                   <div className="flex flex-col items-center">
-                    <button onClick={() => handleConversionTypeChange('DMS_TO_DECIMAL')} className="mb-2.5 p-2.5 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-500">DMS to Decimal</button>
-                    <button onClick={() => handleConversionTypeChange('DECIMAL_TO_DMS')} className="mb-2.5 p-2.5 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-500">Decimal to DMS</button>
+                    <button onClick={() => handleConversionTypeChange('DMS_TO_DECIMAL')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">DMS to Decimal</button>
+                    <button onClick={() => handleConversionTypeChange('DECIMAL_TO_DMS')} className="relative flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">Decimal to DMS</button>
                   </div>
                 )}
 
                 {conversionType === 'DMS_TO_DECIMAL' && (
-                  <form>
-                    <h4 className="font-bold">Latitude:</h4>
-                    <div className="flex">
+                  <form className="flex flex-col justify-center p-2">
+                    <h4 className="text-white top-2 font-bold text-lg text-center">Latitude:</h4>
+                    <div className="flex flex-col">
                       <label className="mr-2.5">
                         Degrees:
                         <input
@@ -278,7 +282,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="latDegrees"
                           value={dmsInput.latDegrees}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                       <label className="mr-2.5">
@@ -288,7 +292,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="latMinutes"
                           value={dmsInput.latMinutes}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                       <label className="mr-2.5">
@@ -298,13 +302,13 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="latSeconds"
                           value={dmsInput.latSeconds}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                     </div>
 
                     <h4 className="font-bold">Longitude:</h4>
-                    <div className="flex">
+                    <div className="flex flex-col">
                       <label className="mr-2.5">
                         Degrees:
                         <input
@@ -312,7 +316,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="lonDegrees"
                           value={dmsInput.lonDegrees}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                       <label className="mr-2.5">
@@ -322,7 +326,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="lonMinutes"
                           value={dmsInput.lonMinutes}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                       <label className="mr-2.5">
@@ -332,7 +336,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="lonSeconds"
                           value={dmsInput.lonSeconds}
                           onChange={handleDmsInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                     </div>
@@ -354,7 +358,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="lat"
                           value={decimalInput.lat}
                           onChange={handleDecimalInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                     </div>
@@ -368,7 +372,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                           name="lon"
                           value={decimalInput.lon}
                           onChange={handleDecimalInputChange}
-                          className="border rounded p-1"
+                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
                         />
                       </label>
                     </div>
