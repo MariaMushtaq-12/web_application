@@ -52,7 +52,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings,onLayerToggle }) =
     onLayerToggle(layerName);
   };
 
-////////////////coordinate converters//////////////////////
+
+//-----------------------coordinate converters------------------------------------------------------
 const [conversionType, setConversionType] = useState(null);
   const [dmsInput, setDmsInput] = useState({ latDegrees: '', latMinutes: '', latSeconds: '', lonDegrees: '', lonMinutes: '', lonSeconds: '' });
   const [decimalInput, setDecimalInput] = useState({ lat: '', lon: '' });
@@ -76,7 +77,6 @@ useEffect(() => {
   });
   setMap(mapInstance);
 }, []);
-
 
 const handleConversionTypeChange = (type) => {
   setConversionType(type);
@@ -117,7 +117,7 @@ const convertDecimalToDms = () => {
     lon: `${lonDms.degrees}° ${lonDms.minutes}' ${lonDms.seconds}"` 
   });
 };
-
+//------------------------------------layers opacity constant-------------------------------------------------
   return (
     <header className="header">
       <video width="70" height="70" loop autoPlay muted>
@@ -177,11 +177,11 @@ const convertDecimalToDms = () => {
                 */}
               </div>
             )}
-
+{/**-----------------------------------------------layers tool---------------------------------------- */}
 {activePopup === 'layers' && (
   <div>
     <h3>Layers</h3>
-    <ul>
+  
       {layers.map((layer, index) => (
         <li key={index}>
           <input 
@@ -193,10 +193,10 @@ const convertDecimalToDms = () => {
           <label htmlFor={`layer-${index}`}>{layer.name}</label>
         </li>
       ))}
-    </ul>
+    
   </div>
 )}
-
+{/**-------------------------------------------------measurement tool---------------------------------------- */}
             {activePopup === 'measurement' && (
               <div className="measurement-popup">
                 <button title="Measure Length" onClick={() => handleMeasurementClick('length')}><FaLine /> Length</button>
@@ -208,7 +208,7 @@ const convertDecimalToDms = () => {
             {activePopup === 'coordinates' && (
               <div>Jump to Location</div>
             )}
-
+{/**----------------------------------------coordinate converter tool---------------------------------------- */}
 {activePopup === 'coordinateConverter' && (
               <div className="coordinate-converter">
                 <h3>Coordinate Converter</h3>
