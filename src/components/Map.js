@@ -485,7 +485,7 @@ import { remove } from 'ol/array';
 import Chart from 'chart.js/auto';
 import {Point} from 'ol/geom';
 import {LineString} from 'ol/geom';
-
+import { Circle as CircleStyle } from 'ol/geom';
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
   let output;
@@ -536,7 +536,8 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const [measureTooltip, setMeasureTooltip] = useState(null);
   const markerRef = useRef(null); // Reference for the moving marker
 //-----------------map layers------------------------------------------------
-  useEffect(() => {
+const vectorSourceRef = useRef(new VectorSource()); 
+useEffect(() => {
   const projection = getProjection('EPSG:4326');
   const projectionExtent = projection.getExtent();
   const size = getWidth(projectionExtent) / 256;
@@ -558,7 +559,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:base',
       },
     }),
-    opacity: 1,
+  
   });
   const osm = new TileLayer({
     source: new TileWMS({
@@ -571,7 +572,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:osm',
       },
     }),
-    opacity: 0.5,
+   
 
   });
   const DEM = new TileLayer({
@@ -585,7 +586,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:DEM',
       },
     }),
-    opacity: 0.7,
+    
   });
 
   const ROAD = new TileLayer({
@@ -599,7 +600,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:ROAD',
       },
     }),
-    opacity: 0.7,
+    
   });
   const WATER = new TileLayer({
     source: new TileWMS({
@@ -612,7 +613,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:WATER',
       },
     }),
-    opacity: 0.7,
+   
   });
   const RAIL = new TileLayer({
     source: new TileWMS({
@@ -625,7 +626,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         'LAYERS': 'ne:RAIL',
       },
     }),
-    opacity: 0.7,
+   
 
   });
   
@@ -633,10 +634,29 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
   const newMap = new Map({
     target: internalMapRef.current,
-    layers: [base,DEM,osm, ROAD,WATER, RAIL, vectorLayer], //add their the additional layers name
+    layers: [base,DEM,osm, ROAD,WATER, RAIL, vectorLayer,new VectorLayer({
+      source: vectorSourceRef.current,
+      style: new Style({
+          fill: new Fill({
+              color: 'rgba(255, 255, 255, 0.2)',
+          }),
+          stroke: new Stroke({
+              color: '#ffcc33',
+              width: 2,
+          }),
+          image: new CircleStyle({
+              radius: 7,
+              fill: new Fill({
+                  color: '#ffcc33',
+              }),
+          }),
+      }),
+  })
+      
+    ], //add their the additional layers name
     view: new View({
       projection: projection,
-      center: [70, 30],
+      center: [70, 31],
       zoom: 5.5,
     }),
   });
