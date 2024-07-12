@@ -713,18 +713,29 @@ console.log(layers);
   };
 }, []);
 
+
+
+// useEffect(() => {
+//   if (map) {
+//     layers.forEach(layer => {
+//       const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
+//       if (mapLayer) {
+//         mapLayer.setVisible(layer.visible);
+//       }
+//     });
+//   }
+// }, [layers]);
+
 useEffect(() => {
   if (map) {
-    layers.forEach(layer => {
-      const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
-      if (mapLayer) {
-        mapLayer.setVisible(layer.visible);
-      }
-    });
+      layers.forEach(layer => {
+          const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
+          if (mapLayer) {
+              mapLayer.setVisible(layer.visible);
+          }
+      });
   }
 }, [layers]);
-
-
 
   
 
