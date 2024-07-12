@@ -9,9 +9,7 @@ import './css/Sidebar.css';
 import VectorLayer from 'ol/layer/Vector';
 import SearchBar from './components/Searchbar';
 import { LineString } from 'ol/geom';
-
 import { fromLonLat} from 'ol/proj';
-
 import VectorSource from 'ol/source/Vector';
 import { Vector , Fill, Stroke, Style } from 'ol/style';
 // Import required components in WMTSComponent.js
@@ -60,7 +58,7 @@ const App = () => {
       layer.name === layerName ? { ...layer, opacity } : layer
     ));
   };
-////////clear drawings////////////
+//---------------------------------clear drawings------------------------------------------------------------------------------
   const clearDrawings = () => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -174,6 +172,13 @@ useEffect(() => {
   }
 }, [lineOfSightParams]);
 
+//-------------------switching of measurement tool--------------------------------------------------------------------
+
+useEffect(() => {
+  if (activeTool && activeMeasurement) {
+    setActiveMeasurement(null);
+  }
+}, [activeTool]);
 //-------------------popup of elevation profile--------------------------------------------------------------------
 const handlePopupClose = () => {
   setElevationData(null);
