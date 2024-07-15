@@ -66,7 +66,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const toggleLayer = (layerName) => {
     onLayerToggle(layerName);
   };
-
+//-----------------------------------constants for the coordinate converters---------------------------------------------------------------------
   const handleConversionTypeChange = (type) => {
     setConversionType(type);
     setOutput({ lat: '', lon: '' });
@@ -106,7 +106,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
       lon: `${lonDms.degrees}° ${lonDms.minutes}' ${lonDms.seconds}"`
     });
   };
-
+//--------------------------------------jump to location--------------------------------------------------------------------------------------------------
   const SearchBar = ({ onJumpToLocation }) => {
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
@@ -125,35 +125,47 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
 
     return (
       <div className="flex flex-col justify-center p-2" >
-      <div >
-        <input
-          type="text"
-          placeholder="Latitude"
-          value={latitude}
-          onChange={(e) => setLatitude(e.target.value)}
-          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-        />
-        <input
-          type="text"
-          placeholder="Longitude"
-          value={longitude}
-          onChange={(e) => setLongitude(e.target.value)}
-          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-        />
+       <form className="space-y-4 md:space-y-6">
+             <div>
+                <label htmlFor="latitude" className="block mb-2 text-sm font-medium text-white dark:text-white">Latitude:</label>
+                <input
+                  type="text"
+                  id="latitude"
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Enter latitude"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="longitude" className="block mb-2 text-sm font-medium text-white dark:text-white">Longitude:</label>
+                <input
+                  type="text"
+                  id="longitude"
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Enter longitude"
+                  required
+                />
+              </div>
         <div className="flex justify-center w-full">
-        <button onClick={handleJump} className="relative flex justify-center w-1/2 mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
+        <button onClick={handleJump} className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
           Jump
         </button>
         </div>
-      </div>
+      </form>
       </div>
     );
   };
-
+//---------------------------------------------returning vertical navbar--------------------------------------------------------------------------------------
   return (
     
     //<header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
     <header className="flex flex-col justify-between items-center text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
+{/*--------------------------------------Symbols and buttons------------------------------------------------------------------------------------------- */}
+
       <nav className="flex flex-col gap-3 mt-12">
         <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-800 text-2xl cursor-pointer">
           <FaList />
@@ -164,7 +176,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
         <button title="Measurement" onClick={() => handleIconClick('measurement')} className="text-gray-800 text-2xl cursor-pointer">
           <FaRuler />
         </button>
-        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-gray-800 text-2xl cursor-pointer">
+        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-gray-900 text-2xl cursor-pointer">
           <FaMapMarkerAlt />
         </button>
         <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-800 text-2xl cursor-pointer">
@@ -174,10 +186,11 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
           <FaEraser/>
         </button>
       </nav>
+{/*--------------------------------------Popup containers------------------------------------------------------------------------------------------- */}
 
       {activePopup && (
         <div
-        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-800 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
+        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-600 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
         style={{
           right: (() => {
             switch (activePopup) {
@@ -201,9 +214,9 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
       >
           <div className="popup-content left-0 relative">
             <button className="absolute flex justify-center right-0 rounded  hover:bg-gray-900" onClick={handleClosePopup}>
-              <FaWindowClose className="text-gray-300 hover:text-green-300"/>
+              <FaWindowClose className="text-gray-300 hover:text-green-500"/>
             </button>
-
+{/*--------------------------------------legends------------------------------------------------------------------------------------------- */}
             {activePopup === 'legend' && (
               <div>
                 <h3 className="font-bold">Legend</h3>
@@ -216,6 +229,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 */}
               </div>
             )}
+{/*--------------------------------------layers------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'layers' && (
               <div>
@@ -236,39 +250,42 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 </ul>
               </div>
             )}
+{/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'measurement' && (
               <div className="flex flex-col justify-center p-2">
                 <p className="text-white top-2 font-bold text-lg text-center">Measure</p>
-                <button title="Measure Length" onClick={() => handleMeasurementClick('length')} className="flex  mb-2 p-2.5 bg-gray-900 text-white text-center justify-center h-10 w-full rounded cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
+                <button title="Measure Length" onClick={() => handleMeasurementClick('length')} className="flex  mb-2 p-2.5 bg-gray-900 text-white text-center justify-center h-10 w-full rounded cursor-pointer hover:bg-green-500 hover:text-gray-900 font-semibold">
                   
                   <FaRuler className="relative top-[5px] mr-1 " /> Length
                 </button>
-                <button title="Measure Area" onClick={() => handleMeasurementClick('area')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">
+                <button title="Measure Area" onClick={() => handleMeasurementClick('area')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">
                   <FaDrawPolygon className="relative top-[5px] mr-1 " /> Area
                 </button>
                 <div className="flex justify-center w-full">
-                  <button title="Erase all drawings" onClick={() => handleMeasurementClick('clear')} className="relative flex justify-center w-full mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900 font-semibold">
+                  <button title="Erase all drawings" onClick={() => handleMeasurementClick('clear')} className="relative flex justify-center w-full mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900 font-semibold">
                     Clear
                   </button>
                 </div>
               </div>
             )}
+{/*--------------------------------------jump to location------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'coordinates' && (
               <div className= "flex flex-col justify-center p-2">
-                <p className="text-white top-2 font-bold text-lg text-center">Jump to Location</p>
+                <p className="text-white top-2 font-bold text-lg text-center ">Jump to Location</p>
                 <SearchBar onJumpToLocation={onJumpToLocation} />
               </div>
             )}
+{/*--------------------------------------Coordinate converter------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'coordinateConverter' && (
               <div className="flex flex-col justify-center p-2">
                 <p className="text-white mb-2 mt-3 font-bold text-sm text-center">Coordinate Converter</p>
                 {!conversionType && (
                   <div className="flex flex-col items-center">
-                    <button onClick={() => handleConversionTypeChange('DMS_TO_DECIMAL')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">DMS to Decimal</button>
-                    <button onClick={() => handleConversionTypeChange('DECIMAL_TO_DMS')} className="relative flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-300 hover:text-gray-900  font-semibold">Decimal to DMS</button>
+                    <button onClick={() => handleConversionTypeChange('DMS_TO_DECIMAL')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">DMS to Decimal</button>
+                    <button onClick={() => handleConversionTypeChange('DECIMAL_TO_DMS')} className="relative flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">Decimal to DMS</button>
                   </div>
                 )}
 
@@ -393,6 +410,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 )}
               </div>
             )}
+{/*--------------------------------------Eraser------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'eraser' && (
               <div>eraser</div>
