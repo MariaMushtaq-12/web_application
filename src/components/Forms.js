@@ -4,8 +4,10 @@ import BufferTool from './Buffer'; // Ensure this is the correct path to the Buf
 import LineOfSightTool from './LineOfSight';
 import RangeRingsTool from './RangeRings';
 import Eptool from './Eptool';
-const Form = ({ activeTool, setActiveTool, setViewshedParams, clickedCoordinates,setBufferParams, setLineOfSightParams, setRangeRingsParams,
-  setEpToolParams,
+const Form = ({ activeTool, setActiveTool, 
+  setViewshedParams, clickedCoordinates,
+  setBufferParams, setLineOfSightParams, 
+  setRangeRingsParams,setEpToolParams,
   setElevationData // Add this prop
   }) => {
   const handleClose = () => {
@@ -16,7 +18,7 @@ const Form = ({ activeTool, setActiveTool, setViewshedParams, clickedCoordinates
     <div className={`modal ${activeTool ? 'active' : ''}`}>
       <div className="modal-content">
        
-        <h3>{activeTool}</h3>
+       {/* <h3>{activeTool}</h3>*/}
         {activeTool === 'Viewshed' && (
           <ViewshedTool 
             setViewshedParams={setViewshedParams} 
