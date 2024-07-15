@@ -78,7 +78,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-const RangeRingsTool = ({ setRangeRingsParams, clickedCoordinates }) => {
+const RangeRingsTool = ({ setRangeRingsParams, clickedCoordinates, onClose }) => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [radius, setRadius] = useState('');
@@ -169,6 +169,9 @@ const RangeRingsTool = ({ setRangeRingsParams, clickedCoordinates }) => {
               <button type="submit" className="w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                 Create Range Rings
               </button>
+              <button onClick={onClose} className="w-full text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+            Close
+          </button>
             </form>
           </div>
         </div>
