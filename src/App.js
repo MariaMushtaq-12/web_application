@@ -174,7 +174,13 @@ const App = () => {
     setElevationData(null);
   };
 
+//-------------------switching of measurement tool--------------------------------------------------------------------
 
+useEffect(() => {
+  if (activeTool && activeMeasurement) {
+    setActiveMeasurement(null);
+  }
+}, [activeTool]);
   //--------------------------------returning all the functions----------------------------------------------------
   return (
     <div className="app-container">
