@@ -216,6 +216,9 @@ console.log(layers);
     { name: 'RAIL', visible: false },
     { name: 'countries', visible: true },
     { name: 'world', visible: true },
+        
+//  { name: 'pak_osm', visible: true },  //add here original layer name which is on geoserver, it will fetch it directly from geoserver
+// { name: 'pak_dem', visible: true },
   ]);
 
   newMap.on('click', (evt) => {
