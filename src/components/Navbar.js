@@ -156,22 +156,22 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     //<header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
     <header className="flex flex-col justify-between items-center text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
       <nav className="flex flex-col gap-3 mt-12">
-        <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-300 text-2xl cursor-pointer">
+        <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-800 text-2xl cursor-pointer">
           <FaList />
         </button>
-        <button title="Layers" onClick={() => handleIconClick('layers')} className="text-gray-300 text-2xl cursor-pointer">
+        <button title="Layers" onClick={() => handleIconClick('layers')} className="text-gray-800 text-2xl cursor-pointer">
           <FaLayerGroup />
         </button>
-        <button title="Measurement" onClick={() => handleIconClick('measurement')} className="text-gray-300 text-2xl cursor-pointer">
+        <button title="Measurement" onClick={() => handleIconClick('measurement')} className="text-gray-800 text-2xl cursor-pointer">
           <FaRuler />
         </button>
-        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-gray-300 text-2xl cursor-pointer">
+        <button title="Jump to Location" onClick={() => handleIconClick('coordinates')} className="text-gray-800 text-2xl cursor-pointer">
           <FaMapMarkerAlt />
         </button>
-        <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-300 text-2xl cursor-pointer">
+        <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-800 text-2xl cursor-pointer">
           <FaGlobe />
         </button>
-        <button title="Tools" onClick={() => handleIconClick('tools')} className="text-gray-300 text-2xl cursor-pointer hover:text-lg">
+        <button title="Tools" onClick={() => handleIconClick('tools')} className="text-gray-800 text-2xl cursor-pointer hover:text-lg">
           <FaToolbox />
         </button>
       </nav>
