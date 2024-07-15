@@ -89,6 +89,7 @@ const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClo
               Buffer Tool
             </h1>
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-4"> 
               <div>
                 <label htmlFor="latitude" className="block mb-2 text-sm font-medium text-white dark:text-white">Latitude:</label>
                 <input
@@ -112,6 +113,7 @@ const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClo
                   placeholder="Enter longitude"
                   required
                 />
+              </div>
               </div>
               <div>
                 <label htmlFor="radius" className="block mb-2 text-sm font-medium text-white dark:text-white">Radius (meters):</label>

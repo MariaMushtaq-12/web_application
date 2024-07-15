@@ -242,7 +242,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
   return (
     <>
       <div
-        className={`absolute left-[5px] top-[100px] w-[40px] h-[40px] bg-gray-400 hover:bg-green-600 hover:text-gray-900 rounded-full shadow-sm flex justify-center items-center cursor-pointer z-50 ${isCollapsed ? '' : 'hidden'}`}
+        className={`absolute left-[5px] top-[80px] w-[40px] h-[40px] bg-gray-400 hover:bg-green-600 hover:text-gray-900 rounded-full shadow-sm flex justify-center items-center cursor-pointer z-50 ${isCollapsed ? '' : 'hidden'}`}
         onClick={toggleSidebar}
       >
         {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}

@@ -170,6 +170,7 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates,onClose }) => {
                             Viewshed Analysis
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-2 gap-4"> 
                             <div>
                                 <label htmlFor="lat" className="block mb-2 text-sm font-medium text-white dark:text-white">Latitude:</label>
                                 <input
@@ -194,6 +195,8 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates,onClose }) => {
                                     required
                                 />
                             </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4"> 
                             <div>
                                 <label htmlFor="radius" className="block mb-2 text-sm font-medium text-white dark:text-white">Radius (m):</label>
                                 <input
@@ -206,6 +209,9 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates,onClose }) => {
                                     required
                                 />
                             </div>
+
+
+
                             <div>
                                 <label htmlFor="height" className="block mb-2 text-sm font-medium text-white dark:text-white">Height Above Ground (m):</label>
                                 <input
@@ -217,6 +223,7 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates,onClose }) => {
                                     placeholder="Enter height above ground"
                                     required
                                 />
+                            </div>
                             </div>
                             <button type="submit" className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                 Run Viewshed
