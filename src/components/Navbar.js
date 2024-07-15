@@ -9,14 +9,12 @@ import {
   FaDrawPolygon,
   FaWindowClose,
 } from 'react-icons/fa';
-import logo_animated from '../img/logo_animated.mp4';
+
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
-import { Draw } from 'ol/interaction';
-import { Style, Fill, Stroke } from 'ol/style';
 
 const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, onJumpToLocation }) => {
   const [activePopup, setActivePopup] = useState(null);
