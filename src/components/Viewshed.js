@@ -106,7 +106,9 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Viewshed.css';
 
-const ViewshedTool = ({  setViewshedParams, clickedCoordinates }) => {
+
+
+const ViewshedTool = ({  setViewshedParams, clickedCoordinates,onClose }) => {
     const [lat, setLat] = useState('');
     const [lon, setLon] = useState('');
     const [radius, setRadius] = useState('');
@@ -161,7 +163,7 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates }) => {
 
     return (
         <section className="bg-gray-50 dark:bg-gray-900">
-            
+             
                 <div className="w-full bg-gray-600 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl dark:text-white">
@@ -219,6 +221,9 @@ const ViewshedTool = ({  setViewshedParams, clickedCoordinates }) => {
                             <button type="submit" className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                 Run Viewshed
                             </button>
+                            <button onClick={onClose} className="w-full text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+            Close
+          </button>
                             </form>
                     </div>
                 </div>
