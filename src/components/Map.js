@@ -74,7 +74,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const [measureTooltipElement, setMeasureTooltipElement] = useState(null);
   const [measureTooltip, setMeasureTooltip] = useState(null);
   const markerRef = useRef(null); // Reference for the moving marker
-
+//--------------------layers from geoserver---------------------------------------------------------------------------------
   useEffect(() => {
   const projection = getProjection('EPSG:4326');
   const projectionExtent = projection.getExtent();
@@ -111,11 +111,92 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       },
     }),
   });
+  const base= new ImageLayer({
+    source: new ImageWMS({
+      ratio: 1,
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'STYLES': '',
+        'LAYERS': 'ne:base',
+      },
+    }),
+  
+  });
+  const osm = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:osm',
+      },
+    }),
+   
 
+  });
+  const DEM = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:DEM',
+      },
+    }),
+    
+  });
+
+  const ROAD = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:ROAD',
+      },
+    }),
+    
+  });
+  const WATER = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:WATER',
+      },
+    }),
+   
+  });
+  const RAIL = new TileLayer({
+    source: new TileWMS({
+      url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'tiled': true,
+        'STYLES': '',
+        'LAYERS': 'ne:RAIL',
+      },
+    }),
+   
+
+  });
+  
 
   const newMap = new Map({
     target: internalMapRef.current,
-    layers: [countries, world,  vectorLayer], //add their the additional layers name
+    layers: [base,DEM,osm, ROAD,WATER, RAIL,countries, world,  vectorLayer], //add their the additional layers name
     view: new View({
       projection: projection,
       center: [70, 30],
@@ -124,12 +205,17 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   });
 console.log(layers);
   onLayerChange([
+   
+    { name: 'base', visible: true },
+    { name: 'DEM', visible: false },
+    { name: 'osm', visible: false },
+    
+   
+    { name: 'ROAD', visible: false },
+    { name: 'WATER', visible: false },
+    { name: 'RAIL', visible: false },
     { name: 'countries', visible: true },
     { name: 'world', visible: true },
-//    { name: 'pak', visible: true },
-//   { name: 'roads', visible: true },
-//  { name: 'pak_osm', visible: true },
-// { name: 'pak_dem', visible: true },
   ]);
 
   newMap.on('click', (evt) => {
@@ -163,6 +249,17 @@ console.log(layers);
   };
 }, []);
 
+useEffect(() => {
+  if (map) {
+      layers.forEach(layer => {
+          const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
+          if (mapLayer) {
+              mapLayer.setVisible(layer.visible);
+          }
+      });
+  }
+}, [layers]);
+//----------------------------------measurement---------------------------------------------------------------------------
   useEffect(() => {
     if (draw) {
       map.removeInteraction(draw);
@@ -231,7 +328,7 @@ console.log(layers);
 
  
   
-
+//---------------------------------viewshed-----------------------------------------------------------------------------------------------
   useEffect(() => {
     if (viewshedParams) {
         const geojsonFormat = new GeoJSON();
@@ -286,7 +383,7 @@ vectorSource.clear();
     }
 }, [viewshedParams]);
 
-
+//---------------------buffer-------------------------------------------------------------------------------------------------------------
 
 useEffect(() => {
   if (bufferParams) {
@@ -312,6 +409,8 @@ useEffect(() => {
   }
 }, [bufferParams]);
 
+
+//-------------------------------range rings---------------------------------------------------------------------------------------------
 useEffect(() => {
   if (rangeRingsParams) {
     const { latitude, longitude, radius, rings } = rangeRingsParams;
@@ -338,7 +437,7 @@ useEffect(() => {
   }
 }, [rangeRingsParams, vectorSource, map]);
 
-////elevation profile
+//-----------------------------------------elevation profile---------------------------------------------------------------------------------
 useEffect(() => {
   if (epToolParams) {
     const { start, end } = epToolParams;
@@ -434,16 +533,6 @@ const fetchElevationProfile = async (start, end) => {
 };
 
 
-useEffect(() => {
-  if (map) {
-    layers.forEach(layer => {
-      const mapLayer = map.getLayers().getArray().find(l => l.getSource().getParams().LAYERS === `ne:${layer.name}`);
-      if (mapLayer) {
-        mapLayer.setVisible(layer.visible);
-      }
-    });
-  }
-}, [layers]);
 
 
   return (
