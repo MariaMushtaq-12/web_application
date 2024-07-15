@@ -24,11 +24,11 @@
   box-shadow: 0 0 0 1px #0e0d0d; /* add a border around the map using box-shadow */
 }
 
-
+/*
 .sidebar.collapsed + .map-container {
   margin-left: 60px;
 }
-
+*/
 
 
 
@@ -41,8 +41,8 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background-color: rgb(0,0,0,0);
+  box-shadow: 0 4px 8px rgba(0,0,0,0);
   padding: 20px;
   border-radius: 8px;
 }
