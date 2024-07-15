@@ -54,9 +54,10 @@ const Form = ({ activeTool, setActiveTool,
             setElevationData={setElevationData} // Pass this prop
           />
         )}
-        {/* Add more conditions for other tools if needed */}
+        {/* 
+        Add more conditions for other tools if needed */}
 
-        <button className="close-btn" onClick={handleClose}>Close</button>
+<button className="close-btn" onClick={handleClose}>Close</button>
       </div>
     </div>
   );
