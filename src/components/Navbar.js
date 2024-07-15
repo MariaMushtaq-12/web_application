@@ -8,6 +8,7 @@ import {
   FaToolbox,
   FaDrawPolygon,
   FaWindowClose,
+  FaEraser
 } from 'react-icons/fa';
 
 import Map from 'ol/Map';
@@ -169,8 +170,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
         <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-800 text-2xl cursor-pointer">
           <FaGlobe />
         </button>
-        <button title="Tools" onClick={() => handleIconClick('tools')} className="text-gray-800 text-2xl cursor-pointer hover:text-lg">
-          <FaToolbox />
+        <button title="Eraser" onClick={() => handleIconClick('eraser')} className="text-gray-800 text-2xl cursor-pointer hover:text-lg">
+          <FaEraser/>
         </button>
       </nav>
 
@@ -190,7 +191,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 return '77%';
               case 'coordinateConverter':
                 return '79%';
-              case 'tools':
+              case 'eraser':
                 return '84%';
               default:
                 return '0';
@@ -393,8 +394,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
               </div>
             )}
 
-            {activePopup === 'tools' && (
-              <div>Tools</div>
+            {activePopup === 'eraser' && (
+              <div>eraser</div>
             )}
           </div>
         </div>
