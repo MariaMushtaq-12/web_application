@@ -152,7 +152,9 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   };
 
   return (
-    <header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
+    
+    //<header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
+    <header className="flex flex-col justify-between items-center text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
       <nav className="flex flex-col gap-3 mt-12">
         <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-300 text-2xl cursor-pointer">
           <FaList />
