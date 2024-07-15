@@ -242,15 +242,15 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
   return (
     <>
       <div
-        className={`absolute left-[5px] top-[100px] w-[40px] h-[40px] bg-gray-400 rounded-full shadow-sm flex justify-center items-center cursor-pointer z-50 ${isCollapsed ? '' : 'hidden'}`}
+        className={`absolute left-[5px] top-[100px] w-[40px] h-[40px] bg-gray-400 hover:bg-green-600 hover:text-gray-900 rounded-full shadow-sm flex justify-center items-center cursor-pointer z-50 ${isCollapsed ? '' : 'hidden'}`}
         onClick={toggleSidebar}
       >
         {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
       </div>
-      <div className={`fixed top-[70px] left-0 h-[calc(100vh-60px)] shadow-md rounded transition-width duration-300 overflow-hidden z-40 ${isCollapsed ? 'w-[0px]' : 'w-[250px]'} bg-gray-800`}>
+      <div className={`fixed top-[70px] left-0 h-[calc(100vh-60px)] shadow-md rounded transition-width duration-300 overflow-hidden z-40 ${isCollapsed ? 'w-[0px]' : 'w-[250px]'} bg-gray-600`}>
         {!isCollapsed && (
           <div
-            className="relative w-[40px] h-[40px] bg-gray-300 rounded-full shadow-sm flex justify-center items-center cursor-pointer"
+            className="relative w-[40px] h-[40px] bg-gray-300 hover:bg-green-500 rounded-full shadow-sm flex justify-center items-center cursor-pointer"
             onClick={toggleSidebar}
           >
             {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
@@ -296,7 +296,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
                       .filter((tool) => tool.name === 'Viewshed' || tool.name === 'Line of Sight' || tool.name === 'Elevation Profile')
                       .map((tool) => (
                         <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
-                          <button className="w-full text-left py-2 px-5 cursor-pointer hover:bg-gray-200" onClick={() => handleToolClick(tool.name)}>
+                          <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>
                             {tool.icon} {tool.name}
                           </button>
                         </motion.li>
@@ -343,7 +343,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
                       .filter((tool) => tool.name === 'Buffer' || tool.name === 'Range Rings')
                       .map((tool) => (
                         <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
-                          <button className="w-full text-left py-2 px-5 cursor-pointer hover:bg-gray-200" onClick={() => handleToolClick(tool.name)}>
+                          <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>
                             {tool.icon} {tool.name}
                           </button>
                         </motion.li>
