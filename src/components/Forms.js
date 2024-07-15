@@ -23,6 +23,7 @@ const Form = ({ activeTool, setActiveTool,
           <ViewshedTool 
             setViewshedParams={setViewshedParams} 
             clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
+            onClose={handleClose} // Pass the close handler to viewshed tool
           />
         )}
 
@@ -31,6 +32,7 @@ const Form = ({ activeTool, setActiveTool,
           <BufferTool 
             setBufferParams={setBufferParams} 
             clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
+            onClose={handleClose} // Pass the close handler to BufferTool
           />
         )}
 
@@ -38,6 +40,7 @@ const Form = ({ activeTool, setActiveTool,
           <LineOfSightTool 
             setLineOfSightParams={setLineOfSightParams} 
             clickedCoordinates={clickedCoordinates}
+            onClose={handleClose} // Pass the close handler to line of sight
           />
         )}
 
@@ -45,6 +48,7 @@ const Form = ({ activeTool, setActiveTool,
           <RangeRingsTool 
             setRangeRingsParams={setRangeRingsParams} 
             clickedCoordinates={clickedCoordinates} 
+            onClose={handleClose} // Pass the close handler to range ringsTool
           />
         )}
   {activeTool === 'Elevation Profile' && (
@@ -52,12 +56,12 @@ const Form = ({ activeTool, setActiveTool,
             setEpToolParams={setEpToolParams}
             clickedCoordinates={clickedCoordinates}
             setElevationData={setElevationData} // Pass this prop
+            onClose={handleClose} // Pass the close handler to elevation profile
           />
         )}
         {/* 
         Add more conditions for other tools if needed */}
 
-<button className="close-btn" onClick={handleClose}>Close</button>
       </div>
     </div>
   );
