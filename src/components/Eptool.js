@@ -12,11 +12,11 @@ const EpTool = ({ setEpToolParams, clickedCoordinates }) => {
       if (!startLat && !startLon) {
         setStartLat(clickedCoordinates[1]);
         setStartLon(clickedCoordinates[0]);
-        alert(`Start location set: Lat ${clickedCoordinates[1]}, Lon ${clickedCoordinates[0]}`);
+       // alert(`Start location set: Lat ${clickedCoordinates[1]}, Lon ${clickedCoordinates[0]}`);
       } else if (!endLat && !endLon) {
         setEndLat(clickedCoordinates[1]);
         setEndLon(clickedCoordinates[0]);
-        alert(`End location set: Lat ${clickedCoordinates[1]}, Lon ${clickedCoordinates[0]}`);
+       // alert(`End location set: Lat ${clickedCoordinates[1]}, Lon ${clickedCoordinates[0]}`);
       }
     }
   }, [clickedCoordinates]);
