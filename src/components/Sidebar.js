@@ -216,7 +216,7 @@ const menuVariants = {
 };
 
 const Sidebar = ({ activeTool, setActiveTool }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true); // Set initial state to true for collapsed sidebar
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleSidebar = () => {
