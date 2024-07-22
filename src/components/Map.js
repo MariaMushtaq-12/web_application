@@ -505,7 +505,7 @@ const drawStraightLine = (map, startCoords, endCoords) => {
 
 const fetchElevationProfile = async (start, end) => {
   try {
-    const response = await fetch('http://127.0.0.1:5002/elevation_profile', {
+    const response = await fetch('http://127.0.0.1:5001/elevation_profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

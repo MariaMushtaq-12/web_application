@@ -143,14 +143,17 @@ const Popup = ({ elevationData, handleClose, map }) => {
   };
 
   return (
-    <div className="popup1">
-      <div className="popup-content">
-        <button className="close-btn" onClick={handleClose}>Close</button>
-        <div id="chart-container" className="bg-black w-full h-96">
-          <canvas id="elevationChart" className=" w-full " ref={chartRef}></canvas>
-        </div>
-      </div>
+    <div className="popup1 fixed top-4 right-4">
+  <div className="popup-content bg-white shadow-lg rounded p-4">
+    <button className="close-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleClose}>
+      Close
+    </button>
+    <div id="chart-container" className="bg-black w-full h-96 mt-4">
+      <canvas id="elevationChart" className="w-full" ref={chartRef}></canvas>
     </div>
+  </div>
+</div>
+
   );
 };
 
