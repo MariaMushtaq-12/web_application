@@ -1,14 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-// import '../css/popup.css';
 
-const Popup = ({ elevationData, handleClose, map }) => {
+const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
   const chartRef = useRef(null);
   const markerRef = useRef(null);
 
@@ -84,8 +83,16 @@ const Popup = ({ elevationData, handleClose, map }) => {
           },
         },
       });
+
+      // Add click event listener to the line
+      if (lineFeature && map) {
+        map.on('click', (event) => {
+          const coordinate = toLonLat(event.coordinate);
+          highlightChartPoint(coordinate, profileCoords, distances);
+        });
+      }
     }
-  }, [elevationData]);
+  }, [elevationData, lineFeature, map]);
 
   const calculateDistance = (lon1, lat1, lon2, lat2) => {
     const R = 6371e3; // Earth radius in meters
@@ -107,6 +114,8 @@ const Popup = ({ elevationData, handleClose, map }) => {
   };
 
   const updateMovingMarker = (coords) => {
+    if (!map) return; // Ensure map is defined
+
     if (!markerRef.current) {
       const marker = new Feature({
         geometry: new Point(fromLonLat([coords[0], coords[1]])),
@@ -142,18 +151,39 @@ const Popup = ({ elevationData, handleClose, map }) => {
     }
   };
 
+  const highlightChartPoint = (coordinate, profileCoords, distances) => {
+    let closestIndex = -1;
+    let minDistance = Infinity;
+
+    profileCoords.forEach((coord, index) => {
+      const distance = calculateDistance(coordinate[0], coordinate[1], coord[0], coord[1]);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex !== -1) {
+      const chart = window.myChart;
+      const meta = chart.getDatasetMeta(0);
+      const point = meta.data[closestIndex];
+      point.custom = point.custom || {};
+      point.custom.backgroundColor = 'red';
+      chart.update();
+    }
+  };
+
   return (
     <div className="popup1 fixed top-4 right-4">
-  <div className="popup-content bg-white shadow-lg rounded p-4">
-    <button className="close-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleClose}>
-      Close
-    </button>
-    <div id="chart-container" className="bg-black w-full h-96 mt-4">
-      <canvas id="elevationChart" className="w-full" ref={chartRef}></canvas>
+      <div className="popup-content bg-white shadow-lg rounded p-4">
+        <button className="close-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleClose}>
+          Close
+        </button>
+        <div id="chart-container" className="bg-black w-full h-96 mt-4">
+          <canvas id="elevationChart" className="w-full" ref={chartRef}></canvas>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   );
 };
 
