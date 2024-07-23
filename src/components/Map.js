@@ -11,19 +11,16 @@ import { getWidth } from 'ol/extent';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
-import { fromLonLat, transform } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
 import Overlay from 'ol/Overlay';
 import { Feature } from 'ol';
 import { getArea, getLength } from 'ol/sphere';
-import { Circle as CircleGeom } from 'ol/geom';
-import { remove } from 'ol/array';
-import Chart from 'chart.js/auto';
-import { Point } from 'ol/geom';
-import { LineString } from 'ol/geom';
+import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
+import Popup from './popup';
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -47,7 +44,7 @@ const formatArea = (polygon) => {
   return output;
 };
 
-const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, setElevationData }) => {
+const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams}) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
   const [vectorLayer] = useState(
@@ -71,12 +68,19 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   );
   const [map, setMap] = useState(null);
   const [draw, setDraw] = useState(null);
-  const [modify, setModify] = useState(null);
+  // const [modify, setModify] = useState(null);
   const [measureTooltipElement, setMeasureTooltipElement] = useState(null);
   const [measureTooltip, setMeasureTooltip] = useState(null);
+  const [lineFeature, setLineFeature] = useState(null);
+  const [elevationData, setElevationData] = useState(null);
+  const [profileCoords, setProfileCoords] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
   const markerRef = useRef(null); // Reference for the moving marker
 
-  //--------------------layers from geoserver---------------------------------------------------------------------------------
+  const handleClose = () => {
+    setShowPopup(false);
+  };
+
   useEffect(() => {
     const projection = getProjection('EPSG:4326');
     const projectionExtent = projection.getExtent();
@@ -224,9 +228,9 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     setMap(newMap);
     mapRef.current = newMap;
 
-    const modifyInteraction = new Modify({ source: vectorSource });
-    newMap.addInteraction(modifyInteraction);
-    setModify(modifyInteraction);
+    // const modifyInteraction = new Modify({ source: vectorSource });
+    // newMap.addInteraction(modifyInteraction);
+    // setModify(modifyInteraction);
 
     const measureTooltipElement = document.createElement('div');
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
@@ -257,7 +261,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
   //----------------------------------measurement---------------------------------------------------------------------------
   useEffect(() => {
-    if (draw) {
+    if (draw && map) {
       map.removeInteraction(draw);
     }
 
@@ -320,7 +324,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       map.addInteraction(drawInteraction);
       setDraw(drawInteraction);
     }
-  }, [activeMeasurement]);
+  }, [activeMeasurement, map]);
 
   //---------------------------------viewshed-----------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -372,7 +376,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         });
       }
     }
-  }, [viewshedParams]);
+  }, [viewshedParams, map, vectorSource]);
 
   //---------------------buffer-------------------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -397,7 +401,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         });
       }
     }
-  }, [bufferParams]);
+  }, [bufferParams, map, vectorSource]);
 
   //-------------------------------range rings---------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -431,7 +435,8 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     if (epToolParams && epToolParams.start && epToolParams.end) {
       addMarkerPin(map, epToolParams.start, 'Start Point');
       addMarkerPin(map, epToolParams.end, 'End Point');
-      drawStraightLine(map, epToolParams.start, epToolParams.end);
+      const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
+      setLineFeature(newLineFeature);
       fetchElevationProfile(epToolParams.start, epToolParams.end);
     }
   }, [epToolParams, map]);
@@ -488,6 +493,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
     lineFeature.setStyle(lineStyle);
     vectorSource.addFeature(lineFeature);
+    return lineFeature;
   };
 
   const fetchElevationProfile = async (start, end) => {
@@ -506,15 +512,46 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       });
 
       setElevationData(response.data);
+      setProfileCoords(response.data.features[0].geometry.coordinates);
+      setShowPopup(true);
     } catch (error) {
       console.error('Error fetching elevation profile:', error);
     }
   };
 
-  const handleSubmit = () => {
-    const { start, end } = epToolParams;
-    if (start && end) {
-      drawStraightLine(start, end);
+  const updateMovingMarker = (coords) => {
+    if (!markerRef.current) {
+      const marker = new Feature({
+        geometry: new Point(fromLonLat([coords[0], coords[1]])),
+      });
+
+      const markerStyle = new Style({
+        image: new Circle({
+          radius: 7,
+          fill: new Fill({
+            color: 'rgba(0, 0, 255, 0.9)',
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 2,
+          }),
+        }),
+      });
+
+      marker.setStyle(markerStyle);
+
+      const vectorSource = new VectorSource({
+        features: [marker],
+      });
+
+      const markerLayer = new VectorLayer({
+        source: vectorSource,
+      });
+
+      map.addLayer(markerLayer);
+      markerRef.current = marker;
+    } else {
+      markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
     }
   };
 
@@ -524,6 +561,16 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         <a href="#" id="popup-closer" className="ol-popup-closer"></a>
         <div id="popup-content"></div>
       </div>
+      {showPopup && (
+        <Popup
+          elevationData={elevationData}
+          handleClose={handleClose}
+          map={map}
+          lineFeature={lineFeature}
+          profileCoords={profileCoords}
+          updateMovingMarker={updateMovingMarker}
+        />
+      )}
     </div>
   );
 };
