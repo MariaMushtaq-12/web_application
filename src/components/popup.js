@@ -6,9 +6,8 @@ import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-// import '../css/popup.css';
 
-const Popup = ({ elevationData, handleClose, map }) => {
+const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
   const chartRef = useRef(null);
   const markerRef = useRef(null);
 
@@ -75,7 +74,7 @@ const Popup = ({ elevationData, handleClose, map }) => {
               external: externalTooltipHandler,
             },
           },
-          onHover: (event, chartElement) => {
+          onClick: (event, chartElement) => {
             if (chartElement.length) {
               const index = chartElement[0].index;
               const coords = profileCoords[index];
@@ -85,7 +84,7 @@ const Popup = ({ elevationData, handleClose, map }) => {
         },
       });
     }
-  }, [elevationData]);
+  }, [elevationData, lineFeature, map]);
 
   const calculateDistance = (lon1, lat1, lon2, lat2) => {
     const R = 6371e3; // Earth radius in meters
@@ -143,17 +142,16 @@ const Popup = ({ elevationData, handleClose, map }) => {
   };
 
   return (
-    <div className="popup1 fixed top-4 right-4">
-  <div className="popup-content bg-white shadow-lg rounded p-4">
-    <button className="close-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleClose}>
-      Close
-    </button>
-    <div id="chart-container" className="bg-black w-full h-96 mt-4">
-      <canvas id="elevationChart" className="w-full" ref={chartRef}></canvas>
+    <div className="popup1 fixed top-4 w-1/3 right-4">
+      <div className="popup-content bg-white shadow-lg rounded p-4">
+        <button className="close-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleClose}>
+          Close
+        </button>
+        <div id="chart-container" className="bg-black w-full h-96 mt-4">
+          <canvas id="elevationChart" className="w-full" ref={chartRef}></canvas>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   );
 };
 
