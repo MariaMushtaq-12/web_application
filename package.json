@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://192.168.1.200:5000/",
   "proxy1": "http://192.168.1.200:5001/",
-  "proxy2":"http://127.0.0.1:5001",
+  "proxy2":"http://192.168.1.200:5002/",
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
