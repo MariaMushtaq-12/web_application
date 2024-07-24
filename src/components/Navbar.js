@@ -31,7 +31,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
       layers: [
         new TileLayer({
           source: new XYZ({
-            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+            //url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
           })
         })
       ],
@@ -107,58 +107,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     });
   };
 //--------------------------------------jump to location--------------------------------------------------------------------------------------------------
-  // const SearchBar = ({ onJumpToLocation }) => {
-  //   const [latitude, setLatitude] = useState('');
-  //   const [longitude, setLongitude] = useState('');
-
-  //   const handleJump = () => {
-  //     if (latitude && longitude) {
-  //       const lat = parseFloat(latitude);
-  //       const lon = parseFloat(longitude);
-  //       if (!isNaN(lat) && !isNaN(lon)) {
-  //         onJumpToLocation(lat, lon);
-  //       } else {
-  //         alert('Please enter valid coordinates.');
-  //       }
-  //     }
-  //   };
-
-  //   return (
-  //     <div className="flex flex-col justify-center p-2" >
-  //      <form className="space-y-4 md:space-y-6">
-  //            <div>
-  //               <label htmlFor="latitude" className="block mb-2 text-sm font-medium text-white dark:text-white">Latitude:</label>
-  //               <input
-  //                 type="text"
-  //                 id="latitude"
-  //                 value={latitude}
-  //                 onChange={(e) => setLatitude(e.target.value)}
-  //                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-  //                 placeholder="Enter latitude"
-  //                 required
-  //               />
-  //             </div>
-  //             <div>
-  //               <label htmlFor="longitude" className="block mb-2 text-sm font-medium text-white dark:text-white">Longitude:</label>
-  //               <input
-  //                 type="text"
-  //                 id="longitude"
-  //                 value={longitude}
-  //                 onChange={(e) => setLongitude(e.target.value)}
-  //                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-  //                 placeholder="Enter longitude"
-  //                 required
-  //               />
-  //             </div>
-  //       <div className="flex justify-center w-full">
-  //       <button onClick={handleJump} className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-  //         Jump
-  //       </button>
-  //       </div>
-  //     </form>
-  //     </div>
-  //   );
-  // };
+ 
   const SearchBar = ({ onJumpToLocation }) => {
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
