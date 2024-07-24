@@ -205,7 +205,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       view: new View({
         projection: projection,
         center: [70, 30],
-        zoom: 5.8,
+        zoom: 6.25,
       }),
     });
 
