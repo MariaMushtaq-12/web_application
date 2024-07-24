@@ -257,7 +257,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
 
       {activePopup && (
         <div
-        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-600 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
+        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-800 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
         style={{
           right: (() => {
             switch (activePopup) {
