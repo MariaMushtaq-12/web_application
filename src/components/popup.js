@@ -314,7 +314,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
           Close
         </button>
 
-        
+                                               
       </div>
     </div>
   );
