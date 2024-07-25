@@ -178,7 +178,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
 //---------------------------------------------returning vertical navbar--------------------------------------------------------------------------------------
   return (
     
-    //<header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
+    
     <header className="flex flex-col justify-between items-center text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
 {/*--------------------------------------Symbols and buttons------------------------------------------------------------------------------------------- */}
 

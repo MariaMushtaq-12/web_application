@@ -214,6 +214,10 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          // interaction: {
+          //   mode: 'index',
+          //   intersect: false
+          // },
           scales: {
             x: {
               type: 'linear',
@@ -221,6 +225,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
               title: {
                 display: true,
                 text: 'Distance (meters)',
+                
               },
             },
             y: {
