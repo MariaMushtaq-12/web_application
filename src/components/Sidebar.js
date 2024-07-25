@@ -171,8 +171,7 @@
 //   );
 // };
 
-// export default Sidebar;
-
+// export default Sidebar;  
 
 import React, { useState } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaEye, FaLine, FaChartLine, FaCircle, FaCompass, FaMapMarkedAlt } from 'react-icons/fa';
@@ -237,7 +236,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
     { id: 6, name: 'Point of Interest', icon: <FaMapMarkedAlt/>, description: 'Showing places with in a buffer region' },
   ];
 
-
+  
   return (
     <>
       <div

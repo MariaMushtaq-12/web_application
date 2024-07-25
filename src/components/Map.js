@@ -84,6 +84,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     setShowPopup(false);
   };
 
+  
   useEffect(() => {
     const projection = getProjection('EPSG:4326');
     const projectionExtent = projection.getExtent();
@@ -577,5 +578,6 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     </div>
   );
 };
+//-------------------------------------------POI----------------------------------------------------
 
 export default WMTSComponent;

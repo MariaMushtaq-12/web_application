@@ -12,20 +12,74 @@ import Feature from 'ol/Feature';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Fill, Stroke, Style, Icon } from 'ol/style';
 import Overlay from 'ol/Overlay';
-import '../css/MapComponent.css';
+import './MapComponent.css';
 
-const PointOfInterest = (onClose) => {
+const MapComponent = () => {
   const mapElement = useRef();
   const [map, setMap] = useState(null);
   const [vectorSource, setVectorSource] = useState(new VectorSource());
   const tooltipElement = useRef();
   const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  useEffect(() => {
+    const initialMap = new Map({
+      target: mapElement.current,
+      layers: [
+        new TileLayer({
+          source: new OSM()
+        }),
+        new VectorLayer({
+          source: vectorSource
+        })
+      ],
+      view: new View({
+        center: fromLonLat([71.5, 30.0]),
+        zoom: 6
+      })
+    });
+
+    setMap(initialMap);
+
+    const tooltip = new Overlay({
+      element: tooltipElement.current,
+      positioning: 'bottom-center',
+      stopEvent: false,
+      offset: [0, -10]
+    });
+
+    initialMap.addOverlay(tooltip);
+
+    initialMap.on('pointermove', (event) => {
+      if (tooltipVisible) {
+        const feature = initialMap.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        if (feature && feature.get('name')) {
+          tooltipElement.current.innerHTML = feature.get('name');
+          tooltip.setPosition(event.coordinate);
+          tooltipElement.current.style.display = 'block';
+        } else {
+          tooltipElement.current.style.display = 'none';
+        }
+      }
+    });
+
+    initialMap.on('click', (event) => {
+      const [lon, lat] = toLonLat(event.coordinate);
+      document.getElementById('lat').value = lat.toFixed(6);
+      document.getElementById('lng').value = lon.toFixed(6);
+      createBuffer();
+    });
+
+    return () => initialMap.setTarget(undefined);
+  }, [vectorSource, tooltipVisible]);
+
   const getIconUrl = (type) => {
     switch (type) {
-      // Ensure paths to your icons are correct and accessible
-      case 'alpine_hut': return '/alpinehut.png';
-      case 'archaeological': return '/archeology.png';
-      case 'arts_centre': return '/artcenter.png';
+      case 'alpine_hut':
+        return '/alpinehut.png'; // Ensure this path is correct and GIF is accessible
+      case 'archaeological':
+        return '/archeology.png';
+      case 'arts_centre':
+        return '/artcenter.png'; 
       case 'artwork':
         return '/artwork.png'; 
         case 'atm':
@@ -219,8 +273,8 @@ const PointOfInterest = (onClose) => {
           return '/wayside_shrine.jpeg';
         case 'zoo':
           return '/zoo.jpeg';
-      
-      default: return '/icons/default.png'; // Default icon
+      default:
+        return '/icons/default.png'; // Example for default icon
     }
   };
 
@@ -229,15 +283,15 @@ const PointOfInterest = (onClose) => {
     const lng = parseFloat(document.getElementById('lng').value);
     const radius = parseFloat(document.getElementById('radius').value);
     const type = document.getElementById('type').value;
-
     if (!lat || !lng || !radius || !type) {
-      alert("Please fill in all fields");
       return;
     }
-
+    
     const center = fromLonLat([lng, lat]);
+    
     const bufferGeometry = new Circle(center, radius);
     const bufferFeature = new Feature(bufferGeometry);
+    
     const bufferStyle = new Style({
       stroke: new Stroke({
         color: 'blue',
@@ -247,40 +301,40 @@ const PointOfInterest = (onClose) => {
         color: 'rgba(0, 0, 255, 0.1)'
       })
     });
-
     bufferFeature.setStyle(bufferStyle);
+    
     vectorSource.clear();
     vectorSource.addFeature(bufferFeature);
-
+    
     const markerGeometry = new Point(center);
     const markerFeature = new Feature(markerGeometry);
     vectorSource.addFeature(markerFeature);
-
+    
     if (map) {
       map.getView().fit(bufferGeometry.getExtent(), { padding: [50, 50, 50, 50] });
     }
-
+    
     try {
       const response = await fetch(`/buffer?lat=${lat}&lng=${lng}&radius=${radius}&type=${type}`);
       const data = await response.json();
-
+    
       data.points.forEach(point => {
         const feature = new Feature({
           geometry: new Point(fromLonLat([point.lng, point.lat])),
           name: point.name
         });
-
+    
         if (bufferGeometry.intersectsCoordinate(feature.getGeometry().getCoordinates())) {
           feature.setStyle(new Style({
             image: new Icon({
               src: getIconUrl(type),
-              scale: 0.06 // Adjust scale if needed
+              scale: 0.06, // Adjust scale if needed
             })
           }));
           vectorSource.addFeature(feature);
         }
       });
-
+    
       setTooltipVisible(true);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -288,54 +342,17 @@ const PointOfInterest = (onClose) => {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
-      <div className="w-full bg-gray-600 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-        <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl dark:text-white">
-            Point of Interest
-          </h1>
-          <div className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="lat" className="block mb-2 text-sm font-medium text-white dark:text-white">Latitude:</label>
-                <input
-                  type="text"
-                  id="lat"
-                  placeholder="Enter latitude"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="lng" className="block mb-2 text-sm font-medium text-white dark:text-white">Longitude:</label>
-                <input
-                  type="text"
-                  id="lng"
-                  placeholder="Enter longitude"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="radius" className="block mb-2 text-sm font-medium text-white dark:text-white">Radius (meters):</label>
-                <input
-                  type="text"
-                  id="radius"
-                  placeholder="Enter radius"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="type" className="block mb-2 text-sm font-medium text-white dark:text-white">Type:</label>
-                <select
-                  id="type"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                >
-                   <option value="alpine_hut">Alpine Hut</option>
+    <div>
+      <div className="controls">
+        <label htmlFor="lat">Latitude:</label>
+        <input type="text" id="lat" placeholder="Enter latitude" />
+        <label htmlFor="lng">Longitude:</label>
+        <input type="text" id="lng" placeholder="Enter longitude" />
+        <label htmlFor="radius">Radius (meters):</label>
+        <input type="text" id="radius" placeholder="Enter radius" />
+        <label htmlFor="type">Type:</label>
+        <select id="type">
+        <option value="alpine_hut">Alpine Hut</option>
             <option value="archaeological">Archaeological</option>
             <option value="arts_centre">Arts Centre</option>
             <option value="artwork">Artwork</option>
@@ -436,23 +453,13 @@ const PointOfInterest = (onClose) => {
             <option value="water_tower">Water Tower</option>
             <option value="wayside_shrine">Wayside Shrine</option>
             <option value="zoo">Zoo</option>
-                </select>
-              </div>
-            </div>
-            <button onClick={createBuffer} className="w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-              Create Buffer
-            </button>
-            <button onClick={onClose} className="w-full text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
-            Close
-          </button>
-          </div>
-        </div>
+        </select>
+        <button onClick={createBuffer}>Create Buffer</button>
       </div>
-      <div ref={mapElement} className="map-container"></div>
+      <div ref={mapElement} id="map" className="map"></div>
       <div ref={tooltipElement} className="tooltip"></div>
-    </section>
+    </div>
   );
 };
 
-
-export default PointOfInterest;
+export default MapComponent;

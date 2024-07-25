@@ -8,7 +8,8 @@ import {
   FaToolbox,
   FaDrawPolygon,
   FaWindowClose,
-  FaEraser
+  FaEraser,
+  FaSearch
 } from 'react-icons/fa';
 
 import Map from 'ol/Map';
@@ -17,13 +18,14 @@ import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 
-const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, onJumpToLocation }) => {
+const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, onJumpToLocation, onPlaceSearch }) => {
   const [activePopup, setActivePopup] = useState(null);
   const [conversionType, setConversionType] = useState(null);
   const [dmsInput, setDmsInput] = useState({ latDegrees: '', latMinutes: '', latSeconds: '', lonDegrees: '', lonMinutes: '', lonSeconds: '' });
   const [decimalInput, setDecimalInput] = useState({ lat: '', lon: '' });
   const [output, setOutput] = useState({ lat: '', lon: '' });
   const [map, setMap] = useState(null);
+  const [place, setPlace] = useState('');
 
   useEffect(() => {
     const mapInstance = new Map({
@@ -66,7 +68,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const toggleLayer = (layerName) => {
     onLayerToggle(layerName);
   };
-//-----------------------------------constants for the coordinate converters---------------------------------------------------------------------
+
   const handleConversionTypeChange = (type) => {
     setConversionType(type);
     setOutput({ lat: '', lon: '' });
@@ -106,8 +108,15 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
       lon: `${lonDms.degrees}° ${lonDms.minutes}' ${lonDms.seconds}"`
     });
   };
-//--------------------------------------jump to location--------------------------------------------------------------------------------------------------
-  
+
+  const handlePlaceSearch = () => {
+    if (place) {
+      onPlaceSearch(place);
+    } else {
+      alert('Please enter a place.');
+    }
+  };
+
   const SearchBar = ({ onJumpToLocation }) => {
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
@@ -175,13 +184,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     );
   };
 
-//---------------------------------------------returning vertical navbar--------------------------------------------------------------------------------------
   return (
-    
-    //<header className="flex flex-col justify-between items-center bg-gray-800 text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
     <header className="flex flex-col justify-between items-center text-white right-0 p-2.5 fixed w-12 h-screen mt-0 z-50">
-{/*--------------------------------------Symbols and buttons------------------------------------------------------------------------------------------- */}
-
       <nav className="flex flex-col gap-3 mt-12">
         <button title="Legend" onClick={() => handleIconClick('legend')} className="text-gray-800 text-2xl cursor-pointer">
           <FaList />
@@ -198,11 +202,13 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
         <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-800 text-2xl cursor-pointer">
           <FaGlobe />
         </button>
+        <button title="Place Search" onClick={() => handleIconClick('placeSearch')} className="text-gray-800 text-2xl cursor-pointer">
+          <FaSearch />
+        </button>
         <button title="Eraser" onClick={() => handleIconClick('eraser')} className="text-gray-800 text-2xl cursor-pointer hover:text-lg">
           <FaEraser/>
         </button>
       </nav>
-{/*--------------------------------------Popup containers------------------------------------------------------------------------------------------- */}
 
       {activePopup && (
         <div
@@ -213,225 +219,229 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
               case 'legend':
                 return '70%';
               case 'layers':
-                return '72%';
+                return '65%';
               case 'measurement':
-                return '74%';
+                return '60%';
               case 'coordinates':
-                return '77%';
+                return '55%';
               case 'coordinateConverter':
-                return '79%';
-              case 'eraser':
-                return '84%';
+                return '50%';
+              case 'placeSearch':
+                return '45%';
               default:
-                return '0';
+                return '50%';
             }
           })()
         }}
       >
-          <div className="popup-content left-0 relative">
-            <button className="absolute flex justify-center right-0 rounded  hover:bg-gray-900" onClick={handleClosePopup}>
-              <FaWindowClose className="text-gray-300 hover:text-green-500"/>
+
+          <div className="p-2 mb-4 flex justify-between items-center">
+            <h2 className="text-lg font-semibold">{activePopup.charAt(0).toUpperCase() + activePopup.slice(1)}</h2>
+            <button onClick={handleClosePopup} className="text-gray-600 hover:text-white text-lg">
+              <FaWindowClose />
             </button>
-{/*--------------------------------------legends------------------------------------------------------------------------------------------- */}
-            {activePopup === 'legend' && (
-              <div>
-                <h3 className="font-bold">Legend</h3>
-                {/* 
-                <ul>
-                  {layers && layers.map((layer, index) => (
-                    <li key={index}>{layer.get('name')}</li>
-                  ))}
-                </ul>
-                */}
-              </div>
-            )}
-{/*--------------------------------------layers------------------------------------------------------------------------------------------- */}
+          </div>
 
-            {activePopup === 'layers' && (
-              <div>
-                <h3 className="font-bold">Layers</h3>
-                <ul>
-                  {layers.map((layer, index) => (
-                    <li key={index}>
-                      <input
-                        type="checkbox"
-                        id={`layer-${index}`}
-                        checked={layer.visible}
-                        onChange={() => toggleLayer(layer.name)}
-                        className="mr-2"
-                      />
-                      <label htmlFor={`layer-${index}`}>{layer.name}</label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-{/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
-
-            {activePopup === 'measurement' && (
-              <div className="flex flex-col justify-center p-2">
-                <p className="text-white top-2 font-bold text-lg text-center">Measure</p>
-                <button title="Measure Length" onClick={() => handleMeasurementClick('length')} className="flex  mb-2 p-2.5 bg-gray-900 text-white text-center justify-center h-10 w-full rounded cursor-pointer hover:bg-green-500 hover:text-gray-900 font-semibold">
-                  
-                  <FaRuler className="relative top-[5px] mr-1 " /> Length
-                </button>
-                <button title="Measure Area" onClick={() => handleMeasurementClick('area')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">
-                  <FaDrawPolygon className="relative top-[5px] mr-1 " /> Area
-                </button>
-                <div className="flex justify-center w-full">
-                  <button title="Erase all drawings" onClick={() => handleMeasurementClick('clear')} className="relative flex justify-center w-full mb-2 p-2.5 bg-gray-900 text-white rounded-lg h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900 font-semibold">
-                    Clear
-                  </button>
+          {activePopup === 'legend' && (
+            <div>
+              <p>Legend Content</p>
+            </div>
+          )}
+          {activePopup === 'layers' && (
+            <div>
+              {layers.map((layer) => (
+                <div key={layer.name} className="flex items-center gap-2 mb-2">
+                  <input
+                    type="checkbox"
+                    checked={layer.visible}
+                    onChange={() => toggleLayer(layer.name)}
+                  />
+                  <label>{layer.name}</label>
                 </div>
+              ))}
+            </div>
+          )}
+          {activePopup === 'measurement' && (
+            <div className="space-y-2">
+              <button
+                onClick={() => handleMeasurementClick('line')}
+                className="bg-blue-600 hover:bg-blue-500 text-white w-full py-2 rounded-md"
+              >
+                Measure Distance
+              </button>
+              <button
+                onClick={() => handleMeasurementClick('area')}
+                className="bg-blue-600 hover:bg-blue-500 text-white w-full py-2 rounded-md"
+              >
+                Measure Area
+              </button>
+              <button
+                onClick={() => handleMeasurementClick('clear')}
+                className="bg-red-600 hover:bg-red-500 text-white w-full py-2 rounded-md"
+              >
+                Clear Measurements
+              </button>
+            </div>
+          )}
+          {activePopup === 'coordinates' && <SearchBar onJumpToLocation={onJumpToLocation} />}
+          {activePopup === 'coordinateConverter' && (
+            <div>
+              <div className="mb-4">
+                <label className="mr-2">
+                  <input
+                    type="radio"
+                    name="conversionType"
+                    value="dmsToDecimal"
+                    checked={conversionType === 'dmsToDecimal'}
+                    onChange={() => handleConversionTypeChange('dmsToDecimal')}
+                  />
+                  DMS to Decimal
+                </label>
+                <label className="ml-4">
+                  <input
+                    type="radio"
+                    name="conversionType"
+                    value="decimalToDms"
+                    checked={conversionType === 'decimalToDms'}
+                    onChange={() => handleConversionTypeChange('decimalToDms')}
+                  />
+                  Decimal to DMS
+                </label>
               </div>
-            )}
-{/*--------------------------------------jump to location------------------------------------------------------------------------------------------- */}
 
-            {activePopup === 'coordinates' && (
-              <div className= "flex flex-col justify-center p-2">
-                <p className="text-white top-2 font-bold text-lg text-center ">Jump to Location</p>
-                <SearchBar onJumpToLocation={onJumpToLocation} />
-              </div>
-            )}
-{/*--------------------------------------Coordinate converter------------------------------------------------------------------------------------------- */}
-
-            {activePopup === 'coordinateConverter' && (
-              <div className="flex flex-col justify-center p-2">
-                <p className="text-white mb-2 mt-3 font-bold text-sm text-center">Coordinate Converter</p>
-                {!conversionType && (
-                  <div className="flex flex-col items-center">
-                    <button onClick={() => handleConversionTypeChange('DMS_TO_DECIMAL')} className="flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">DMS to Decimal</button>
-                    <button onClick={() => handleConversionTypeChange('DECIMAL_TO_DMS')} className="relative flex justify-center w-full mr-2.5 mb-2 p-2.5 bg-gray-900 text-white rounded h-10 cursor-pointer hover:bg-green-500 hover:text-gray-900  font-semibold">Decimal to DMS</button>
+              {conversionType === 'dmsToDecimal' && (
+                <div>
+                  <div className="flex flex-col mb-2">
+                    <label>Latitude:</label>
+                    <div className="flex space-x-2">
+                      <input
+                        type="number"
+                        name="latDegrees"
+                        placeholder="Degrees"
+                        value={dmsInput.latDegrees}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
+                      <input
+                        type="number"
+                        name="latMinutes"
+                        placeholder="Minutes"
+                        value={dmsInput.latMinutes}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
+                      <input
+                        type="number"
+                        name="latSeconds"
+                        placeholder="Seconds"
+                        value={dmsInput.latSeconds}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
+                    </div>
                   </div>
-                )}
-
-                {conversionType === 'DMS_TO_DECIMAL' && (
-                  <form className="flex flex-col justify-center p-2">
-                    <h4 className="text-white top-2 font-bold text-lg text-center">Latitude:</h4>
-                    <div className="flex flex-col">
-                      <label className="mr-2.5">
-                        Degrees:
-                        <input
-                          type="number"
-                          name="latDegrees"
-                          value={dmsInput.latDegrees}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                      <label className="mr-2.5">
-                        Minutes:
-                        <input
-                          type="number"
-                          name="latMinutes"
-                          value={dmsInput.latMinutes}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                      <label className="mr-2.5">
-                        Seconds:
-                        <input
-                          type="number"
-                          name="latSeconds"
-                          value={dmsInput.latSeconds}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
+                  <div className="flex flex-col mb-2">
+                    <label>Longitude:</label>
+                    <div className="flex space-x-2">
+                      <input
+                        type="number"
+                        name="lonDegrees"
+                        placeholder="Degrees"
+                        value={dmsInput.lonDegrees}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
+                      <input
+                        type="number"
+                        name="lonMinutes"
+                        placeholder="Minutes"
+                        value={dmsInput.lonMinutes}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
+                      <input
+                        type="number"
+                        name="lonSeconds"
+                        placeholder="Seconds"
+                        value={dmsInput.lonSeconds}
+                        onChange={handleDmsInputChange}
+                        className="w-1/3 p-1"
+                      />
                     </div>
-
-                    <h4 className="font-bold">Longitude:</h4>
-                    <div className="flex flex-col">
-                      <label className="mr-2.5">
-                        Degrees:
-                        <input
-                          type="number"
-                          name="lonDegrees"
-                          value={dmsInput.lonDegrees}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                      <label className="mr-2.5">
-                        Minutes:
-                        <input
-                          type="number"
-                          name="lonMinutes"
-                          value={dmsInput.lonMinutes}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                      <label className="mr-2.5">
-                        Seconds:
-                        <input
-                          type="number"
-                          name="lonSeconds"
-                          value={dmsInput.lonSeconds}
-                          onChange={handleDmsInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                    </div>
-
-                    <button type="button" onClick={convertDmsToDecimal} className="mt-2.5 p-2.5 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-500">
-                      Convert
-                    </button>
-                  </form>
-                )}
-
-                {conversionType === 'DECIMAL_TO_DMS' && (
-                  <form>
-                    <h4 className="font-bold">Latitude:</h4>
-                    <div className="flex">
-                      <label className="mr-2.5">
-                        Decimal Degree:
-                        <input
-                          type="number"
-                          name="lat"
-                          value={decimalInput.lat}
-                          onChange={handleDecimalInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                    </div>
-
-                    <h4 className="font-bold">Longitude:</h4>
-                    <div className="flex">
-                      <label className="mr-2.5">
-                        Decimal Degree:
-                        <input
-                          type="number"
-                          name="lon"
-                          value={decimalInput.lon}
-                          onChange={handleDecimalInputChange}
-                          className="flex  mb-2 p-2.5 bg-gray-900 text-white text-start caret-white justify-center h-10 w-full rounded cursor-pointer font-semibold"
-                        />
-                      </label>
-                    </div>
-
-                    <button type="button" onClick={convertDecimalToDms} className="mt-2.5 p-2.5 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-500">
-                      Convert
-                    </button>
-                  </form>
-                )}
-
-                {output.lat && (
-                  <div>
-                    <h4 className="font-bold">Converted Coordinates:</h4>
+                  </div>
+                  <button
+                    onClick={convertDmsToDecimal}
+                    className="bg-blue-600 hover:bg-blue-500 text-white w-full py-2 rounded-md"
+                  >
+                    Convert to Decimal
+                  </button>
+                  <div className="mt-2">
                     <p>Latitude: {output.lat}</p>
                     <p>Longitude: {output.lon}</p>
                   </div>
-                )}
-              </div>
-            )}
-{/*--------------------------------------Eraser------------------------------------------------------------------------------------------- */}
+                </div>
+              )}
 
-            {activePopup === 'eraser' && (
-              <div>eraser</div>
-            )}
-          </div>
+              {conversionType === 'decimalToDms' && (
+                <div>
+                  <div className="flex flex-col mb-2">
+                    <label>Latitude:</label>
+                    <input
+                      type="number"
+                      name="lat"
+                      placeholder="Decimal Degrees"
+                      value={decimalInput.lat}
+                      onChange={handleDecimalInputChange}
+                      className="p-1"
+                    />
+                  </div>
+                  <div className="flex flex-col mb-2">
+                    <label>Longitude:</label>
+                    <input
+                      type="number"
+                      name="lon"
+                      placeholder="Decimal Degrees"
+                      value={decimalInput.lon}
+                      onChange={handleDecimalInputChange}
+                      className="p-1"
+                    />
+                  </div>
+                  <button
+                    onClick={convertDecimalToDms}
+                    className="bg-blue-600 hover:bg-blue-500 text-white w-full py-2 rounded-md"
+                  >
+                    Convert to DMS
+                  </button>
+                  <div className="mt-2">
+                    <p>Latitude: {output.lat}</p>
+                    <p>Longitude: {output.lon}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {activePopup === 'placeSearch' && (
+            <div className="p-2">
+              <label htmlFor="place" className="block mb-2 text-sm font-medium text-white dark:text-white">Enter Place Name</label>
+              <input
+                type="text"
+                name="place"
+                id="place"
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search for a place"
+                required
+              />
+              <button
+                type="button"
+                onClick={handlePlaceSearch}
+                className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Search Place
+              </button>
+            </div>
+          )}
         </div>
       )}
     </header>
