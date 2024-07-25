@@ -122,88 +122,88 @@ const WMTSComponent = ({
       }),
     });
 
-    // const base = new ImageLayer({
-    //   source: new ImageWMS({
-    //     ratio: 1,
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:base',
-    //     },
-    //   }),
-    // });
+    const base = new ImageLayer({
+      source: new ImageWMS({
+        ratio: 1,
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'STYLES': '',
+          'LAYERS': 'ne:base',
+        },
+      }),
+    });
 
-    // const osm = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:osm',
-    //     },
-    //   }),
-    // });
+    const osm = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:osm',
+        },
+      }),
+    });
 
-    // const DEM = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:DEM',
-    //     },
-    //   }),
-    // });
+    const DEM = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:DEM',
+        },
+      }),
+    });
 
-    // const ROAD = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:ROAD',
-    //     },
-    //   }),
-    // });
+    const ROAD = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:ROAD',
+        },
+      }),
+    });
 
-    // const WATER = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:WATER',
-    //     },
-    //   }),
-    // });
+    const WATER = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:WATER',
+        },
+      }),
+    });
 
-    // const RAIL = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:RAIL',
-    //     },
-    //   }),
-    // });
+    const RAIL = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:RAIL',
+        },
+      }),
+    });
 
     const newMap = new Map({
       target: internalMapRef.current,
-      layers: [ countries, world, vectorLayer],
-      // layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
+      //layers: [ countries, world, vectorLayer],
+       layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -213,13 +213,13 @@ const WMTSComponent = ({
 
     console.log(layers);
     onLayerChange([
-      // { name: 'base', visible: true },
-      // { name: 'DEM', visible: false },
-      // { name: 'osm', visible: false },
-      // { name: 'ROAD', visible: false },
-      // { name: 'WATER', visible: false },
-      // { name: 'RAIL', visible: false },
-      {name: 'vectorLayer', visible: true},
+      { name: 'base', visible: true },
+      { name: 'DEM', visible: false },
+      { name: 'osm', visible: false },
+      { name: 'ROAD', visible: false },
+      { name: 'WATER', visible: false },
+      { name: 'RAIL', visible: false },
+      
       { name: 'countries', visible: true },
       { name: 'world', visible: true },
     ]);
