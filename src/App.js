@@ -179,6 +179,8 @@ import WMTSComponent from './components/Map';
 import Header from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Form from './components/Forms';
+// import Popup from './components/Popup';
+import Routing from './components/routing';
 import './css/Navbar.css';
 import './App.css';
 import './css/Sidebar.css';
@@ -209,6 +211,8 @@ const App = () => {
   const [rangeRingsParams, setRangeRingsParams] = useState(null);
   const [epToolParams, setEpToolParams] = useState(null);
   const [elevationData, setElevationData] = useState(null); // Elevation
+  const [routingParams, setRoutingParams] = useState(null); // Add routingParams state
+
 
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
@@ -437,6 +441,7 @@ useEffect(() => {
           layers={layers}
           epToolParams={epToolParams}
           setElevationData={setElevationData}
+          routingParams={routingParams} // Pass routingParams
         />
         <Form
           activeTool={activeTool}
@@ -447,6 +452,8 @@ useEffect(() => {
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
+          setRoutingParams={setRoutingParams} // Pass setRouting
+
         />
         {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
       </div>
@@ -455,3 +462,5 @@ useEffect(() => {
 };
 
 export default App;
+
+

@@ -122,88 +122,88 @@ const WMTSComponent = ({
       }),
     });
 
-    const base = new ImageLayer({
-      source: new ImageWMS({
-        ratio: 1,
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'STYLES': '',
-          'LAYERS': 'ne:base',
-        },
-      }),
-    });
+    // const base = new ImageLayer({
+    //   source: new ImageWMS({
+    //     ratio: 1,
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:base',
+    //     },
+    //   }),
+    // });
 
-    const osm = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:osm',
-        },
-      }),
-    });
+    // const osm = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:osm',
+    //     },
+    //   }),
+    // });
 
-    const DEM = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:DEM',
-        },
-      }),
-    });
+    // const DEM = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:DEM',
+    //     },
+    //   }),
+    // });
 
-    const ROAD = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:ROAD',
-        },
-      }),
-    });
+    // const ROAD = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:ROAD',
+    //     },
+    //   }),
+    // });
 
-    const WATER = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:WATER',
-        },
-      }),
-    });
+    // const WATER = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:WATER',
+    //     },
+    //   }),
+    // });
 
-    const RAIL = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:RAIL',
-        },
-      }),
-    });
+    // const RAIL = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:RAIL',
+    //     },
+    //   }),
+    // });
 
     const newMap = new Map({
       target: internalMapRef.current,
-      //layers: [ countries, world, vectorLayer],
-       layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
+      layers: [ countries, world, vectorLayer],
+      // layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -213,13 +213,13 @@ const WMTSComponent = ({
 
     console.log(layers);
     onLayerChange([
-      { name: 'base', visible: true },
-      { name: 'DEM', visible: true },
-      { name: 'osm', visible: true },
-      { name: 'ROAD', visible: true },
-      { name: 'WATER', visible: true },
-      { name: 'RAIL', visible: true},
-      
+      // { name: 'base', visible: true },
+      // { name: 'DEM', visible: false },
+      // { name: 'osm', visible: false },
+      // { name: 'ROAD', visible: false },
+      // { name: 'WATER', visible: false },
+      // { name: 'RAIL', visible: false },
+      // {name: 'vectorLayer', visible: true},
       { name: 'countries', visible: true },
       { name: 'world', visible: true },
     ]);
@@ -515,7 +515,7 @@ const WMTSComponent = ({
     if (!start || !end) return;
 
     try {
-      const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
+      const response = await axios.post('http://127.0.0.1:5001/elevation_profile', {
         start: {
           lat: start[1],
           lon: start[0],
@@ -571,55 +571,90 @@ const WMTSComponent = ({
   };
 
   // Add a useEffect for routingParams to display the route on the map
+
+
+
   useEffect(() => {
-    if (routingParams && map) {
-      const fetchShortestPath = async () => {
-        try {
-          const response = await axios.get('http://127.0.0.1:5000/shortest_path', {
-            params: {
-              source_lon: routingParams.start[0],
-              source_lat: routingParams.start[1],
-              dest_lon: routingParams.end[0],
-              dest_lat: routingParams.end[1],
-            },
-          });
-  
-          const geojson = response.data;
-          const coordinates = geojson.features.map(feature => feature.geometry.coordinates);
-          console.log('Fetched coordinates:', coordinates);
-  
-          const routeFeature = new Feature({
-            geometry: new LineString(coordinates.map(coord => fromLonLat(coord))),
-            name: 'Route',
-          });
-  
-          const routeStyle = new Style({
-            stroke: new Stroke({
-              color: 'blue',
-              width: 3,
-            }),
-          });
-  
-          routeFeature.setStyle(routeStyle);
-          vectorSource.addFeature(routeFeature);
-          console.log('Route feature added:', routeFeature);
-  
-          const extent = routeFeature.getGeometry().getExtent();
-          if (extent) {
-            map.getView().fit(extent, {
-              padding: [50, 50, 50, 50],
-              duration: 1000,
-            });
-            console.log('Map view updated to fit the route.');
-          }
-        } catch (error) {
-          console.error('Error fetching shortest path:', error);
-        }
-      };
-  
-      fetchShortestPath();
+    if (routingParams && routingParams.start && routingParams.end) {
+      addMarkerPin(map, routingParams.start, 'Start Point');
+      addMarkerPin(map, routingParams.end, 'End Point');
+      fetchShortestPath(routingParams.start, routingParams.end);
     }
   }, [routingParams, map]);
+
+  const fetchShortestPath = async (start, end) => {
+    if (!start || !end) return;
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5003/shortest_path', {
+        source_lon: start[0],
+        source_lat: start[1],
+        dest_lon: end[0],
+        dest_lat: end[1],
+      });
+
+      const geojson = response.data;
+      console.log('Server response:', geojson);
+
+      const coordinates = [];
+      geojson.features.forEach((feature) => {
+        if (feature.geometry && feature.geometry.type === 'Point') {
+          const coord = feature.geometry.coordinates;
+          if (coord.length === 2) {
+            coordinates.push(coord);
+            console.log(`Coordinate: ${coord}`);
+          }
+        }
+      });
+
+      console.log('Fetched coordinates:', coordinates);
+
+      if (coordinates.length < 2) {
+        throw new Error('Insufficient coordinates to draw the route');
+      }
+
+      const newLineFeature = drawRouteLine(coordinates);
+      setLineFeature(newLineFeature);
+
+      const extent = newLineFeature.getGeometry().getExtent();
+      console.log('Calculated extent:', extent);
+
+      if (extent.every(value => isFinite(value))) {
+        map.getView().fit(extent, {
+          padding: [50, 50, 50, 50],
+          duration: 1000,
+        });
+        console.log('Map view updated to fit the route.');
+      } else {
+        throw new Error('Invalid extent');
+      }
+    } catch (error) {
+      console.error('Error fetching shortest path:', error);
+    }
+  };
+
+  const drawRouteLine = (coordinates) => {
+    if (!map || !coordinates.length) return;
+
+    const lineFeature = new Feature({
+      geometry: new LineString(coordinates),
+    });
+
+    const lineStyle = new Style({
+      stroke: new Stroke({
+        color: 'rgba(255, 0, 0, 1)',
+        width: 2,
+      }),
+    });
+
+    lineFeature.setStyle(lineStyle);
+    vectorSource.clear(); // Clear previous features
+    vectorSource.addFeature(lineFeature);
+    return lineFeature;
+  };
+
+
+  
   
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
@@ -640,5 +675,6 @@ const WMTSComponent = ({
     </div>
   );
 };
+
 
 export default WMTSComponent;
