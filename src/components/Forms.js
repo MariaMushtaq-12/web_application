@@ -6,7 +6,8 @@ import LineOfSightTool from './LineOfSight';
 import RangeRingsTool from './RangeRings';
 import Eptool from './Eptool';
 import Routing from './routing';
-
+import Draggable from 'react-draggable'; // Import Draggable
+import { FaWindowClose } from 'react-icons/fa';
 const Form = ({ activeTool, setActiveTool, 
   setViewshedParams, clickedCoordinates,
   setBufferParams, setLineOfSightParams, 
@@ -18,8 +19,16 @@ const Form = ({ activeTool, setActiveTool,
   };
 
   return (
+    <Draggable handle=".modal-header">
     <div className={`modal ${activeTool ? 'active' : ''}`}>
       <div className="modal-content">
+
+     
+          <div className="p-4">
+          
+          <div className="modal-header cursor-move bg-gray-100 dark:bg-green-500 p-1 rounded-t-lg flex justify-end">
+          <FaWindowClose className="text-red-600 hover:text-red-900" onClick={handleClose}/>
+          </div>
         {activeTool === 'Viewshed' && (
           <ViewshedTool 
             setViewshedParams={setViewshedParams} 
@@ -68,8 +77,10 @@ const Form = ({ activeTool, setActiveTool,
             onClose={handleClose}
           />
         )}
+        </div>
       </div>
     </div>
+    </Draggable>
   );
 };
 
