@@ -98,7 +98,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     const countries = new ImageLayer({
       source: new ImageWMS({
         ratio: 1,
-        url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+        url: 'http://localhost:8081/geoserver/ne/wms/wmts?request=GetCapabilities',
         params: {
           'FORMAT': 'image/jpeg',
           'VERSION': '1.1.1',
@@ -110,7 +110,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
     const world = new TileLayer({
       source: new TileWMS({
-        url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+        url: 'http://localhost:8081/geoserver/ne/wms/wmts?request=GetCapabilities',
         params: {
           'FORMAT': 'image/jpeg',
           'VERSION': '1.1.1',
@@ -503,7 +503,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     if (!start || !end) return;
 
     try {
-      const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
+      const response = await axios.post('http://192.168.14.32:5001/elevation_profile', {
         start: {
           lat: start[1],
           lon: start[0],

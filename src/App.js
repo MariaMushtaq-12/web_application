@@ -20,7 +20,8 @@ import Feature from 'ol/Feature';
 import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
-import Popup from './components/popup';
+import Popup from './components/popup'; 
+import PointOfInterest from './components/PointOfInterest';
 
 const App = () => {
   const [activeTool, setActiveTool] = useState(null);
@@ -68,55 +69,7 @@ const App = () => {
   };
 
   //-----------------------------------jump to location function---------------------------------------------------------------------------
-  // const handleJumpToLocation = (latitude, longitude) => {
-  //   if (mapRef.current) {
-  //     const map = mapRef.current;
-  //     const view = map.getView();
-  //     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
-  //     view.setCenter(coords);
-  //     view.setZoom(10);
-
-  //     // Add a marker
-  //     const markerFeature = new Feature({
-  //       geometry: new Point(coords),
-  //     });
-
-  //     const markerStyle = new Style({
-  //       image: new Icon({
-  //         anchor: [0.5, 1],
-  //         src: locationPin, // Replace with the path to your marker icon
-  //         scale: 0.1, // Adjust the scale to make the icon smaller
-  //       }),
-  //     });
-
-  //     markerFeature.setStyle(markerStyle);
-
-  //     const vectorSource = new VectorSource({
-  //       features: [markerFeature],
-  //     });
-
-  //     const markerLayer = new VectorLayer({
-  //       source: vectorSource,
-  //     });
-
-  //     map.addLayer(markerLayer);
-
-  //     // Add a popup
-  //     const popupContent = `<div> ${latitude}, ${longitude}</div>`;
-  //     const popupElement = document.createElement('div');
-  //     popupElement.innerHTML = popupContent;
-
-  //     const popupOverlay = new Overlay({
-  //       element: popupElement,
-  //       positioning: 'bottom-center',
-  //       stopEvent: false,
-  //       offset: [0, -50],
-  //     });
-
-  //     popupOverlay.setPosition(coords);
-  //     map.addOverlay(popupOverlay);
-  //   }
-  // };
+  
   const handleJumpToLocation = (latitude, longitude) => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -262,6 +215,7 @@ useEffect(() => {
           epToolParams={epToolParams}
           setElevationData={setElevationData}
         />
+       
         <Form
           activeTool={activeTool}
           setActiveTool={setActiveTool}
@@ -271,7 +225,9 @@ useEffect(() => {
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
+
         />
+
         {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
       </div>
     </div>
