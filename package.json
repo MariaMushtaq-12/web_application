@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://192.168.1.200:5000/",
   "proxy1": "http://192.168.1.200:5001/",
-  "proxy2":"http://127.0.0.1:5002",
+  "proxy2": "http://192.168.1.200:5002/",
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
@@ -14,6 +14,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-zoom": "^2.0.1",
     "framer-motion": "^11.3.2",
     "ol": "^9.2.4",
     "proj4js": "^10.0.0",

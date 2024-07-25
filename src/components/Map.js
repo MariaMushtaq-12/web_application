@@ -1,4 +1,3 @@
-// src/components/Map.js
 import React, { useEffect, useRef, useState } from 'react';
 import 'ol/ol.css';
 import Map from 'ol/Map';
@@ -23,6 +22,7 @@ import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
 import locationPin from '../img/marker.jpg'; // Ensure this path is correct
+
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -207,7 +207,7 @@ const WMTSComponent = ({
       view: new View({
         projection: projection,
         center: [70, 30],
-        zoom: 5.8,
+        zoom: 6.25,
       }),
     });
 
@@ -515,7 +515,7 @@ const WMTSComponent = ({
     if (!start || !end) return;
 
     try {
-      const response = await axios.post('http://127.0.0.1:5001/elevation_profile', {
+      const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
         start: {
           lat: start[1],
           lon: start[0],
