@@ -235,8 +235,9 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
     { id: 1, name: 'Viewshed', icon: <FaEye />, description: 'Analyze the visible area from a point' },
     { id: 2, name: 'Line of Sight', icon: <FaLine />, description: 'Calculate the line of sight between two points' },
     { id: 3, name: 'Elevation Profile', icon: <FaChartLine />, description: 'Generate an elevation profile along a path' },
-    { id: 4, name: 'Buffer', icon: <FaCircle />, description: 'Create a buffer zone around a feature' },
-    { id: 5, name: 'Range Rings', icon: <FaCompass />, description: 'Create range rings around a point' },
+    { id: 4, name: 'Shortest Route', icon: <FaChartLine />, description: 'Generate shortest route along a path' },
+    { id: 5, name: 'Buffer', icon: <FaCircle />, description: 'Create a buffer zone around a feature' },
+    { id: 6, name: 'Range Rings', icon: <FaCompass />, description: 'Create range rings around a point' },
   ];
 
   return (
@@ -293,7 +294,7 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
                     style={{ pointerEvents: openDropdown === 'terrainAnalysis' ? 'auto' : 'none' }}
                   >
                     {tools
-                      .filter((tool) => tool.name === 'Viewshed' || tool.name === 'Line of Sight' || tool.name === 'Elevation Profile')
+                      .filter((tool) => tool.name === 'Viewshed' || tool.name === 'Line of Sight' || tool.name === 'Elevation Profile' || tool.name === 'Shortest Route')
                       .map((tool) => (
                         <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
                           <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>

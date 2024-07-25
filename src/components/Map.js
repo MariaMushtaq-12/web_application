@@ -1,3 +1,4 @@
+// src/components/Map.js
 import React, { useEffect, useRef, useState } from 'react';
 import 'ol/ol.css';
 import Map from 'ol/Map';
@@ -10,7 +11,7 @@ import { get as getProjection } from 'ol/proj';
 import { getWidth } from 'ol/extent';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
+import { Circle, Fill, Stroke, Style, Icon, Text } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import Draw from 'ol/interaction/Draw';
@@ -21,6 +22,7 @@ import { getArea, getLength } from 'ol/sphere';
 import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
+import locationPin from '../img/marker.jpg'; // Ensure this path is correct
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -44,7 +46,10 @@ const formatArea = (polygon) => {
   return output;
 };
 
-const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams}) => {
+const WMTSComponent = ({
+  mapRef, viewshedParams, setClickedCoordinates, activeMeasurement,
+  clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, routingParams, setRoutingParams
+}) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
   const [vectorLayer] = useState(
@@ -68,7 +73,6 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   );
   const [map, setMap] = useState(null);
   const [draw, setDraw] = useState(null);
-  // const [modify, setModify] = useState(null);
   const [measureTooltipElement, setMeasureTooltipElement] = useState(null);
   const [measureTooltip, setMeasureTooltip] = useState(null);
   const [lineFeature, setLineFeature] = useState(null);
@@ -118,87 +122,88 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       }),
     });
 
-    const base = new ImageLayer({
-      source: new ImageWMS({
-        ratio: 1,
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'STYLES': '',
-          'LAYERS': 'ne:base',
-        },
-      }),
-    });
+    // const base = new ImageLayer({
+    //   source: new ImageWMS({
+    //     ratio: 1,
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:base',
+    //     },
+    //   }),
+    // });
 
-    const osm = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:osm',
-        },
-      }),
-    });
+    // const osm = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:osm',
+    //     },
+    //   }),
+    // });
 
-    const DEM = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:DEM',
-        },
-      }),
-    });
+    // const DEM = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:DEM',
+    //     },
+    //   }),
+    // });
 
-    const ROAD = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:ROAD',
-        },
-      }),
-    });
+    // const ROAD = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:ROAD',
+    //     },
+    //   }),
+    // });
 
-    const WATER = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:WATER',
-        },
-      }),
-    });
+    // const WATER = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:WATER',
+    //     },
+    //   }),
+    // });
 
-    const RAIL = new TileLayer({
-      source: new TileWMS({
-        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:RAIL',
-        },
-      }),
-    });
+    // const RAIL = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+    //     params: {
+    //       'FORMAT': 'image/jpeg',
+    //       'VERSION': '1.1.1',
+    //       'tiled': true,
+    //       'STYLES': '',
+    //       'LAYERS': 'ne:RAIL',
+    //     },
+    //   }),
+    // });
 
     const newMap = new Map({
       target: internalMapRef.current,
-      layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer], // Add the additional layers here
+      layers: [ countries, world, vectorLayer],
+      // layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -208,12 +213,13 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
     console.log(layers);
     onLayerChange([
-      { name: 'base', visible: true },
-      { name: 'DEM', visible: false },
-      { name: 'osm', visible: false },
-      { name: 'ROAD', visible: false },
-      { name: 'WATER', visible: false },
-      { name: 'RAIL', visible: false },
+      // { name: 'base', visible: true },
+      // { name: 'DEM', visible: false },
+      // { name: 'osm', visible: false },
+      // { name: 'ROAD', visible: false },
+      // { name: 'WATER', visible: false },
+      // { name: 'RAIL', visible: false },
+      {name: 'vectorLayer', visible: true},
       { name: 'countries', visible: true },
       { name: 'world', visible: true },
     ]);
@@ -227,10 +233,6 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
     setMap(newMap);
     mapRef.current = newMap;
-
-    // const modifyInteraction = new Modify({ source: vectorSource });
-    // newMap.addInteraction(modifyInteraction);
-    // setModify(modifyInteraction);
 
     const measureTooltipElement = document.createElement('div');
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
@@ -333,7 +335,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       const visibleFeatures = geojsonFormat.readFeatures(viewshedParams.visible);
       const nonVisibleFeatures = geojsonFormat.readFeatures(viewshedParams.non_visible);
       const restFeatures = geojsonFormat.readFeatures(viewshedParams.rest);
-      ///colors
+
       // Add styles to the features
       visibleFeatures.forEach(feature => feature.setStyle(new Style({
         stroke: new Stroke({
@@ -418,6 +420,19 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
         ringFeature = new Feature(new CircleGeom(center, (radius * i) / 100000));
         vectorSource.addFeature(ringFeature);
       }
+
+      const markerIconPath = 'C:/Users/Hp/Desktop/InoTech/web_application/src/img/marker.jpg'; // Correct path format
+
+      // Add marker feature at the center of the range rings
+      const markerFeature = new Feature(new Point(center));
+      const markerStyle = new Style({
+        image: new Icon({
+          src: markerIconPath,
+          anchor: [0.5, 1],
+        }),
+      });
+      markerFeature.setStyle(markerStyle);
+      vectorSource.addFeature(markerFeature);
 
       // Fit the map to the buffer rings if the extent is valid
       const extent = ringFeature.getGeometry().getExtent();
@@ -555,6 +570,57 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     }
   };
 
+  // Add a useEffect for routingParams to display the route on the map
+  useEffect(() => {
+    if (routingParams && map) {
+      const fetchShortestPath = async () => {
+        try {
+          const response = await axios.get('http://127.0.0.1:5000/shortest_path', {
+            params: {
+              source_lon: routingParams.start[0],
+              source_lat: routingParams.start[1],
+              dest_lon: routingParams.end[0],
+              dest_lat: routingParams.end[1],
+            },
+          });
+  
+          const geojson = response.data;
+          const coordinates = geojson.features.map(feature => feature.geometry.coordinates);
+          console.log('Fetched coordinates:', coordinates);
+  
+          const routeFeature = new Feature({
+            geometry: new LineString(coordinates.map(coord => fromLonLat(coord))),
+            name: 'Route',
+          });
+  
+          const routeStyle = new Style({
+            stroke: new Stroke({
+              color: 'blue',
+              width: 3,
+            }),
+          });
+  
+          routeFeature.setStyle(routeStyle);
+          vectorSource.addFeature(routeFeature);
+          console.log('Route feature added:', routeFeature);
+  
+          const extent = routeFeature.getGeometry().getExtent();
+          if (extent) {
+            map.getView().fit(extent, {
+              padding: [50, 50, 50, 50],
+              duration: 1000,
+            });
+            console.log('Map view updated to fit the route.');
+          }
+        } catch (error) {
+          console.error('Error fetching shortest path:', error);
+        }
+      };
+  
+      fetchShortestPath();
+    }
+  }, [routingParams, map]);
+  
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
       <div id="popup" className="ol-popup">

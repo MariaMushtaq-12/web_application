@@ -1,15 +1,18 @@
+// src/components/Form.js
 import React from 'react';
-import ViewshedTool from './Viewshed'; // Ensure this is the correct path to the Viewshed component
-import BufferTool from './Buffer'; // Ensure this is the correct path to the Buffer component
+import ViewshedTool from './Viewshed';
+import BufferTool from './Buffer';
 import LineOfSightTool from './LineOfSight';
 import RangeRingsTool from './RangeRings';
 import Eptool from './Eptool';
+import Routing from './routing';
+
 const Form = ({ activeTool, setActiveTool, 
   setViewshedParams, clickedCoordinates,
   setBufferParams, setLineOfSightParams, 
-  setRangeRingsParams,setEpToolParams,
-  setElevationData // Add this prop
-  }) => {
+  setRangeRingsParams, setEpToolParams,
+  setElevationData, setRoutingParams
+}) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
   };
@@ -17,51 +20,54 @@ const Form = ({ activeTool, setActiveTool,
   return (
     <div className={`modal ${activeTool ? 'active' : ''}`}>
       <div className="modal-content">
-       
-       {/* <h3>{activeTool}</h3>*/}
         {activeTool === 'Viewshed' && (
           <ViewshedTool 
             setViewshedParams={setViewshedParams} 
-            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
-            onClose={handleClose} // Pass the close handler to viewshed tool
+            clickedCoordinates={clickedCoordinates} 
+            onClose={handleClose} 
           />
         )}
 
-
-{activeTool === 'Buffer' && (
+        {activeTool === 'Buffer' && (
           <BufferTool 
             setBufferParams={setBufferParams} 
-            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
-            onClose={handleClose} // Pass the close handler to BufferTool
+            clickedCoordinates={clickedCoordinates} 
+            onClose={handleClose} 
           />
         )}
 
-{activeTool === 'Line of Sight' && (
+        {activeTool === 'Line of Sight' && (
           <LineOfSightTool 
             setLineOfSightParams={setLineOfSightParams} 
             clickedCoordinates={clickedCoordinates}
-            onClose={handleClose} // Pass the close handler to line of sight
+            onClose={handleClose} 
           />
         )}
 
-{activeTool === 'Range Rings' && (
+        {activeTool === 'Range Rings' && (
           <RangeRingsTool 
             setRangeRingsParams={setRangeRingsParams} 
             clickedCoordinates={clickedCoordinates} 
-            onClose={handleClose} // Pass the close handler to range ringsTool
+            onClose={handleClose} 
           />
         )}
-  {activeTool === 'Elevation Profile' && (
+
+        {activeTool === 'Elevation Profile' && (
           <Eptool
             setEpToolParams={setEpToolParams}
             clickedCoordinates={clickedCoordinates}
-            setElevationData={setElevationData} // Pass this prop
-            onClose={handleClose} // Pass the close handler to elevation profile
+            setElevationData={setElevationData} 
+            onClose={handleClose} 
           />
         )}
-        {/* 
-        Add more conditions for other tools if needed */}
 
+        {activeTool === 'Shortest Route' && (
+          <Routing
+            setRoutingParams={setRoutingParams}
+            clickedCoordinates={clickedCoordinates}
+            onClose={handleClose}
+          />
+        )}
       </div>
     </div>
   );
