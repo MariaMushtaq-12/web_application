@@ -206,7 +206,10 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
               label: 'Elevation Profile',
               data: elevations,
               borderColor: 'rgba(75, 192, 192, 1)',
-              fill: false,
+              //fill: false,
+              tension: 0.4, // Added tension for smoothing
+              backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color
+              fill: true, // Enable fill
               tension: 0.4, // Added tension for smoothing
             },
           ],
@@ -214,10 +217,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          // interaction: {
-          //   mode: 'index',
-          //   intersect: false
-          // },
+         
           scales: {
             x: {
               type: 'linear',
