@@ -570,7 +570,9 @@ const WMTSComponent = ({
     }
   };
 
-  // Add a useEffect for routingParams to display the route on the map
+
+
+//---------------------------------------------- Routing-------------------------------------------------------------------------------------------------------
 
 
 
