@@ -8,11 +8,13 @@ import Eptool from './Eptool';
 import Routing from './routing';
 import Draggable from 'react-draggable'; // Import Draggable
 import { FaWindowClose } from 'react-icons/fa';
+import PointOfInterest from './PointOfInterest';
 const Form = ({ activeTool, setActiveTool, 
   setViewshedParams, clickedCoordinates,
   setBufferParams, setLineOfSightParams, 
   setRangeRingsParams, setEpToolParams,
-  setElevationData, setRoutingParams
+  setElevationData, setRoutingParams,
+  setPointofInterest
 }) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
@@ -77,6 +79,15 @@ const Form = ({ activeTool, setActiveTool,
             onClose={handleClose}
           />
         )}
+
+{activeTool === 'Point of Interest' && (
+          <PointOfInterest
+          setPointofInterest={setPointofInterest}
+            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
+            onClose={handleClose} // Pass the close handler to PointOfInterest
+          />
+        )}
+
         </div>
       </div>
     </div>
