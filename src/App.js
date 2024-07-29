@@ -3,19 +3,15 @@ import WMTSComponent from './components/Map';
 import Header from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Form from './components/Forms';
-// import Popup from './components/Popup';
 import Routing from './components/routing';
 import './css/Navbar.css';
 import './App.css';
 import './css/Sidebar.css';
 import VectorLayer from 'ol/layer/Vector';
 import { LineString } from 'ol/geom';
-
 import { fromLonLat } from 'ol/proj';
-
 import VectorSource from 'ol/source/Vector';
 import { Vector, Fill, Stroke, Style } from 'ol/style';
-// Import required components in WMTSComponent.js
 import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
@@ -23,7 +19,12 @@ import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
 import Popup from './components/popup';
-
+import { unByKey } from 'ol/Observable';
+import { Select } from '@headlessui/react';
+import { click } from 'ol/events/condition';
+import { toLonLat } from 'ol/proj';
+import { pointerMove } from 'ol/events/condition';
+import "./App.css"
 const App = () => {
   const [activeTool, setActiveTool] = useState(null);
   const [viewshedParams, setViewshedParams] = useState(null);
@@ -39,10 +40,7 @@ const App = () => {
 
 
   /////////////add use state of the layers ////////////////////
-  const [layers, setLayers] = useState([
-
-
-  ]);
+  const [layers, setLayers] = useState([]);
 
   const handleLayerToggle = (layerName) => {
     const updatedLayers = layers.map(layer =>
@@ -96,12 +94,10 @@ const App = () => {
       const markerLayer = new VectorLayer({
         source: vectorSource,
       });
-
-
       map.addLayer(markerLayer);
       
 // Add a popup
-const popupContent = <div>{'${latitude}, ${longitude}'}</div>;
+const popupContent =  `<div>${latitude}, ${longitude}</div>`;
 const popupElement = document.createElement('div');
 popupElement.innerHTML = popupContent;
       const popupOverlay = new Overlay({
@@ -132,7 +128,6 @@ popupElement.innerHTML = popupContent;
               }
             });
           }
-
           // Add new Line of Sight layers
           features.forEach(feature => {
             const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
@@ -140,20 +135,17 @@ popupElement.innerHTML = popupContent;
             const vectorSource = new VectorSource({
               features: [new Feature({ geometry: lineString })],
             });
-
             const style = new Style({
               stroke: new Stroke({
                 color: feature.properties.visible ? 'red' : 'green',
                 width: 4,
               }),
             });
-
             const vectorLayer = new VectorLayer({
               source: vectorSource,
               style: style,
               name: 'lineOfSight',
             });
-
             if (mapRef.current) {
               mapRef.current.addLayer(vectorLayer);
             }
@@ -166,13 +158,12 @@ popupElement.innerHTML = popupContent;
     }
   }, [lineOfSightParams]);
 
+
   //-------------------popup of elevation profile--------------------------------------------------------------------
   const handlePopupClose = () => {
     setElevationData(null);
   };
-
 //-------------------switching of measurement tool--------------------------------------------------------------------
-
 useEffect(() => {
   if (activeTool && activeMeasurement) {
     setActiveMeasurement(null);
@@ -190,14 +181,14 @@ useEffect(() => {
           setActiveMeasurement={setActiveMeasurement}
           clearDrawings={clearDrawings}
           onLayerToggle={handleLayerToggle}
-        //  onLayerChange={handleJumpToLocation}
           onJumpToLocation={handleJumpToLocation}
         />
-        {/* <SearchBar onJumpToLocation={handleJumpToLocation} /> */}
+     
         <Sidebar 
         layers={layers}
         activeTool={activeTool} 
         setActiveTool={setActiveTool} />
+
         <WMTSComponent
           className="z-100"
           mapRef={mapRef}
@@ -213,6 +204,7 @@ useEffect(() => {
           setElevationData={setElevationData}
           routingParams={routingParams} // Pass routingParams
         />
+        
         <Form
           activeTool={activeTool}
           setActiveTool={setActiveTool}
@@ -225,7 +217,13 @@ useEffect(() => {
           setRoutingParams={setRoutingParams} // Pass setRouting
 
         />
-        {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
+        {elevationData && 
+        <Popup elevationData={elevationData} 
+        handleClose={handlePopupClose}
+        map={mapRef.current} />}
+     
+     
+     
       </div>
     </div>
   );
