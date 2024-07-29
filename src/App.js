@@ -101,7 +101,7 @@ const App = () => {
       map.addLayer(markerLayer);
       
 // Add a popup
-const popupContent = <div> ${latitude}, ${longitude}</div>;
+const popupContent = <div>{'${latitude}, ${longitude}'}</div>;
 const popupElement = document.createElement('div');
 popupElement.innerHTML = popupContent;
       const popupOverlay = new Overlay({
