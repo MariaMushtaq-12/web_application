@@ -23,7 +23,8 @@ import { getArea, getLength } from 'ol/sphere';
 import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
-
+import PointOfInterest from './PointOfInterest';
+import setPointOfInterestParams from './PointOfInterest';
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -47,7 +48,7 @@ const formatArea = (polygon) => {
   return output;
 };
 
-const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams}) => {
+const WMTSComponent = ({ pois, onMapClick, mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, setPointofInterestParams }) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
   const [vectorLayer] = useState(
@@ -69,6 +70,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       }),
     })
   );
+  
   const [map, setMap] = useState(null);
   const [draw, setDraw] = useState(null);
   // const [modify, setModify] = useState(null);
@@ -78,12 +80,12 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
   const [elevationData, setElevationData] = useState(null);
   const [profileCoords, setProfileCoords] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [PointOfInterestFeatures, setPointOfInterestFeatures] = useState([]); 
   const markerRef = useRef(null); // Reference for the moving marker
 
   const handleClose = () => {
     setShowPopup(false);
   };
-
   
   useEffect(() => {
     const projection = getProjection('EPSG:4326');
@@ -558,6 +560,29 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
       markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
     }
   };
+  //-----------------------------------------point of interest---------------------------------------------------------------------------------
+  // useEffect(() => {
+  //   if (map && PointOfInterestFeatures.length > 0) {
+  //     console.log('Adding Point of Interest features:', PointOfInterestFeatures);
+  //     vectorSource.clear();
+  //     PointOfInterestFeatures.forEach((poi) => {
+  //       console.log('Adding POI:', poi);
+  //       const poiFeature = new Feature({
+  //         geometry: new Point(fromLonLat(poi.coordinates, 'EPSG:4326')),
+  //         name: poi.name,
+  //       });
+  //       vectorSource.addFeature(poiFeature);
+  //     });
+  //   }
+  // }, [map, PointOfInterestFeatures, vectorSource]);
+
+  // const addPointOfInterest = (coordinates, name) => {
+  //   const newPoi = { coordinates, name };
+  //   setPointOfInterestFeatures([...PointOfInterestFeatures, newPoi]);
+  // };
+
+
+//-------------------------------------------POI----------------------------------------------------
 
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
@@ -578,6 +603,4 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     </div>
   );
 };
-//-------------------------------------------POI----------------------------------------------------
-
 export default WMTSComponent;

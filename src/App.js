@@ -8,9 +8,7 @@ import './App.css';
 import './css/Sidebar.css';
 import VectorLayer from 'ol/layer/Vector';
 import { LineString } from 'ol/geom';
-
 import { fromLonLat } from 'ol/proj';
-
 import VectorSource from 'ol/source/Vector';
 import { Vector, Fill, Stroke, Style } from 'ol/style';
 // Import required components in WMTSComponent.js
@@ -21,7 +19,6 @@ import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
 import Popup from './components/popup'; 
-import PointOfInterest from './components/PointOfInterest';
 
 const App = () => {
   const [activeTool, setActiveTool] = useState(null);
@@ -34,10 +31,10 @@ const App = () => {
   const [rangeRingsParams, setRangeRingsParams] = useState(null);
   const [epToolParams, setEpToolParams] = useState(null);
   const [elevationData, setElevationData] = useState(null); // Elevation
+  const [pointOfInterestParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
 
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
-
     { name: 'countries', visible: true },
     { name: 'world', visible: true },
     { name: 'pak', visible: true },
@@ -56,6 +53,7 @@ const App = () => {
   const handleLayerChange = (newLayers) => {
     setLayers(newLayers);
   };
+
   ////////clear drawings////////////
   const clearDrawings = () => {
     if (mapRef.current) {
@@ -69,7 +67,6 @@ const App = () => {
   };
 
   //-----------------------------------jump to location function---------------------------------------------------------------------------
-  
   const handleJumpToLocation = (latitude, longitude) => {
     if (mapRef.current) {
       const map = mapRef.current;
@@ -100,24 +97,24 @@ const App = () => {
         source: vectorSource,
       });
 
-
       map.addLayer(markerLayer);
-      
-// Add a popup
-const popupContent = `<div> ${latitude}, ${longitude}</div>`;
-const popupElement = document.createElement('div');
-popupElement.innerHTML = popupContent;
+
+      // Add a popup
+      const popupContent = `<div> ${latitude}, ${longitude}</div>`;
+      const popupElement = document.createElement('div');
+      popupElement.innerHTML = popupContent;
       const popupOverlay = new Overlay({
-              element: popupElement,
-              positioning: 'bottom-center',
-              stopEvent: false,
-              offset: [0, -50],
-            });
-      
-            popupOverlay.setPosition(coords);
-            map.addOverlay(popupOverlay);
+        element: popupElement,
+        positioning: 'bottom-center',
+        stopEvent: false,
+        offset: [0, -50],
+      });
+
+      popupOverlay.setPosition(coords);
+      map.addOverlay(popupOverlay);
     }
   };
+
   //--------------------------------------------------------line of sight------------------------------------------------
   useEffect(() => {
     if (lineOfSightParams) {
@@ -165,7 +162,6 @@ popupElement.innerHTML = popupContent;
         .catch(error => {
           console.error('There was an error calculating the Line of Sight!', error);
         });
-
     }
   }, [lineOfSightParams]);
 
@@ -174,33 +170,29 @@ popupElement.innerHTML = popupContent;
     setElevationData(null);
   };
 
-//-------------------switching of measurement tool--------------------------------------------------------------------
+  //-------------------switching of measurement tool--------------------------------------------------------------------
+  useEffect(() => {
+    if (activeTool && activeMeasurement) {
+      setActiveMeasurement(null);
+    }
+  }, [activeTool]);
 
-useEffect(() => {
-  if (activeTool && activeMeasurement) {
-    setActiveMeasurement(null);
-  }
-}, [activeTool]);
   //--------------------------------returning all the functions----------------------------------------------------
   return (
     <div className="app-container">
-
-      {/* <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} /> */}
-
       <div className="map-container">
         <Header
           layers={layers}
           setActiveMeasurement={setActiveMeasurement}
           clearDrawings={clearDrawings}
           onLayerToggle={handleLayerToggle}
-        //  onLayerChange={handleJumpToLocation}
           onJumpToLocation={handleJumpToLocation}
         />
-        {/* <SearchBar onJumpToLocation={handleJumpToLocation} /> */}
-        <Sidebar 
-        layers={layers}
-        activeTool={activeTool} 
-        setActiveTool={setActiveTool} />
+        <Sidebar
+          layers={layers}
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+        />
         <WMTSComponent
           className="z-100"
           mapRef={mapRef}
@@ -214,8 +206,9 @@ useEffect(() => {
           layers={layers}
           epToolParams={epToolParams}
           setElevationData={setElevationData}
+          setPointofInterestParams={setPointOfInterestParams} 
+          
         />
-       
         <Form
           activeTool={activeTool}
           setActiveTool={setActiveTool}
@@ -225,9 +218,8 @@ useEffect(() => {
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
-
+          setPointofInterestParams={setPointOfInterestParams} // Ensure this is passed down
         />
-
         {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
       </div>
     </div>
