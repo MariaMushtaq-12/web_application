@@ -3,6 +3,7 @@ import WMTSComponent from './components/Map';
 import Header from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Form from './components/Forms';
+import PointOfInterest from './components/PointOfInterest';
 import './css/Navbar.css';
 import './App.css';
 import './css/Sidebar.css';
@@ -207,7 +208,7 @@ const App = () => {
           epToolParams={epToolParams}
           setElevationData={setElevationData}
           setPointofInterestParams={setPointOfInterestParams} 
-          
+
         />
         <Form
           activeTool={activeTool}

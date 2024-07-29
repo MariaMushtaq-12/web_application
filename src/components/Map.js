@@ -25,6 +25,7 @@ import axios from 'axios';
 import Popup from './popup';
 import PointOfInterest from './PointOfInterest';
 import setPointOfInterestParams from './PointOfInterest';
+import { OSM } from 'ol/source';
 
 const formatLength = (line) => {
   const length = line.clone().transform('EPSG:4326', 'EPSG:3857').getLength();
@@ -561,25 +562,115 @@ const WMTSComponent = ({ pois, onMapClick, mapRef, viewshedParams, setClickedCoo
     }
   };
   //-----------------------------------------point of interest---------------------------------------------------------------------------------
-  // useEffect(() => {
-  //   if (map && PointOfInterestFeatures.length > 0) {
-  //     console.log('Adding Point of Interest features:', PointOfInterestFeatures);
-  //     vectorSource.clear();
-  //     PointOfInterestFeatures.forEach((poi) => {
-  //       console.log('Adding POI:', poi);
-  //       const poiFeature = new Feature({
-  //         geometry: new Point(fromLonLat(poi.coordinates, 'EPSG:4326')),
-  //         name: poi.name,
-  //       });
-  //       vectorSource.addFeature(poiFeature);
-  //     });
-  //   }
-  // }, [map, PointOfInterestFeatures, vectorSource]);
+  
+  const [poiData, setPoiData] = useState(null);
 
-  // const addPointOfInterest = (coordinates, name) => {
-  //   const newPoi = { coordinates, name };
-  //   setPointOfInterestFeatures([...PointOfInterestFeatures, newPoi]);
-  // };
+  // Create the map instance when the component mounts
+  // useEffect(() => {
+  //   const initialMap = new Map({
+  //     target: 'map',
+  //     layers: [
+  //       new TileLayer({
+  //         source: new OSM(),
+  //       }),
+  //     ],
+  //     view: new View({
+  //       center: fromLonLat([0, 0]), // Default center
+  //       zoom: 2,
+  //     }),
+  //   });
+
+  //   setMap(initialMap);
+
+  //   return () => {
+  //     initialMap.setTarget(null); // Clean up on unmount
+  //   };
+  // }, []);
+
+  // Function to add POIs to the map
+  
+  const addPoisToMap = (pois) => {
+    if (!map) return;
+
+    // Ensure pois is an array
+    if (!Array.isArray(pois)) {
+      console.error('Expected pois to be an array, but got:', pois);
+      return;
+    }
+
+    const vectorSource = new VectorSource({
+      features: pois.map(poi => {
+        const coords = fromLonLat([poi.longitude, poi.latitude], 'EPSG:4326');
+        const feature = new Feature({
+          geometry: new Point(coords),
+          name: poi.name,
+        });
+
+        const style = new Style({
+          image: new Circle({
+            radius: 7,
+            fill: new Fill({ color: 'rgba(255, 0, 0, 0.9)' }),
+            stroke: new Stroke({ color: '#fff', width: 2 }),
+          }),
+          text: new Text({
+            text: poi.name,
+            offsetY: -25,
+            fill: new Fill({ color: '#000' }),
+            stroke: new Stroke({ color: '#fff', width: 2 }),
+          }),
+        });
+
+        feature.setStyle(style);
+        return feature;
+      }),
+    });
+
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+    });
+
+    map.addLayer(vectorLayer);
+  };
+
+  const handlePoiDataUpdate = (poiData) => {
+    // Ensure poiData is an array
+    if (Array.isArray(poiData)) {
+      setPoiData(poiData);
+      addPoisToMap(poiData);
+    } else {
+      console.error('Invalid poiData format:', poiData);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setPoiData([]); // Clear previous data if necessary
+
+    const params = {
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      radius: parseFloat(radius),
+      type,
+    };
+
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/buffer?lat=${params.latitude}&lng=${params.longitude}&radius=${params.radius}&type=${params.type}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch POIs');
+      }
+      const data = await response.json();
+
+      // Assuming the API returns an array of points directly
+      if (Array.isArray(data.points)) {
+        handlePoiDataUpdate(data.points);
+      } else {
+        console.error('Unexpected response structure:', data);
+      }
+    } catch (err) {
+      console.error('Error fetching POIs:', err);
+    }
+  };
+
 
 
 //-------------------------------------------POI----------------------------------------------------
@@ -590,6 +681,12 @@ const WMTSComponent = ({ pois, onMapClick, mapRef, viewshedParams, setClickedCoo
         <a href="#" id="popup-closer" className="ol-popup-closer"></a>
         <div id="popup-content"></div>
       </div>
+      <PointOfInterest
+        setPointofInterestParams={(params) => handlePoiDataUpdate(params)}
+        clickedCoordinates={null} // Pass clickedCoordinates if available
+        onClose={() => console.log('POI form closed')}
+        setActiveTool={() => console.log('Tool set')}
+      />
       {showPopup && (
         <Popup
           elevationData={elevationData}
