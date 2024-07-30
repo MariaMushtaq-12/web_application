@@ -31,6 +31,9 @@ const App = () => {
   const [epToolParams, setEpToolParams] = useState(null); //elevation profile
   const [elevationData, setElevationData] = useState(null); // Elevation data
   const [routingParams, setRoutingParams] = useState(null); // Add routingParams state
+  const [poiParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
+
+
 
 
   /////////////add use state of the layers ////////////////////
@@ -197,6 +200,9 @@ useEffect(() => {
           epToolParams={epToolParams}
           setElevationData={setElevationData}
           routingParams={routingParams} // Pass routingParams
+          poiParams={poiParams}
+          setPointofInterestParams={setPointOfInterestParams} 
+
         />
         
         <Form
@@ -209,6 +215,8 @@ useEffect(() => {
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
           setRoutingParams={setRoutingParams} // Pass setRouting
+          setPointofInterestParams={setPointOfInterestParams} 
+
 
         />
         {elevationData && 

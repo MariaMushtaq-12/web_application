@@ -14,7 +14,7 @@ const Form = ({ activeTool, setActiveTool,
   setBufferParams, setLineOfSightParams, 
   setRangeRingsParams, setEpToolParams,
   setElevationData, setRoutingParams,
-  setPointofInterest
+  setPointofInterestParams,poisParams
 }) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
@@ -82,9 +82,10 @@ const Form = ({ activeTool, setActiveTool,
 
 {activeTool === 'Point of Interest' && (
           <PointOfInterest
-          setPointofInterest={setPointofInterest}
+          setPointofInterestParams={setPointofInterestParams}
             clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
             onClose={handleClose} // Pass the close handler to PointOfInterest
+            setActiveTool={setActiveTool}
           />
         )}
 
