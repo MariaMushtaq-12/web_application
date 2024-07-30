@@ -25,6 +25,13 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [decimalInput, setDecimalInput] = useState({ lat: '', lon: '' });
   const [output, setOutput] = useState({ lat: '', lon: '' });
   const [map, setMap] = useState(null);
+  const handlePlaceSearch = () => {
+    if (place) {
+      onPlaceSearch(place);
+    } else {
+      alert('Please enter a place.');
+    }
+  };
 
   useEffect(() => {
     const mapInstance = new Map({
