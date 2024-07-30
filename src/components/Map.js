@@ -543,9 +543,9 @@ const WMTSComponent = ({
         }),
       });
       marker.setStyle(markerStyle);
-      // const vectorSource = new VectorSource({
-      //   features: [marker],
-      // });
+      const vectorSource = new VectorSource({
+        features: [marker],
+      });
       const markerLayer = new VectorLayer({
         source: vectorSource,
       });
