@@ -341,8 +341,6 @@
 // };
 
 // export default Popup;
-
-
 import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 import { fromLonLat } from 'ol/proj';
@@ -361,6 +359,12 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
   const [hoveredPoint, setHoveredPoint] = useState(null);
 
   useEffect(() => {
+    // Create tooltip element
+    const tooltipEl = document.createElement('div');
+    tooltipEl.id = 'chartjs-tooltip';
+    tooltipEl.innerHTML = '<table></table>';
+    document.body.appendChild(tooltipEl);
+
     if (elevationData) {
       const profileCoords = elevationData.features[0].geometry.coordinates;
       const distances = [];
@@ -460,8 +464,13 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
           const index = elements[0].index;
           const coords = elevationData.features[0].geometry.coordinates[index];
           setHoveredPoint({ lon: coords[0], lat: coords[1], elevation: coords[2] });
+          updateMovingMarker(coords); // Update marker position on hover
         } else {
           setHoveredPoint(null);
+          if (markerRef.current) {
+            // Hide the marker when not hovering over the chart
+            markerRef.current.getGeometry().setCoordinates([0, 0]);
+          }
         }
       }
     };
@@ -529,7 +538,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
     const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
     const φ2 = (lat2 * Math.PI) / 180;
     const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+    const Δλ = ((lon1 - lon2) * Math.PI) / 180;
 
     const a =
       Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
@@ -684,6 +693,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
 };
 
 export default Popup;
+
 
 
 //hovering in console

@@ -446,39 +446,105 @@ const WMTSComponent = ({
     }
   }, [rangeRingsParams, vectorSource, map]);
 //-----------------------------------------elevation profile---------------------------------------------------------------------------------
-  useEffect(() => {
-    if (epToolParams && epToolParams.start && epToolParams.end) {
-      addMarkerPin(map, epToolParams.start, 'Start Point');
-      addMarkerPin(map, epToolParams.end, 'End Point');
-      const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
-      setLineFeature(newLineFeature);
-      fetchElevationProfile(epToolParams.start, epToolParams.end);
+useEffect(() => {
+  if (epToolParams && epToolParams.start && epToolParams.end) {
+    addMarkerPin(map, epToolParams.start, 'Start Point');
+    addMarkerPin(map, epToolParams.end, 'End Point');
+    const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
+    setLineFeature(newLineFeature);
+    fetchElevationProfile(epToolParams.start, epToolParams.end);
+  }
+}, [epToolParams, map]);
 
-    }
-  }, [epToolParams, map]);
-  const addMarkerPin = (map, coords, label) => {
-    if (!map || !coords) return;
+const addMarkerPin = (map, coords, label) => {
+  if (!map || !coords) return;
 
-    const marker = new Feature({
-      geometry: new Point(coords),
-      name: label,
+  const marker = new Feature({
+    geometry: new Point(coords),
+    name: label,
+  });
+
+  const markerStyle = new Style({
+    image: new Circle({
+      radius: 7,
+      fill: new Fill({
+        color: 'rgba(255, 0, 0, 0.9)',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+    text: new Text({
+      text: label,
+      offsetY: -25,
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+  });
+
+  marker.setStyle(markerStyle);
+  vectorSource.addFeature(marker);
+};
+
+const drawStraightLine = (map, startCoords, endCoords) => {
+  if (!map || !startCoords || !endCoords) return;
+
+  const lineFeature = new Feature({
+    geometry: new LineString([startCoords, endCoords]),
+  });
+
+  const lineStyle = new Style({
+    stroke: new Stroke({
+      color: 'rgba(255, 0, 0, 1)',
+      width: 2,
+    }),
+  });
+
+  lineFeature.setStyle(lineStyle);
+  vectorSource.addFeature(lineFeature);
+  return lineFeature;
+};
+
+const fetchElevationProfile = async (start, end) => {
+  if (!start || !end) return;
+
+  try {
+    const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
+      start: {
+        lat: start[1],
+        lon: start[0],
+      },
+      end: {
+        lat: end[1],
+        lon: end[0],
+      },
     });
+
+    setElevationData(response.data);
+    setProfileCoords(response.data.features[0].geometry.coordinates);
+    setShowPopup(true);
+  } catch (error) {
+    console.error('Error fetching elevation profile:', error);
+  }
+};
+
+const updateMovingMarker = (coords) => {
+  if (!markerRef.current) {
+    const marker = new Feature({
+      geometry: new Point(fromLonLat([coords[0], coords[1]])),
+    });
+
     const markerStyle = new Style({
       image: new Circle({
         radius: 7,
         fill: new Fill({
-          color: 'rgba(255, 0, 0, 0.9)',
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-      text: new Text({
-        text: label,
-        offsetY: -25,
-        fill: new Fill({
-          color: '#000',
+          color: 'rgba(0, 0, 255, 0.9)',
         }),
         stroke: new Stroke({
           color: '#fff',
@@ -486,75 +552,23 @@ const WMTSComponent = ({
         }),
       }),
     });
-    marker.setStyle(markerStyle);
-    vectorSource.addFeature(marker);
-  };
-  const drawStraightLine = (map, startCoords, endCoords) => {
-    if (!map || !startCoords || !endCoords) return;
 
-    const lineFeature = new Feature({
-      geometry: new LineString([startCoords, endCoords]),
+    marker.setStyle(markerStyle);
+
+    // const vectorSource = new VectorSource({
+    //   features: [marker],
+    // });
+
+    const markerLayer = new VectorLayer({
+      source: vectorSource,
     });
-    const lineStyle = new Style({
-      stroke: new Stroke({
-        color: 'rgba(255, 0, 0, 1)',
-        width: 2,
-      }),
-    });
-    lineFeature.setStyle(lineStyle);
-    vectorSource.addFeature(lineFeature);
-    return lineFeature;
-  };
-  const fetchElevationProfile = async (start, end) => {
-    if (!start || !end) return;
-    try {
-      const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
-        start: {
-          lat: start[1],
-          lon: start[0],
-        },
-        end: {
-          lat: end[1],
-          lon: end[0],
-        },
-      });
-      setElevationData(response.data);
-      setProfileCoords(response.data.features[0].geometry.coordinates);
-      setShowPopup(true);
-    } catch (error) {
-      console.error('Error fetching elevation profile:', error);
-    }
-  };
-  const updateMovingMarker = (coords) => {
-    if (!markerRef.current) {
-      const marker = new Feature({
-        geometry: new Point(fromLonLat([coords[0], coords[1]])),
-      });
-      const markerStyle = new Style({
-        image: new Circle({
-          radius: 7,
-          fill: new Fill({
-            color: 'rgba(0, 0, 255, 0.9)',
-          }),
-          stroke: new Stroke({
-            color: '#fff',
-            width: 2,
-          }),
-        }),
-      });
-      marker.setStyle(markerStyle);
-      const vectorSource = new VectorSource({
-        features: [marker],
-      });
-      const markerLayer = new VectorLayer({
-        source: vectorSource,
-      });
-      map.addLayer(markerLayer);
-      markerRef.current = marker;
-    } else {
-      markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
-    }
-  };
+
+    map.addLayer(markerLayer);
+    markerRef.current = marker;
+  } else {
+    markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
+  }
+};
 
 //---------------------------------------------- Routing-------------------------------------------------------------------------------------------------------
   useEffect(() => {
