@@ -3,7 +3,6 @@ import WMTSComponent from './components/Map';
 import Header from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Form from './components/Forms';
-import Routing from './components/routing';
 import './css/Navbar.css';
 import './App.css';
 import './css/Sidebar.css';
@@ -19,11 +18,6 @@ import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
 import Popup from './components/popup';
-import { unByKey } from 'ol/Observable';
-import { Select } from '@headlessui/react';
-import { click } from 'ol/events/condition';
-import { toLonLat } from 'ol/proj';
-import { pointerMove } from 'ol/events/condition';
 import "./App.css"
 const App = () => {
   const [activeTool, setActiveTool] = useState(null);
@@ -34,8 +28,8 @@ const App = () => {
   const [bufferParams, setBufferParams] = useState(null);
   const [lineOfSightParams, setLineOfSightParams] = useState(null);
   const [rangeRingsParams, setRangeRingsParams] = useState(null);
-  const [epToolParams, setEpToolParams] = useState(null);
-  const [elevationData, setElevationData] = useState(null); // Elevation
+  const [epToolParams, setEpToolParams] = useState(null); //elevation profile
+  const [elevationData, setElevationData] = useState(null); // Elevation data
   const [routingParams, setRoutingParams] = useState(null); // Add routingParams state
 
 
