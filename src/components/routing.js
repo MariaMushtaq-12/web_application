@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Routing = ({ setRoutingParams, clickedCoordinates, onClose }) => {
   const [startLat, setStartLat] = useState('');
   const [startLon, setStartLon] = useState('');
   const [endLat, setEndLat] = useState('');
   const [endLon, setEndLon] = useState('');
+  const [totalDistance, setTotalDistance] = useState('');
+  const [totalTime, setTotalTime] = useState('');
+  const [arrivalTime, setArrivalTime] = useState('');
 
   useEffect(() => {
     if (clickedCoordinates) {
@@ -22,9 +26,61 @@ const Routing = ({ setRoutingParams, clickedCoordinates, onClose }) => {
     e.preventDefault();
     if (startLat && startLon && endLat && endLon) {
       setRoutingParams({ start: [startLon, startLat], end: [endLon, endLat] });
+      fetchRouteDetails(startLon, startLat, endLon, endLat);
     } else {
       alert('Please select both start and end points on the map.');
     }
+  };
+
+  const fetchRouteDetails = async (startLon, startLat, endLon, endLat) => {
+    const url = `http://127.0.0.1:5003/shortest_path`;
+    try {
+      const response = await axios.post(url, {
+        source_lon: startLon,
+        source_lat: startLat,
+        dest_lon: endLon,
+        dest_lat: endLat
+      });
+      const geojson = response.data;
+
+      const coordinates = geojson.features.map(feature => feature.geometry.coordinates.reverse());
+      
+      let totalDistance = 0;
+      for (let i = 1; i < coordinates.length; i++) {
+        const startPoint = coordinates[i - 1];
+        const endPoint = coordinates[i];
+        totalDistance += calculateDistance(startPoint, endPoint);
+      }
+
+      setTotalDistance(totalDistance.toFixed(2) + " meters");
+
+      const travelTime = totalDistance / 83.3;
+      setTotalTime(travelTime.toFixed(0) + " min");
+
+      const currentTime = new Date();
+      const newTime = new Date(currentTime.getTime() + travelTime * 60 * 1000);
+      setArrivalTime(newTime.toLocaleString());
+    } catch (error) {
+      console.error("Error loading GeoJSON: ", error);
+    }
+  };
+
+  const calculateDistance = (startPoint, endPoint) => {
+    const [lat1, lon1] = startPoint;
+    const [lat2, lon2] = endPoint;
+
+    const toRad = (value) => (value * Math.PI) / 180;
+
+    const R = 6371000; // Radius of the Earth in meters
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return distance;
   };
 
   return (
@@ -92,6 +148,15 @@ const Routing = ({ setRoutingParams, clickedCoordinates, onClose }) => {
                 Close
               </button>
             </form>
+
+            {totalDistance && (
+              <div className="bg-white p-4 mt-4 rounded shadow-sm">
+                <h2 className="text-lg font-bold mb-2">Route Details</h2>
+                <p><strong>Total Distance:</strong> {totalDistance}</p>
+                <p><strong>Total Time:</strong> {totalTime}</p>
+                <p><strong>Arrival Time:</strong> {arrivalTime}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
