@@ -14,10 +14,8 @@ import { Circle, Fill, Stroke, Style, Icon, Text } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import Draw from 'ol/interaction/Draw';
-import Modify from 'ol/interaction/Modify';
 import Overlay from 'ol/Overlay';
 import { Feature } from 'ol';
-import { getArea, getLength } from 'ol/sphere';
 import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
@@ -80,7 +78,8 @@ const WMTSComponent = ({
   const [profileCoords, setProfileCoords] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const markerRef = useRef(null); // Reference for the moving marker
-
+  
+ 
   const handleClose = () => {
     setShowPopup(false);
   };
@@ -108,7 +107,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+   
     const world = new TileLayer({
       source: new TileWMS({
         url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
@@ -122,88 +121,99 @@ const WMTSComponent = ({
       }),
     });
 
-    // const base = new ImageLayer({
-    //   source: new ImageWMS({
-    //     ratio: 1,
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:base',
-    //     },
-    //   }),
-    // });
+    const base = new ImageLayer({
+      source: new ImageWMS({
+        ratio: 1,
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'STYLES': '',
+          'LAYERS': 'ne:base',
+        },
+      }),
+    });
 
-    // const osm = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:osm',
-    //     },
-    //   }),
-    // });
+    const osm = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:osm',
+        },
+      }),
+    });
 
-    // const DEM = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:DEM',
-    //     },
-    //   }),
-    // });
+    const DEM = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:DEM',
+        },
+      }),
+    });
 
-    // const ROAD = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:ROAD',
-    //     },
-    //   }),
-    // });
+    const ROAD = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:ROAD',
+        },
+      }),
+    });
 
-    // const WATER = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:WATER',
-    //     },
-    //   }),
-    // });
+    const WATER = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:WATER',
+        },
+      }),
+    });
 
-    // const RAIL = new TileLayer({
-    //   source: new TileWMS({
-    //     url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
-    //     params: {
-    //       'FORMAT': 'image/jpeg',
-    //       'VERSION': '1.1.1',
-    //       'tiled': true,
-    //       'STYLES': '',
-    //       'LAYERS': 'ne:RAIL',
-    //     },
-    //   }),
-    // });
-
+    const RAIL = new TileLayer({
+      source: new TileWMS({
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'tiled': true,
+          'STYLES': '',
+          'LAYERS': 'ne:RAIL',
+        },
+      }),
+    });
+    const SAT = new ImageLayer({
+      source: new ImageWMS({
+        ratio: 1,
+        url: 'http://192.168.1.200:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+        params: {
+          'FORMAT': 'image/jpeg',
+          'VERSION': '1.1.1',
+          'STYLES': '',
+          'LAYERS': 'ne:SAT',
+        },
+      }),
+    });
     const newMap = new Map({
       target: internalMapRef.current,
-      layers: [ countries, world, vectorLayer],
-      // layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world, vectorLayer],
+    //   layers: [ countries, world, vectorLayer],
+      layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world,SAT, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -213,15 +223,15 @@ const WMTSComponent = ({
 
     console.log(layers);
     onLayerChange([
-      // { name: 'base', visible: true },
-      // { name: 'DEM', visible: false },
-      // { name: 'osm', visible: false },
-      // { name: 'ROAD', visible: false },
-      // { name: 'WATER', visible: false },
-      // { name: 'RAIL', visible: false },
-      // {name: 'vectorLayer', visible: true},
+      { name: 'base', visible: true },
+      { name: 'DEM', visible: false },
+      { name: 'osm', visible: false },
+      { name: 'ROAD', visible: false },
+      { name: 'WATER', visible: false },
+      { name: 'RAIL', visible: false },
       { name: 'countries', visible: true },
       { name: 'world', visible: true },
+      { name: 'SAT', visible: true },
     ]);
 
     newMap.on('click', (evt) => {
@@ -335,7 +345,6 @@ const WMTSComponent = ({
       const visibleFeatures = geojsonFormat.readFeatures(viewshedParams.visible);
       const nonVisibleFeatures = geojsonFormat.readFeatures(viewshedParams.non_visible);
       const restFeatures = geojsonFormat.readFeatures(viewshedParams.rest);
-
       // Add styles to the features
       visibleFeatures.forEach(feature => feature.setStyle(new Style({
         stroke: new Stroke({
@@ -346,7 +355,6 @@ const WMTSComponent = ({
           color: 'rgba(0, 169, 0, 1)', // Green
         }),
       })));
-
       nonVisibleFeatures.forEach(feature => feature.setStyle(new Style({
         stroke: new Stroke({
           color: 'rgba(255, 0, 0, 1)', // Red
@@ -356,7 +364,6 @@ const WMTSComponent = ({
           color: 'rgba(255, 0, 0, 1)', // Red
         }),
       })));
-
       restFeatures.forEach(feature => feature.setStyle(new Style({
         stroke: new Stroke({
           color: 'rgba(255, 0, 0, 1)', // Blue
@@ -369,7 +376,6 @@ const WMTSComponent = ({
       vectorSource.clear();
       vectorSource.addFeatures(visibleFeatures);
       vectorSource.addFeatures(restFeatures);
-
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {
@@ -379,8 +385,7 @@ const WMTSComponent = ({
       }
     }
   }, [viewshedParams, map, vectorSource]);
-
-  //---------------------buffer-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------buffer-------------------------------------------------------------------------------------------------------------
   useEffect(() => {
     if (bufferParams) {
       const { latitude, longitude, radius } = bufferParams;
@@ -404,15 +409,12 @@ const WMTSComponent = ({
       }
     }
   }, [bufferParams, map, vectorSource]);
-
-  //-------------------------------range rings---------------------------------------------------------------------------------------------
+//---------------------------------------range rings---------------------------------------------------------------------------------------------
   useEffect(() => {
     if (rangeRingsParams) {
       const { latitude, longitude, radius, rings } = rangeRingsParams;
-
       // Clear existing features
       vectorSource.clear();
-
       // Create circular buffer features
       const center = fromLonLat([longitude, latitude], 'EPSG:4326');
       let ringFeature;
@@ -420,9 +422,7 @@ const WMTSComponent = ({
         ringFeature = new Feature(new CircleGeom(center, (radius * i) / 100000));
         vectorSource.addFeature(ringFeature);
       }
-
       const markerIconPath = 'C:/Users/Hp/Desktop/InoTech/web_application/src/img/marker.jpg'; // Correct path format
-
       // Add marker feature at the center of the range rings
       const markerFeature = new Feature(new Point(center));
       const markerStyle = new Style({
@@ -433,7 +433,6 @@ const WMTSComponent = ({
       });
       markerFeature.setStyle(markerStyle);
       vectorSource.addFeature(markerFeature);
-
       // Fit the map to the buffer rings if the extent is valid
       const extent = ringFeature.getGeometry().getExtent();
       if (extent) {
@@ -444,42 +443,106 @@ const WMTSComponent = ({
       }
     }
   }, [rangeRingsParams, vectorSource, map]);
+//-----------------------------------------elevation profile---------------------------------------------------------------------------------
+useEffect(() => {
+  if (epToolParams && epToolParams.start && epToolParams.end) {
+    addMarkerPin(map, epToolParams.start, 'Start Point');
+    addMarkerPin(map, epToolParams.end, 'End Point');
+    const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
+    setLineFeature(newLineFeature);
+    fetchElevationProfile(epToolParams.start, epToolParams.end);
+  }
+}, [epToolParams, map]);
 
-  //-----------------------------------------elevation profile---------------------------------------------------------------------------------
-  useEffect(() => {
-    if (epToolParams && epToolParams.start && epToolParams.end) {
-      addMarkerPin(map, epToolParams.start, 'Start Point');
-      addMarkerPin(map, epToolParams.end, 'End Point');
-      const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
-      setLineFeature(newLineFeature);
-      fetchElevationProfile(epToolParams.start, epToolParams.end);
-    }
-  }, [epToolParams, map]);
+const addMarkerPin = (map, coords, label) => {
+  if (!map || !coords) return;
 
-  const addMarkerPin = (map, coords, label) => {
-    if (!map || !coords) return;
+  const marker = new Feature({
+    geometry: new Point(coords),
+    name: label,
+  });
 
+  const markerStyle = new Style({
+    image: new Circle({
+      radius: 7,
+      fill: new Fill({
+        color: 'rgba(255, 0, 0, 0.9)',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+    text: new Text({
+      text: label,
+      offsetY: -25,
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 2,
+      }),
+    }),
+  });
+
+  marker.setStyle(markerStyle);
+  vectorSource.addFeature(marker);
+};
+
+const drawStraightLine = (map, startCoords, endCoords) => {
+  if (!map || !startCoords || !endCoords) return;
+
+  const lineFeature = new Feature({
+    geometry: new LineString([startCoords, endCoords]),
+  });
+
+  const lineStyle = new Style({
+    stroke: new Stroke({
+      color: 'rgba(255, 0, 0, 1)',
+      width: 2,
+    }),
+  });
+
+  lineFeature.setStyle(lineStyle);
+  vectorSource.addFeature(lineFeature);
+  return lineFeature;
+};
+
+const fetchElevationProfile = async (start, end) => {
+  if (!start || !end) return;
+
+  try {
+    const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
+      start: {
+        lat: start[1],
+        lon: start[0],
+      },
+      end: {
+        lat: end[1],
+        lon: end[0],
+      },
+    });
+
+    setElevationData(response.data);
+    setProfileCoords(response.data.features[0].geometry.coordinates);
+    setShowPopup(true);
+  } catch (error) {
+    console.error('Error fetching elevation profile:', error);
+  }
+};
+
+const updateMovingMarker = (coords) => {
+  if (!markerRef.current) {
     const marker = new Feature({
-      geometry: new Point(coords),
-      name: label,
+      geometry: new Point(fromLonLat([coords[0], coords[1]])),
     });
 
     const markerStyle = new Style({
       image: new Circle({
         radius: 7,
         fill: new Fill({
-          color: 'rgba(255, 0, 0, 0.9)',
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-      text: new Text({
-        text: label,
-        offsetY: -25,
-        fill: new Fill({
-          color: '#000',
+          color: 'rgba(0, 0, 255, 0.9)',
         }),
         stroke: new Stroke({
           color: '#fff',
@@ -489,91 +552,23 @@ const WMTSComponent = ({
     });
 
     marker.setStyle(markerStyle);
-    vectorSource.addFeature(marker);
-  };
 
-  const drawStraightLine = (map, startCoords, endCoords) => {
-    if (!map || !startCoords || !endCoords) return;
+    // const vectorSource = new VectorSource({
+    //   features: [marker],
+    // });
 
-    const lineFeature = new Feature({
-      geometry: new LineString([startCoords, endCoords]),
+    const markerLayer = new VectorLayer({
+      source: vectorSource,
     });
 
-    const lineStyle = new Style({
-      stroke: new Stroke({
-        color: 'rgba(255, 0, 0, 1)',
-        width: 2,
-      }),
-    });
+    map.addLayer(markerLayer);
+    markerRef.current = marker;
+  } else {
+    markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
+  }
+};
 
-    lineFeature.setStyle(lineStyle);
-    vectorSource.addFeature(lineFeature);
-    return lineFeature;
-  };
-
-  const fetchElevationProfile = async (start, end) => {
-    if (!start || !end) return;
-
-    try {
-      const response = await axios.post('http://127.0.0.1:5001/elevation_profile', {
-        start: {
-          lat: start[1],
-          lon: start[0],
-        },
-        end: {
-          lat: end[1],
-          lon: end[0],
-        },
-      });
-
-      setElevationData(response.data);
-      setProfileCoords(response.data.features[0].geometry.coordinates);
-      setShowPopup(true);
-    } catch (error) {
-      console.error('Error fetching elevation profile:', error);
-    }
-  };
-
-  const updateMovingMarker = (coords) => {
-    if (!markerRef.current) {
-      const marker = new Feature({
-        geometry: new Point(fromLonLat([coords[0], coords[1]])),
-      });
-
-      const markerStyle = new Style({
-        image: new Circle({
-          radius: 7,
-          fill: new Fill({
-            color: 'rgba(0, 0, 255, 0.9)',
-          }),
-          stroke: new Stroke({
-            color: '#fff',
-            width: 2,
-          }),
-        }),
-      });
-
-      marker.setStyle(markerStyle);
-
-      // const vectorSource = new VectorSource({
-      //   features: [marker],
-      // });
-
-      const markerLayer = new VectorLayer({
-        source: vectorSource,
-      });
-
-      map.addLayer(markerLayer);
-      markerRef.current = marker;
-    } else {
-      markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
-    }
-  };
-
-  // Add a useEffect for routingParams to display the route on the map
-
-
-
+//---------------------------------------------- Routing-------------------------------------------------------------------------------------------------------
   useEffect(() => {
     if (routingParams && routingParams.start && routingParams.end) {
       addMarkerPin(map, routingParams.start, 'Start Point');
@@ -581,21 +576,17 @@ const WMTSComponent = ({
       fetchShortestPath(routingParams.start, routingParams.end);
     }
   }, [routingParams, map]);
-
   const fetchShortestPath = async (start, end) => {
     if (!start || !end) return;
-
     try {
-      const response = await axios.post('http://127.0.0.1:5003/shortest_path', {
+      const response = await axios.post('http://192.168.1.200:5003/shortest_path', {
         source_lon: start[0],
         source_lat: start[1],
         dest_lon: end[0],
         dest_lat: end[1],
       });
-
       const geojson = response.data;
       console.log('Server response:', geojson);
-
       const coordinates = [];
       geojson.features.forEach((feature) => {
         if (feature.geometry && feature.geometry.type === 'Point') {
@@ -606,19 +597,14 @@ const WMTSComponent = ({
           }
         }
       });
-
       console.log('Fetched coordinates:', coordinates);
-
       if (coordinates.length < 2) {
         throw new Error('Insufficient coordinates to draw the route');
       }
-
       const newLineFeature = drawRouteLine(coordinates);
       setLineFeature(newLineFeature);
-
       const extent = newLineFeature.getGeometry().getExtent();
       console.log('Calculated extent:', extent);
-
       if (extent.every(value => isFinite(value))) {
         map.getView().fit(extent, {
           padding: [50, 50, 50, 50],
@@ -632,30 +618,22 @@ const WMTSComponent = ({
       console.error('Error fetching shortest path:', error);
     }
   };
-
   const drawRouteLine = (coordinates) => {
     if (!map || !coordinates.length) return;
-
     const lineFeature = new Feature({
       geometry: new LineString(coordinates),
     });
-
     const lineStyle = new Style({
       stroke: new Stroke({
         color: 'rgba(255, 0, 0, 1)',
         width: 2,
       }),
     });
-
     lineFeature.setStyle(lineStyle);
     vectorSource.clear(); // Clear previous features
     vectorSource.addFeature(lineFeature);
     return lineFeature;
   };
-
-
-  
-  
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
       <div id="popup" className="ol-popup">
@@ -675,6 +653,4 @@ const WMTSComponent = ({
     </div>
   );
 };
-
-
 export default WMTSComponent;

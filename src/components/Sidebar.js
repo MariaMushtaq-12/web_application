@@ -307,53 +307,6 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
             </li>
             <li
               className="relative mb-2.5 group flex-grow"
-              onMouseEnter={() => handleDropdownToggle('tools')}
-              onMouseLeave={() => handleDropdownToggle(null)}
-            >
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                className="w-full text-left bg-green-600 text-white py-2.5 px-5 rounded cursor-pointer"
-                onClick={() => handleDropdownToggle('tools')}
-              >
-                Tools
-                <motion.div
-                  variants={{
-                    open: { rotate: 180 },
-                    closed: { rotate: 0 },
-                  }}
-                  transition={{ duration: 0.2 }}
-                  style={{ originY: 0.55 }}
-                >
-                  <svg width="15" height="15" viewBox="0 0 20 20">
-                    <path d="M0 7 L 20 7 L 10 16" />
-                  </svg>
-                </motion.div>
-              </motion.button>
-              <AnimatePresence>
-                {openDropdown === 'tools' && (
-                  <motion.ul
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                    variants={menuVariants}
-                    className="absolute left-1/2 transform -translate-x-1/2 top-full bg-white min-w-[200px] border border-gray-300 z-50 overflow-y-auto max-h-60"
-                    style={{ pointerEvents: openDropdown === 'tools' ? 'auto' : 'none' }}
-                  >
-                    {tools
-                      .filter((tool) => tool.name === 'Buffer' || tool.name === 'Range Rings'|| tool.name ==='Point of Interest')
-                      .map((tool) => (
-                        <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
-                          <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>
-                            {tool.icon} {tool.name}
-                          </button>
-                        </motion.li>
-                      ))}
-                  </motion.ul>
-                )}
-              </AnimatePresence>
-            </li>
-            <li
-              className="relative mb-2.5 group flex-grow"
               onMouseEnter={() => handleDropdownToggle('Navigation')}
               onMouseLeave={() => handleDropdownToggle(null)}
             >
@@ -399,6 +352,54 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
                 )}
               </AnimatePresence>
             </li>
+            <li
+              className="relative mb-2.5 group flex-grow"
+              onMouseEnter={() => handleDropdownToggle('tools')}
+              onMouseLeave={() => handleDropdownToggle(null)}
+            >
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                className="w-full text-left bg-green-600 text-white py-2.5 px-5 rounded cursor-pointer"
+                onClick={() => handleDropdownToggle('tools')}
+              >
+                Tools
+                <motion.div
+                  variants={{
+                    open: { rotate: 180 },
+                    closed: { rotate: 0 },
+                  }}
+                  transition={{ duration: 0.2 }}
+                  style={{ originY: 0.55 }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 20 20">
+                    <path d="M0 7 L 20 7 L 10 16" />
+                  </svg>
+                </motion.div>
+              </motion.button>
+              <AnimatePresence>
+                {openDropdown === 'tools' && (
+                  <motion.ul
+                    initial="closed"
+                    animate="open"
+                    exit="closed"
+                    variants={menuVariants}
+                    className="absolute left-1/2 transform -translate-x-1/2 top-full bg-white min-w-[200px] border border-gray-300 z-50 overflow-y-auto max-h-60"
+                    style={{ pointerEvents: openDropdown === 'tools' ? 'auto' : 'none' }}
+                  >
+                    {tools
+                      .filter((tool) => tool.name === 'Buffer' || tool.name === 'Range Rings'|| tool.name ==='Point of Interest')
+                      .map((tool) => (
+                        <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
+                          <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>
+                            {tool.icon} {tool.name}
+                          </button>
+                        </motion.li>
+                      ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </li>
+          
           </ul>
         </div>
       </div>
