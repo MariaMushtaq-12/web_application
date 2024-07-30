@@ -32,16 +32,10 @@ const App = () => {
   const [rangeRingsParams, setRangeRingsParams] = useState(null);
   const [epToolParams, setEpToolParams] = useState(null);
   const [elevationData, setElevationData] = useState(null); // Elevation
-  const [pointOfInterestParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
+  const [poiParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
 
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
-    { name: 'countries', visible: true },
-    { name: 'world', visible: true },
-    { name: 'pak', visible: true },
-    { name: 'roads', visible: true },
-    { name: 'pak_osm', visible: true },
-    { name: 'pak_dem', visible: true },
   ]);
 
   const handleLayerToggle = (layerName) => {
@@ -198,6 +192,7 @@ const App = () => {
           className="z-100"
           mapRef={mapRef}
           onLayerChange={handleLayerChange}
+          poiParams={poiParams}
           viewshedParams={viewshedParams}
           bufferParams={bufferParams}
           setClickedCoordinates={setClickedCoordinates}
@@ -228,3 +223,4 @@ const App = () => {
 };
 
 export default App;
+

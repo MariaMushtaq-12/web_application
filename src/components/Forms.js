@@ -12,7 +12,7 @@ const Form = ({
   setBufferParams, setLineOfSightParams, 
   setRangeRingsParams, setEpToolParams,
   setElevationData, setPointofInterestParams,
-  PointofInterestParams,
+  poiParams,
 }) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
@@ -71,3 +71,7 @@ const Form = ({
 };
 
 export default Form;
+
+
+
+

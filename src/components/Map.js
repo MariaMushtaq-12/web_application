@@ -22,7 +22,7 @@ import { getArea, getLength } from 'ol/sphere';
 import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
-
+import { Circle as CircleStyle } from 'ol/style';
 
 
 const formatLength = (line) => {
@@ -47,7 +47,7 @@ const formatArea = (polygon) => {
   return output;
 };
 
-const WMTSComponent = ({  onMapClick, mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams}) => {
+const WMTSComponent = ({  onMapClick, mapRef, viewshedParams, setClickedCoordinates, activeMeasurement, clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, poiParams}) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
   const [vectorLayer] = useState(
@@ -409,160 +409,343 @@ const WMTSComponent = ({  onMapClick, mapRef, viewshedParams, setClickedCoordina
   }, [bufferParams, map, vectorSource]);
 
   //-------------------------------range rings---------------------------------------------------------------------------------------------
-  useEffect(() => {
-    if (rangeRingsParams) {
-      const { latitude, longitude, radius, rings } = rangeRingsParams;
-
-      // Clear existing features
-      vectorSource.clear();
-
-      // Create circular buffer features
-      const center = fromLonLat([longitude, latitude], 'EPSG:4326');
-      let ringFeature;
-      for (let i = 1; i <= rings; i++) {
-        ringFeature = new Feature(new CircleGeom(center, (radius * i) / 100000));
-        vectorSource.addFeature(ringFeature);
-      }
-
-      // Fit the map to the buffer rings if the extent is valid
-      const extent = ringFeature.getGeometry().getExtent();
-      if (extent) {
-        map.getView().fit(extent, {
-          padding: [50, 50, 50, 50],
-          duration: 1000,
-        });
-      }
-    }
-  }, [rangeRingsParams, vectorSource, map]);
 
   //-----------------------------------------elevation profile---------------------------------------------------------------------------------
-  useEffect(() => {
-    if (epToolParams && epToolParams.start && epToolParams.end) {
-      addMarkerPin(map, epToolParams.start, 'Start Point');
-      addMarkerPin(map, epToolParams.end, 'End Point');
-      const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
-      setLineFeature(newLineFeature);
-      fetchElevationProfile(epToolParams.start, epToolParams.end);
-    }
-  }, [epToolParams, map]);
-
-  const addMarkerPin = (map, coords, label) => {
-    if (!map || !coords) return;
-
-    const marker = new Feature({
-      geometry: new Point(coords),
-      name: label,
-    });
-
-    const markerStyle = new Style({
-      image: new Circle({
-        radius: 7,
-        fill: new Fill({
-          color: 'rgba(255, 0, 0, 0.9)',
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-      text: new Text({
-        text: label,
-        offsetY: -25,
-        fill: new Fill({
-          color: '#000',
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-    });
-
-    marker.setStyle(markerStyle);
-    vectorSource.addFeature(marker);
-  };
-
-  const drawStraightLine = (map, startCoords, endCoords) => {
-    if (!map || !startCoords || !endCoords) return;
-
-    const lineFeature = new Feature({
-      geometry: new LineString([startCoords, endCoords]),
-    });
-
-    const lineStyle = new Style({
-      stroke: new Stroke({
-        color: 'rgba(255, 0, 0, 1)',
-        width: 2,
-      }),
-    });
-
-    lineFeature.setStyle(lineStyle);
-    vectorSource.addFeature(lineFeature);
-    return lineFeature;
-  };
-
-  const fetchElevationProfile = async (start, end) => {
-    if (!start || !end) return;
-
-    try {
-      const response = await axios.post('http://192.168.14.32:5001/elevation_profile', {
-        start: {
-          lat: start[1],
-          lon: start[0],
-        },
-        end: {
-          lat: end[1],
-          lon: end[0],
-        },
-      });
-
-      setElevationData(response.data);
-      setProfileCoords(response.data.features[0].geometry.coordinates);
-      setShowPopup(true);
-    } catch (error) {
-      console.error('Error fetching elevation profile:', error);
-    }
-  };
-
-  const updateMovingMarker = (coords) => {
-    if (!markerRef.current) {
-      const marker = new Feature({
-        geometry: new Point(fromLonLat([coords[0], coords[1]])),
-      });
-
-      const markerStyle = new Style({
-        image: new Circle({
-          radius: 7,
-          fill: new Fill({
-            color: 'rgba(0, 0, 255, 0.9)',
-          }),
-          stroke: new Stroke({
-            color: '#fff',
-            width: 2,
-          }),
-        }),
-      });
-
-      marker.setStyle(markerStyle);
-
-      const vectorSource = new VectorSource({
-        features: [marker],
-      });
-
-      const markerLayer = new VectorLayer({
-        source: vectorSource,
-      });
-
-      map.addLayer(markerLayer);
-      markerRef.current = marker;
-    } else {
-      markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
-    }
-  };
+ 
   //-----------------------------------------point of interest---------------------------------------------------------------------------------
+  // useEffect(() => {
+  //   // Check if POI parameters are available
+  //   if (poiParams && poiParams.latitude && poiParams.longitude && poiParams.radius && poiParams.type) {
+  //     // Clear existing features
+  //     vectorSource.clear();
   
+  //     // Create and add buffer feature
+  //     const { latitude, longitude, radius } = poiParams;
+  //     const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+  //     const bufferFeature = new Feature({
+  //       geometry: new CircleGeom(center, radius / 100000) // Convert radius from meters to appropriate units
+  //     });
   
+  //     const bufferStyle = new Style({
+  //       stroke: new Stroke({
+  //         color: 'rgba(0, 0, 255, 0.5)',
+  //         width: 2,
+  //       }),
+  //       fill: new Fill({
+  //         color: 'rgba(0, 0, 255, 0.2)',
+  //       }),
+  //     });
+  
+  //     bufferFeature.setStyle(bufferStyle);
+  //     vectorSource.addFeature(bufferFeature);
+  
+  //     // Fetch POIs from API
+  //     const fetchPOIs = async () => {
+  //       try {
+  //         const response = await axios.get('http://127.0.0.1:5000/buffer', {
+  //           params: {
+  //             lat: poiParams.latitude,
+  //             lng: poiParams.longitude,
+  //             radius: poiParams.radius,
+  //             type: poiParams.type,
+  //           },
+  //         });
+  
+  //         const pois = response.data; // Assuming response contains the POIs
+  // console.log("pois",pois);
+  //         pois.forEach((poi) => {
+  //           const { latitude, longitude, name } = poi;
+  //           const poiFeature = new Feature({
+  //             geometry: new Point(fromLonLat([longitude, latitude], 'EPSG:4326')),
+  //             name,
+  //           });
+  
+  //           const poiStyle = new Style({
+  //             image: new Circle({
+  //               radius: 5,
+  //               fill: new Fill({
+  //                 color: 'rgba(0, 0, 255, 0.6)',
+  //               }),
+  //               stroke: new Stroke({
+  //                 color: '#fff',
+  //                 width: 2,
+  //               }),
+  //             }),
+  //             text: new Text({
+  //               text: name,
+  //               offsetY: -15,
+  //               fill: new Fill({
+  //                 color: '#000',
+  //               }),
+  //               stroke: new Stroke({
+  //                 color: '#fff',
+  //                 width: 2,
+  //               }),
+  //             }),
+  //           });
+  
+  //           poiFeature.setStyle(poiStyle);
+  //           vectorSource.addFeature(poiFeature);
+  //         });
+  
+  //         // Adjust map view to fit all features
+  //         const extent = vectorSource.getExtent();
+  //         if (extent) {
+  //                 map.getView().fit(extent, {
+  //                   padding: [50, 50, 50, 50],
+  //                   duration: 1000,
+  //                 });
+  //               }
+  //       } catch (error) {
+  //         console.error('Error fetching POIs:', error);
+  //       }
+  //     };
+  
+  //     fetchPOIs();
+  
+  //     // Optional: Add click interaction to show popup for POIs
+  //     const handleClick = (evt) => {
+  //       const feature = map.getFeaturesAtPixel(evt.pixel)[0];
+  //       if (feature && feature.get('type')) {
+  //         // Display popup with POI details
+  //         setShowPopup(true);
+  //         //setElevationData(feature.get('name')); // Set appropriate data to show in popup
+  //       }
+  //     };
+  
+  //     map.on('click', handleClick);
+  
+  //     return () => {
+  //       map.un('click', handleClick); // Cleanup event listener on unmount
+  //     };
+  //   }
+  // }, [poiParams, map, vectorSource]);
 
+
+  //run without errror plus zoomed in
+  // useEffect(() => {
+  //   // Check if POI parameters are available
+  //   if (poiParams && poiParams.latitude && poiParams.longitude && poiParams.radius && poiParams.type) {
+  //     // Clear existing features
+  //     vectorSource.clear();
+  
+  //     // Create and add buffer feature
+  //     const { latitude, longitude, radius } = poiParams;
+  //     const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+  //     const bufferFeature = new Feature({
+  //       geometry: new CircleGeom(center, radius / 100000) // Convert radius from meters to appropriate units
+  //     });
+  
+  //     const bufferStyle = new Style({
+  //       stroke: new Stroke({
+  //         color: 'rgba(0, 0, 255, 0.5)',
+  //         width: 2,
+  //       }),
+  //       fill: new Fill({
+  //         color: 'rgba(0, 0, 255, 0.2)',
+  //       }),
+  //     });
+  
+  //     bufferFeature.setStyle(bufferStyle);
+  //     vectorSource.addFeature(bufferFeature);
+  
+  //     // Fetch POIs from API
+  //     const fetchPOIs = async () => {
+  //       try {
+  //         const response = await axios.get('http://127.0.0.1:5000/buffer', {
+  //           params: {
+  //             lat: poiParams.latitude,
+  //             lng: poiParams.longitude,
+  //             radius: poiParams.radius,
+  //             type: poiParams.type,
+  //           },
+  //         });
+  
+  //         const pois = response.data.points; // Access the points array from the response
+  //         console.log("pois", pois);
+  
+  //         pois.forEach((poi) => {
+  //           const { latitude, longitude, name } = poi;
+  //           console.log("poi",poi);
+  //           const poiFeature = new Feature({
+  //             geometry: new Point(fromLonLat([longitude, latitude], 'EPSG:4326')),
+  //             name,
+  //           });
+  // console.log("poifeature", poiFeature);
+  //           const poiStyle = new Style({
+  //             image: new Circle({
+  //               radius: 5,
+  //               fill: new Fill({
+  //                 color: 'rgba(0, 0, 255, 0.6)',
+  //               }),
+  //               stroke: new Stroke({
+  //                 color: '#fff',
+  //                 width: 2,
+  //               }),
+  //             }),
+  //             text: new Text({
+  //               text: name,
+  //               offsetY: -15,
+  //               fill: new Fill({
+  //                 color: '#000',
+  //               }),
+  //               stroke: new Stroke({
+  //                 color: '#fff',
+  //                 width: 2,
+  //               }),
+  //             }),
+  //           });
+  
+  //           poiFeature.setStyle(poiStyle);
+  //           vectorSource.addFeature(poiFeature);
+  //         });
+  
+  //         // Adjust map view to fit all features
+  //         const extent = vectorSource.getExtent();
+  //         if (extent) {
+  //           map.getView().fit(extent, {
+  //             padding: [50, 50, 50, 50],
+  //             duration: 1000,
+  //           });
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching POIs:', error);
+  //       }
+  //     };
+  
+  //     fetchPOIs();
+  
+  //     // Optional: Add click interaction to show popup for POIs
+  //     const handleClick = (evt) => {
+  //       const feature = map.getFeaturesAtPixel(evt.pixel)[0];
+  //       if (feature && feature.get('type')) {
+  //         // Display popup with POI details
+  //         setShowPopup(true);
+  //         //setElevationData(feature.get('name')); // Set appropriate data to show in popup
+  //       }
+  //     };
+  
+  //     map.on('click', handleClick);
+  
+  //     return () => {
+  //       map.un('click', handleClick); // Cleanup event listener on unmount
+  //     };
+  //   }
+  // }, [poiParams, map, vectorSource]);
+  useEffect(() => {
+    // Check if POI parameters are available
+    if (poiParams && poiParams.latitude && poiParams.longitude && poiParams.radius && poiParams.type) {
+      // Clear existing features
+      vectorSource.clear();
+  
+      // Create and add buffer feature
+      const { latitude, longitude, radius } = poiParams;
+      const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+      const bufferFeature = new Feature({
+        geometry: new CircleGeom(center, radius / 100000) // Convert radius from meters to appropriate units
+      });
+  
+      const bufferStyle = new Style({
+        stroke: new Stroke({
+          color: 'rgba(0, 0, 255, 0.5)',
+          width: 2,
+        }),
+        fill: new Fill({
+          color: 'rgba(0, 0, 255, 0.2)',
+        }),
+      });
+  
+      bufferFeature.setStyle(bufferStyle);
+      vectorSource.addFeature(bufferFeature);
+  
+      // Fetch POIs from API
+      const fetchPOIs = async () => {
+        try {
+          const response = await axios.get('http://127.0.0.1:5000/buffer', {
+            params: {
+              lat: poiParams.latitude,
+              lng: poiParams.longitude,
+              radius: poiParams.radius,
+              type: poiParams.type,
+            },
+          });
+  
+          const pois = response.data.points; // Access the points array from the response
+          console.log("pois", pois);
+  
+          pois.forEach((poi) => {
+            const { lat, lng, name } = poi; // Note: Adjusted to `lat` and `lng` to match the backend response
+            console.log("poi", poi);
+  
+            // Create POI feature
+            const poiFeature = new Feature({
+              geometry: new Point(fromLonLat([lng, lat], 'EPSG:4326')),
+              name,
+            });
+            console.log("poiFeature", poiFeature);
+  
+            // Style POI feature
+            const poiStyle = new Style({
+              image: new Circle({
+                radius: 5,
+                fill: new Fill({
+                  color: 'rgba(0, 0, 255, 0.6)',
+                }),
+                stroke: new Stroke({
+                  color: '#fff',
+                  width: 2,
+                }),
+              }),
+              text: new Text({
+                text: name,
+                offsetY: -15,
+                fill: new Fill({
+                  color: '#000',
+                }),
+                stroke: new Stroke({
+                  color: '#fff',
+                  width: 2,
+                }),
+              }),
+            });
+  
+            poiFeature.setStyle(poiStyle);
+            vectorSource.addFeature(poiFeature);
+          });
+  
+          // Adjust map view to fit all features
+          const extent = vectorSource.getExtent();
+          if (extent) {
+            map.getView().fit(extent, {
+              padding: [50, 50, 50, 50],
+              duration: 1000,
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching POIs:', error);
+        }
+      };
+  
+      fetchPOIs();
+  
+      // Optional: Add click interaction to show popup for POIs
+      const handleClick = (evt) => {
+        const feature = map.getFeaturesAtPixel(evt.pixel)[0];
+        if (feature && feature.get('name')) {
+          // Display popup with POI details
+          setShowPopup(true);
+          // setElevationData(feature.get('name')); // Set appropriate data to show in popup
+        }
+      };
+  
+      map.on('click', handleClick);
+  
+      return () => {
+        map.un('click', handleClick); // Cleanup event listener on unmount
+      };
+    }
+  }, [poiParams, map, vectorSource]);
+  
 //-------------------------------------------POI----------------------------------------------------
 
   return (
@@ -579,10 +762,13 @@ const WMTSComponent = ({  onMapClick, mapRef, viewshedParams, setClickedCoordina
           map={map}
           lineFeature={lineFeature}
           profileCoords={profileCoords}
-          updateMovingMarker={updateMovingMarker}
-        />
+                  />
       )}
     </div>
   );
 };
 export default WMTSComponent;
+
+
+
+
