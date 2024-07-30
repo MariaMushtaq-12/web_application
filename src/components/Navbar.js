@@ -8,6 +8,7 @@ import {
   FaToolbox,
   FaDrawPolygon,
   FaWindowClose,
+  FaSearch,
   FaEraser
 } from 'react-icons/fa';
 
@@ -198,6 +199,9 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
         <button title="Coordinate Converter" onClick={() => handleIconClick('coordinateConverter')} className="text-gray-800 text-2xl cursor-pointer">
           <FaGlobe />
         </button>
+        <button title="Place Search" onClick={() => handleIconClick('placeSearch')} className="text-gray-800 text-2xl cursor-pointer">
+          <FaSearch />
+          </button>
         <button title="Eraser" onClick={() => handleIconClick('eraser')} className="text-gray-800 text-2xl cursor-pointer hover:text-lg">
           <FaEraser/>
         </button>
@@ -426,6 +430,30 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 )}
               </div>
             )}
+{/*-------------------------------------Place Search------------------------------------------------------------------------------------------- */}
+{activePopup === 'placeSearch' && (
+            <div className="p-2">
+              <label htmlFor="place" className="block mb-2 text-sm font-medium text-white dark:text-white">Enter Place Name</label>
+              <input
+                type="text"
+                name="place"
+                id="place"
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search for a place"
+                required
+              />
+              <button
+                type="button"
+                onClick={handlePlaceSearch}
+                className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Search Place
+              </button>
+            </div>
+          )}
+
 {/*--------------------------------------Eraser------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'eraser' && (
