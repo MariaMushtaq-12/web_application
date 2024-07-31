@@ -23,6 +23,8 @@ import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
 import { Circle as CircleStyle } from 'ol/style';
+// Import the getIconUrl function
+import { getIconUrl } from './icon';
 
 
 const formatLength = (line) => {

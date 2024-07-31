@@ -26,6 +26,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [output, setOutput] = useState({ lat: '', lon: '' });
   const [map, setMap] = useState(null);
   const [place, setPlace] = useState('');
+  
+
 
   useEffect(() => {
     const mapInstance = new Map({
@@ -109,11 +111,11 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     });
   };
 
-  const handlePlaceSearch = () => {
-    if (place) {
+  const handleSearchClick = () => {
+    if (onPlaceSearch) {
       onPlaceSearch(place);
     } else {
-      alert('Please enter a place.');
+     
     }
   };
 
@@ -435,7 +437,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
               />
               <button
                 type="button"
-                onClick={handlePlaceSearch}
+                onClick={handleSearchClick}
                 className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Search Place

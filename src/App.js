@@ -37,7 +37,7 @@ const App = () => {
   /////////////add use state of the layers ////////////////////
   const [layers, setLayers] = useState([
   ]);
-
+  const [cityName, setCityName] = useState('');
   const handleLayerToggle = (layerName) => {
     const updatedLayers = layers.map(layer =>
       layer.name === layerName ? { ...layer, visible: !layer.visible } : layer
@@ -60,6 +60,7 @@ const App = () => {
       }
     }
   };
+
 
   //-----------------------------------jump to location function---------------------------------------------------------------------------
   const handleJumpToLocation = (latitude, longitude) => {
@@ -160,10 +161,51 @@ const App = () => {
     }
   }, [lineOfSightParams]);
 
+
+
+
+//---------------------------------->PLACE SEARCH---------------------------------------
+  
+
+const handleCitySearch = (inputCityName) => {
+    if (inputCityName) {
+      console.log('Searching for city:', inputCityName);
+      setCityName(inputCityName);
+    } else {
+      alert('Please enter a city name.');
+    }
+  };
+  useEffect(() => {
+    const searchCity = async () => {
+      if (cityName) {
+        try {
+          const response = await axios.get(`http://127.0.0.1:5003/search?city_name=${cityName}`);
+          console.log(response.data); 
+          const results = response.data.places;
+
+          if (results.length > 0) {
+            const [longitude, latitude] = [results[0].lng, results[0].lat]; // Adjust according to API response
+            handleJumpToLocation(latitude, longitude);
+          } else {
+            alert('No results found for the specified city.');
+          }
+        } catch (error) {
+          console.error('Error searching for city:', error);
+          alert('An error occurred while searching for the city.');
+        }
+      }
+    };
+
+    searchCity();
+  }, [cityName, handleJumpToLocation]);
+
+ 
   //-------------------popup of elevation profile--------------------------------------------------------------------
   const handlePopupClose = () => {
     setElevationData(null);
   };
+
+
 
   //-------------------switching of measurement tool--------------------------------------------------------------------
   useEffect(() => {
@@ -182,6 +224,7 @@ const App = () => {
           clearDrawings={clearDrawings}
           onLayerToggle={handleLayerToggle}
           onJumpToLocation={handleJumpToLocation}
+          onPlaceSearch={handleCitySearch}
         />
         <Sidebar
           layers={layers}
