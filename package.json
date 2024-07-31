@@ -6,6 +6,7 @@
   "proxy1": "http://192.168.1.200:5001/",
   "proxy2": "http://192.168.1.200:5002/", 
   "proxy3": "http://192.168.1.200:5003/",
+  "proxy4":"http://192.168.1.200:5005/",
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
