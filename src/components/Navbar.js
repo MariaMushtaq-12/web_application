@@ -232,6 +232,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 return '77%';
               case 'coordinateConverter':
                 return '79%';
+                case 'placeSearch':
+                  return '82%';
               case 'eraser':
                 return '84%';
               default:
@@ -248,13 +250,6 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
             {activePopup === 'legend' && (
               <div>
                 <h3 className="font-bold">Legend</h3>
-                {/* 
-                <ul>
-                  {layers && layers.map((layer, index) => (
-                    <li key={index}>{layer.get('name')}</li>
-                  ))}
-                </ul>
-                */}
               </div>
             )}
 {/*--------------------------------------layers------------------------------------------------------------------------------------------- */}

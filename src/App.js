@@ -20,6 +20,10 @@ import axios from 'axios';
 import Popup from './components/popup';
 import "./App.css"
 const App = () => {
+  
+  
+
+  /////////////add use state of the layers ////////////////////
   const [activeTool, setActiveTool] = useState(null);
   const [viewshedParams, setViewshedParams] = useState(null);
   const [clickedCoordinates, setClickedCoordinates] = useState(null);
@@ -32,12 +36,9 @@ const App = () => {
   const [elevationData, setElevationData] = useState(null); // Elevation data
   const [routingParams, setRoutingParams] = useState(null); // Add routingParams state
   const [poiParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
+  const [layers, setLayers] = useState([]); //place search
+  const [cityName, setCityName] = useState('');
 
-
-
-
-  /////////////add use state of the layers ////////////////////
-  const [layers, setLayers] = useState([]);
 
   const handleLayerToggle = (layerName) => {
     const updatedLayers = layers.map(layer =>
@@ -155,6 +156,43 @@ popupElement.innerHTML = popupContent;
     }
   }, [lineOfSightParams]);
 
+//---------------------------------->PLACE SEARCH---------------------------------------
+  
+
+const handleCitySearch = (inputCityName) => {
+  if (inputCityName) {
+    console.log('Searching for city:', inputCityName);
+    setCityName(inputCityName);
+  } else {
+    alert('Please enter a city name.');
+  }
+};
+useEffect(() => {
+  const searchCity = async () => {
+    if (cityName) {
+      try {
+        const response = await axios.get(`http://192.168.1.200:5004/search?city_name=${cityName}`);
+        console.log(response.data); 
+        const results = response.data.places;
+
+        if (results.length > 0) {
+          const [longitude, latitude] = [results[0].lng, results[0].lat]; // Adjust according to API response
+          handleJumpToLocation(latitude, longitude);
+        } else {
+          alert('No results found for the specified city.');
+        }
+      } catch (error) {
+        console.error('Error searching for city:', error);
+        alert('An error occurred while searching for the city.');
+      }
+    }
+  };
+
+  searchCity();
+}, [cityName, handleJumpToLocation]);
+
+
+
 
   //-------------------popup of elevation profile--------------------------------------------------------------------
   const handlePopupClose = () => {
@@ -179,6 +217,8 @@ useEffect(() => {
           clearDrawings={clearDrawings}
           onLayerToggle={handleLayerToggle}
           onJumpToLocation={handleJumpToLocation}
+          onPlaceSearch={handleCitySearch} // Pass handleCitySearch here
+
         />
      
         <Sidebar 
