@@ -19,7 +19,7 @@ import { Feature } from 'ol';
 import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
-import locationPin from '../img/marker.jpg'; // Ensure this path is correct
+import locationPin from '../img/location_pin.png';
 
 
 const formatLength = (line) => {
@@ -386,76 +386,82 @@ const WMTSComponent = ({
     }
   }, [viewshedParams, map, vectorSource]);
 //-------------------------------------------buffer-------------------------------------------------------------------------------------------------------------
-  useEffect(() => {
-    if (bufferParams) {
-      const { latitude, longitude, radius } = bufferParams;
-
-      // Clear existing features
-      vectorSource.clear();
-
-      // Create a circular buffer feature
-      const center = fromLonLat([longitude, latitude], 'EPSG:4326');
-      const bufferFeature = new Feature(new CircleGeom(center, radius / 100000));
-
-      vectorSource.addFeature(bufferFeature);
-
-      // Fit the map to the buffer
-      const extent = bufferFeature.getGeometry().getExtent();
-      if (extent) {
-        map.getView().fit(extent, {
-          padding: [50, 50, 50, 50],
-          duration: 1000,
-        });
-      }
-    }
-  }, [bufferParams, map, vectorSource]);
-//---------------------------------------range rings---------------------------------------------------------------------------------------------
-  useEffect(() => {
-    if (rangeRingsParams) {
-      const { latitude, longitude, radius, rings } = rangeRingsParams;
-      // Clear existing features
-      vectorSource.clear();
-      // Create circular buffer features
-      const center = fromLonLat([longitude, latitude], 'EPSG:4326');
-      let ringFeature;
-      for (let i = 1; i <= rings; i++) {
-        ringFeature = new Feature(new CircleGeom(center, (radius * i) / 100000));
-        vectorSource.addFeature(ringFeature);
-      }
-      const markerIconPath = 'C:/Users/Hp/Desktop/InoTech/web_application/src/img/marker.jpg'; // Correct path format
-      // Add marker feature at the center of the range rings
-      const markerFeature = new Feature(new Point(center));
-      const markerStyle = new Style({
-        image: new Icon({
-          src: markerIconPath,
-          anchor: [0.5, 1],
-        }),
-      });
-      markerFeature.setStyle(markerStyle);
-      vectorSource.addFeature(markerFeature);
-      // Fit the map to the buffer rings if the extent is valid
-      const extent = ringFeature.getGeometry().getExtent();
-      if (extent) {
-        map.getView().fit(extent, {
-          padding: [50, 50, 50, 50],
-          duration: 1000,
-        });
-      }
-    }
-  }, [rangeRingsParams, vectorSource, map]);
-//-----------------------------------------elevation profile---------------------------------------------------------------------------------
 useEffect(() => {
-  if (epToolParams && epToolParams.start && epToolParams.end) {
-    addMarkerPin(map, epToolParams.start, 'Start Point');
-    addMarkerPin(map, epToolParams.end, 'End Point');
-    const newLineFeature = drawStraightLine(map, epToolParams.start, epToolParams.end);
-    setLineFeature(newLineFeature);
-    fetchElevationProfile(epToolParams.start, epToolParams.end);
-  }
-}, [epToolParams, map]);
+  console.log('useEffect triggered for bufferParams');
 
-const addMarkerPin = (map, coords, label) => {
-  if (!map || !coords) return;
+  if (bufferParams) {
+    const { latitude, longitude, radius } = bufferParams;
+    
+    console.log('Buffer Parameters:', bufferParams);
+
+    // Clear existing features
+    vectorSource.clear();
+    console.log('Cleared existing features');
+
+    // Create a circular buffer feature
+    const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+    console.log('Center coordinates:', center);
+    
+    const bufferFeature = new Feature(new CircleGeom(center, radius / 100000));
+    vectorSource.addFeature(bufferFeature);
+    console.log('Added buffer feature');
+
+    // Add a marker at the center of the buffer
+    addMarkerPin(vectorSource, center, 'Center Marker');
+    console.log('Added marker feature at center');
+
+    // Fit the map to the buffer
+    const extent = bufferFeature.getGeometry().getExtent();
+    console.log('Buffer extent:', extent);
+    if (extent) {
+      map.getView().fit(extent, {
+        padding: [50, 50, 50, 50],
+        duration: 1000,
+      });
+      console.log('Fitting map to buffer extent');
+    }
+  }
+}, [bufferParams, map, vectorSource]);
+//---------------------------------------range rings---------------------------------------------------------------------------------------------
+useEffect(() => {
+  console.log('useEffect triggered for rangeRingsParams');
+
+  if (rangeRingsParams) {
+    const { latitude, longitude, radius, rings } = rangeRingsParams;
+    
+    console.log('Range Rings Parameters:', rangeRingsParams);
+
+    // Clear existing features
+    vectorSource.clear();
+    console.log('Cleared existing features');
+
+    // Create circular range ring features
+    const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+    let ringFeature;
+    for (let i = 1; i <= rings; i++) {
+      ringFeature = new Feature(new CircleGeom(center, (radius * i) / 100000));
+      vectorSource.addFeature(ringFeature);
+    }
+    console.log('Added range ring features');
+
+    // Add a marker at the center of the range rings
+    addMarkerPin(vectorSource, center, 'Center Marker');
+    console.log('Added marker feature at center of range rings');
+
+    // Fit the map to the buffer rings if the extent is valid
+    const extent = ringFeature.getGeometry().getExtent();
+    if (extent) {
+      map.getView().fit(extent, {
+        padding: [50, 50, 50, 50],
+        duration: 1000,
+      });
+      console.log('Fitting map to range rings extent');
+    }
+  }
+}, [rangeRingsParams, map, vectorSource]);
+//-----------------------------------------elevation profile---------------------------------------------------------------------------------
+const addMarkerPin = (vectorSource, coords, label) => {
+  if (!coords) return;
 
   const marker = new Feature({
     geometry: new Point(coords),
@@ -488,11 +494,14 @@ const addMarkerPin = (map, coords, label) => {
 
   marker.setStyle(markerStyle);
   vectorSource.addFeature(marker);
+  console.log(`Added marker: ${label} at coordinates: ${coords}`);
 };
 
-const drawStraightLine = (map, startCoords, endCoords) => {
-  if (!map || !startCoords || !endCoords) return;
+const drawStraightLine = (vectorSource, startCoords, endCoords) => {
+  if (!startCoords || !endCoords) return;
 
+  console.log(`Drawing line from ${startCoords} to ${endCoords}`);
+  
   const lineFeature = new Feature({
     geometry: new LineString([startCoords, endCoords]),
   });
@@ -506,14 +515,17 @@ const drawStraightLine = (map, startCoords, endCoords) => {
 
   lineFeature.setStyle(lineStyle);
   vectorSource.addFeature(lineFeature);
+  console.log(`Added line feature from ${startCoords} to ${endCoords}`);
   return lineFeature;
 };
 
 const fetchElevationProfile = async (start, end) => {
   if (!start || !end) return;
 
+  console.log(`Fetching elevation profile from ${start} to ${end}`);
+
   try {
-    const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
+    const response = await axios.post('http://127.0.0.1:5001/elevation_profile', {
       start: {
         lat: start[1],
         lon: start[0],
@@ -527,15 +539,47 @@ const fetchElevationProfile = async (start, end) => {
     setElevationData(response.data);
     setProfileCoords(response.data.features[0].geometry.coordinates);
     setShowPopup(true);
+    console.log('Elevation profile data:', response.data);
   } catch (error) {
     console.error('Error fetching elevation profile:', error);
   }
 };
 
+useEffect(() => {
+  console.log('useEffect triggered for epToolParams');
+
+  if (epToolParams && epToolParams.start && epToolParams.end) {
+    // Clear existing features
+    vectorSource.clear();
+    console.log('Cleared existing features');
+
+    const startCoords = fromLonLat(epToolParams.start, 'EPSG:4326');
+    const endCoords = fromLonLat(epToolParams.end, 'EPSG:4326');
+
+    addMarkerPin(vectorSource, startCoords, 'Start Point');
+    addMarkerPin(vectorSource, endCoords, 'End Point');
+    
+    const newLineFeature = drawStraightLine(vectorSource, startCoords, endCoords);
+    setLineFeature(newLineFeature);
+    
+    fetchElevationProfile(epToolParams.start, epToolParams.end);
+
+    // Fit the map to the markers and line if the extent is valid
+    const extent = newLineFeature.getGeometry().getExtent();
+    if (extent) {
+      map.getView().fit(extent, {
+        padding: [50, 50, 50, 50],
+        duration: 1000,
+      });
+      console.log('Fitting map to elevation profile extent');
+    }
+  }
+}, [epToolParams, map, vectorSource]);
+
 const updateMovingMarker = (coords) => {
   if (!markerRef.current) {
     const marker = new Feature({
-      geometry: new Point(fromLonLat([coords[0], coords[1]])),
+      geometry: new Point(fromLonLat([coords[0], coords[1]], 'EPSG:4326')),
     });
 
     const markerStyle = new Style({
@@ -553,18 +597,12 @@ const updateMovingMarker = (coords) => {
 
     marker.setStyle(markerStyle);
 
-    // const vectorSource = new VectorSource({
-    //   features: [marker],
-    // });
-
-    const markerLayer = new VectorLayer({
-      source: vectorSource,
-    });
-
-    map.addLayer(markerLayer);
     markerRef.current = marker;
+    vectorSource.addFeature(marker);
+    console.log(`Added moving marker at coordinates: ${toLonLat([coords[0], coords[1]])}`);
   } else {
-    markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
+    markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]], 'EPSG:4326'));
+    console.log(`Updated moving marker to coordinates: ${toLonLat([coords[0], coords[1]])}`);
   }
 };
 

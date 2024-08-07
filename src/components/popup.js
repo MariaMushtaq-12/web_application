@@ -7,7 +7,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
 
-const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
+const Popup = ({ elevationData, handleClose, map, lineFeature, updateMovingMarker }) => {
   const chartRef = useRef(null);
   const markerRef = useRef(null);
   const [startPoint, setStartPoint] = useState(null);
@@ -96,7 +96,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
         },
       });
     }
-  }, [elevationData, lineFeature, map]);
+  }, [elevationData, lineFeature, map, updateMovingMarker]);
 
   useEffect(() => {
     const canvas = chartRef.current;
@@ -152,7 +152,7 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, startPoint, endPoint]);
+  }, [isDragging, startPoint, endPoint, updateMovingMarker, elevationData]);
 
   const zoomChart = (startPoint, endPoint) => {
     const chart = window.myChart;
@@ -259,42 +259,6 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
     tooltipEl.style.padding = tooltipModel.options.padding + 'px ' + tooltipModel.options.padding + 'px';
   };
 
-  const updateMovingMarker = (coords) => {
-    if (!markerRef.current) {
-      const marker = new Feature({
-        geometry: new Point(fromLonLat([coords[0], coords[1]])),
-      });
-
-      const markerStyle = new Style({
-        image: new CircleStyle({
-          radius: 7,
-          fill: new Fill({
-            color: 'rgba(0, 0, 255, 0.9)',
-          }),
-          stroke: new Stroke({
-            color: '#fff',
-            width: 2,
-          }),
-        }),
-      });
-
-      marker.setStyle(markerStyle);
-
-      const vectorSource = new VectorSource({
-        features: [marker],
-      });
-
-      const markerLayer = new VectorLayer({
-        source: vectorSource,
-      });
-
-      map.addLayer(markerLayer);
-      markerRef.current = marker;
-    } else {
-      markerRef.current.getGeometry().setCoordinates(fromLonLat([coords[0], coords[1]]));
-    }
-  };
-
   const zoomIntoMap = (coords) => {
     const view = map.getView();
     const zoom = view.getZoom();
@@ -350,5 +314,3 @@ const Popup = ({ elevationData, handleClose, map, lineFeature }) => {
 };
 
 export default Popup;
-
-
