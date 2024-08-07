@@ -525,7 +525,7 @@ const fetchElevationProfile = async (start, end) => {
   console.log(`Fetching elevation profile from ${start} to ${end}`);
 
   try {
-    const response = await axios.post('http://127.0.0.1:5001/elevation_profile', {
+    const response = await axios.post('http://192.168.1.200:5002/elevation_profile', {
       start: {
         lat: start[1],
         lon: start[0],
