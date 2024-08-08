@@ -26,8 +26,54 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [output, setOutput] = useState({ lat: '', lon: '' });
   const [map, setMap] = useState(null);
   const [place, setPlace] = useState('');
-  
+  const [suggestions, setSuggestions] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState('');
 
+
+  // Function to fetch place suggestions from the API
+const fetchPlaceSuggestions = async (cityName) => {
+  try {
+  const response = await
+  fetch(`http://127.0.0.1:5003/search?city_name=${cityName}`);
+  const data = await response.json();
+  // Assuming the API returns an array of place names
+  return data.places || [];
+  } catch (error) {
+  console.error('Error fetching place suggestions:', error);
+  return [];
+  }
+  };
+  const handleSearch = () => {
+    onPlaceSearch(place);
+    };
+    useEffect(() => {
+    if (place.length > 2) {
+    const fetchSuggestions = async () => {
+    const results = await fetchPlaceSuggestions(place);
+    setSuggestions(results);
+    };
+    fetchSuggestions();
+    } else {
+    setSuggestions([]);
+    }
+    }, [place]);
+    
+    const handleSearchClick = () => {
+      if (onPlaceSearch) {
+        onPlaceSearch(place);
+      } else {
+       
+      }
+    };
+    
+    const handleSuggestionClick = (suggestion) => {
+    setPlace(suggestion.name); // Set the input field value to the selected place
+    setSuggestions([]); // Clear suggestions after selection
+    if (onPlaceSearch) {
+    onPlaceSearch(suggestion.name);
+    }
+    };
 
   useEffect(() => {
     const mapInstance = new Map({
@@ -111,13 +157,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
     });
   };
 
-  const handleSearchClick = () => {
-    if (onPlaceSearch) {
-      onPlaceSearch(place);
-    } else {
-     
-    }
-  };
+ 
 
   const SearchBar = ({ onJumpToLocation }) => {
     const [latitude, setLatitude] = useState('');
@@ -422,25 +462,39 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
               )}
             </div>
           )}
-          {activePopup === 'placeSearch' && (
-            <div className="p-2">
-              <label htmlFor="place" className="block mb-2 text-sm font-medium text-white dark:text-white">Enter Place Name</label>
-              <input
-                type="text"
-                name="place"
-                id="place"
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for a place"
-                required
-              />
-              <button
-                type="button"
-                onClick={handleSearchClick}
-                className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Search Place
+             {activePopup === 'placeSearch' && (
+        <div className="p-4 min-w-[300px] max-w-[400px] max-h-[80vh] overflow-y-auto border border-gray-300 bg-gray-800 text-gray-200 rounded-md shadow-lg">
+          <label htmlFor="place" className="block mb-2 text-sm font-medium text-white">Enter Place Name</label>
+          <input
+            type="text"
+            name="place"
+            id="place"
+            value={place}
+            onChange={(e) => setPlace(e.target.value)} // Update place state on input change
+            className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            placeholder="Search for a place"
+            required
+          />
+          {suggestions.length > 0 && (
+            <ul className="mt-2 max-h-40 overflow-y-auto border border-gray-300 bg-white">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleSuggestionClick(suggestion)} // Set place value on suggestion click
+                  style={{ color: 'black' }}
+                >
+                  {suggestion.name}
+                </li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="button"
+            onClick={handleSearchClick}
+            className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          >
+            Search Place
               </button>
             </div>
           )}

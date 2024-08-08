@@ -168,21 +168,20 @@ const App = () => {
   
 
 const handleCitySearch = (inputCityName) => {
-    if (inputCityName) {
-      console.log('Searching for city:', inputCityName);
-      setCityName(inputCityName);
-    } else {
-      alert('Please enter a city name.');
-    }
+  if (inputCityName) {
+  console.log('Searching for city:', inputCityName);
+  setCityName(inputCityName);
+  } else {
+  alert('Please enter a city name.');
+  }
   };
   useEffect(() => {
     const searchCity = async () => {
       if (cityName) {
         try {
           const response = await axios.get(`http://127.0.0.1:5003/search?city_name=${cityName}`);
-          console.log(response.data); 
+          console.log(response.data);
           const results = response.data.places;
-
           if (results.length > 0) {
             const [longitude, latitude] = [results[0].lng, results[0].lat]; // Adjust according to API response
             handleJumpToLocation(latitude, longitude);
@@ -195,11 +194,9 @@ const handleCitySearch = (inputCityName) => {
         }
       }
     };
-
     searchCity();
-  }, [cityName, handleJumpToLocation]);
-
- 
+  }, [cityName]);
+  
   //-------------------popup of elevation profile--------------------------------------------------------------------
   const handlePopupClose = () => {
     setElevationData(null);

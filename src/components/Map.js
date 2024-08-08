@@ -11,7 +11,7 @@ import { get as getProjection } from 'ol/proj';
 import { getWidth } from 'ol/extent';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
+import { Circle, Fill, Stroke, Style, Text, Icon } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import Draw from 'ol/interaction/Draw';
@@ -637,117 +637,114 @@ const WMTSComponent = ({  onMapClick, mapRef, viewshedParams, setClickedCoordina
   useEffect(() => {
     // Check if POI parameters are available
     if (poiParams && poiParams.latitude && poiParams.longitude && poiParams.radius && poiParams.type) {
-      // Clear existing features
-      vectorSource.clear();
-  
-      // Create and add buffer feature
-      const { latitude, longitude, radius } = poiParams;
-      const center = fromLonLat([longitude, latitude], 'EPSG:4326');
-      const bufferFeature = new Feature({
-        geometry: new CircleGeom(center, radius / 100000) // Convert radius from meters to appropriate units
-      });
-  
-      const bufferStyle = new Style({
-        stroke: new Stroke({
-          color: 'rgba(0, 0, 255, 0.5)',
-          width: 2,
-        }),
-        fill: new Fill({
-          color: 'rgba(0, 0, 255, 0.2)',
-        }),
-      });
-  
-      bufferFeature.setStyle(bufferStyle);
-      vectorSource.addFeature(bufferFeature);
-  
-      // Fetch POIs from API
-      const fetchPOIs = async () => {
-        try {
-          const response = await axios.get('http://127.0.0.1:5000/buffer', {
-            params: {
-              lat: poiParams.latitude,
-              lng: poiParams.longitude,
-              radius: poiParams.radius,
-              type: poiParams.type,
-            },
-          });
-  
-          const pois = response.data.points; // Access the points array from the response
-          console.log("pois", pois);
-  
-          pois.forEach((poi) => {
-            const { lat, lng, name } = poi; // Note: Adjusted to `lat` and `lng` to match the backend response
-            console.log("poi", poi);
-  
-            // Create POI feature
-            const poiFeature = new Feature({
-              geometry: new Point(fromLonLat([lng, lat], 'EPSG:4326')),
-              name,
-            });
-            console.log("poiFeature", poiFeature);
-  
-            // Style POI feature
-            const poiStyle = new Style({
-              image: new Circle({
-                radius: 5,
-                fill: new Fill({
-                  color: 'rgba(0, 0, 255, 0.6)',
-                }),
-                stroke: new Stroke({
-                  color: '#fff',
-                  width: 2,
-                }),
-              }),
-              text: new Text({
-                text: name,
-                offsetY: -15,
-                fill: new Fill({
-                  color: '#000',
-                }),
-                stroke: new Stroke({
-                  color: '#fff',
-                  width: 2,
-                }),
-              }),
-            });
-  
-            poiFeature.setStyle(poiStyle);
-            vectorSource.addFeature(poiFeature);
-          });
-  
-          // Adjust map view to fit all features
-          const extent = vectorSource.getExtent();
-          if (extent) {
-            map.getView().fit(extent, {
-              padding: [50, 50, 50, 50],
-              duration: 1000,
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching POIs:', error);
-        }
-      };
-  
-      fetchPOIs();
-  
-      // Optional: Add click interaction to show popup for POIs
-      const handleClick = (evt) => {
-        const feature = map.getFeaturesAtPixel(evt.pixel)[0];
-        if (feature && feature.get('name')) {
-          // Display popup with POI details
-          setShowPopup(true);
-          // setElevationData(feature.get('name')); // Set appropriate data to show in popup
-        }
-      };
-  
-      map.on('click', handleClick);
-  
-      return () => {
-        map.un('click', handleClick); // Cleanup event listener on unmount
-      };
+        // Clear existing features
+        vectorSource.clear();
+
+        // Create and add buffer feature
+        const { latitude, longitude, radius } = poiParams;
+        const center = fromLonLat([longitude, latitude], 'EPSG:4326');
+        const bufferFeature = new Feature({
+            geometry: new CircleGeom(center, radius / 100000) // Convert radius from meters to appropriate units
+        });
+
+        const bufferStyle = new Style({
+            stroke: new Stroke({
+                color: 'rgba(0, 0, 255, 0.5)',
+                width: 2,
+            }),
+            fill: new Fill({
+                color: 'rgba(0, 0, 255, 0.2)',
+            }),
+        });
+
+        bufferFeature.setStyle(bufferStyle);
+        vectorSource.addFeature(bufferFeature);
+
+        // Fetch POIs from API
+        const fetchPOIs = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:5000/buffer', {
+                    params: {
+                        lat: poiParams.latitude,
+                        lng: poiParams.longitude,
+                        radius: poiParams.radius,
+                        type: poiParams.type,
+                    },
+                });
+
+                const pois = response.data.points; // Access the points array from the response
+                console.log("pois", pois);
+
+                pois.forEach((poi) => {
+                    const { lat, lng, name, iconUrl } = poi;
+                    console.log("poi", poi);
+
+                    // Create POI feature
+                    const poiFeature = new Feature({
+                        geometry: new Point(fromLonLat([lng, lat], 'EPSG:4326')),
+                        name,
+                    });
+                    console.log("poiFeature", poiFeature);
+
+                    // Style POI feature with an icon
+                    const poiStyle = new Style({
+                        image: new Icon({
+                            src: iconUrl || '/icons/cafe.png', // Use the provided iconUrl or default icon
+                            scale: 0.05, // Adjust the scale of the icon as needed
+                            anchor: [0.5, 1], // Adjust anchor to center the icon on the point
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                        }),
+                        text: new Text({
+                            text: name,
+                            offsetY: -20,
+                            fill: new Fill({
+                                color: '#000',
+                            }),
+                            stroke: new Stroke({
+                                color: '#fff',
+                                width: 2,
+                            }),
+                        }),
+                    });
+
+                    poiFeature.setStyle(poiStyle);
+                    vectorSource.addFeature(poiFeature);
+                });
+
+                // Adjust map view to fit all features
+                const extent = vectorSource.getExtent();
+                if (extent) {
+                    map.getView().fit(extent, {
+                        padding: [50, 50, 50, 50],
+                        duration: 1000,
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching POIs:', error);
+            }
+        };
+
+        fetchPOIs();
+
+        // Optional: Add click interaction to show popup for POIs
+        const handleClick = (evt) => {
+            const feature = map.getFeaturesAtPixel(evt.pixel)[0];
+            if (feature && feature.get('name')) {
+                // Display popup with POI details
+                setShowPopup(true);
+                // setElevationData(feature.get('name')); // Set appropriate data to show in popup
+            }
+        };
+
+        map.on('click', handleClick);
+
+        return () => {
+            map.un('click', handleClick); // Cleanup event listener on unmount
+        };
     }
-  }, [poiParams, map, vectorSource]);
-  
+}, [poiParams, map, vectorSource]);
+
 //-------------------------------------------POI----------------------------------------------------
 
   return (

@@ -16,6 +16,11 @@ def index():
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
+# Serve icons from the 'icons' directory in the public folder
+@app.route('/icons/<path:filename>')
+def serve_icon(filename):
+    return send_from_directory(os.path.join(app.static_folder, 'icons'), filename)
+
 # Buffer endpoint to handle GET request for buffer creation
 @app.route('/buffer', methods=['GET'])
 def buffer():
@@ -30,7 +35,7 @@ def buffer():
 
     # Query to fetch POIs within the buffer
     query = f"""
-    SELECT name, ST_X(geom) AS lng, ST_Y(geom) AS lat
+    SELECT name, ST_X(geom) AS lng, ST_Y(geom) AS lat, icon_url
     FROM {poi_type}
     WHERE ST_DWithin(geom, ST_MakePoint(%s, %s)::geography, %s);
     """
@@ -38,9 +43,9 @@ def buffer():
     rows = cur.fetchall()
     conn.close()
 
-    points = [{'name': row[0], 'lng': row[1], 'lat': row[2]} for row in rows]
+    points = [{'name': row[0], 'lng': row[1], 'lat': row[2], 'iconUrl': row[3]} for row in rows]
 
     return jsonify({'points': points})
 
 if __name__ == '__main__':
-     app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
