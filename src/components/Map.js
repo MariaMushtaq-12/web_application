@@ -213,7 +213,7 @@ const WMTSComponent = ({
     const newMap = new Map({
       target: internalMapRef.current,
     //   layers: [ countries, world, vectorLayer],
-      layers: [base, DEM, osm, ROAD, WATER, RAIL, countries, world,SAT, vectorLayer],
+      layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -229,8 +229,8 @@ const WMTSComponent = ({
       { name: 'ROAD', visible: false },
       { name: 'WATER', visible: false },
       { name: 'RAIL', visible: false },
-      { name: 'countries', visible: true },
-      { name: 'world', visible: true },
+      // { name: 'countries', visible: true },
+      // { name: 'world', visible: true },
       { name: 'SAT', visible: true },
     ]);
 
@@ -374,6 +374,7 @@ const WMTSComponent = ({
         }),
       })));
       vectorSource.clear();
+      vectorSource.addFeatures(nonVisibleFeatures);
       vectorSource.addFeatures(visibleFeatures);
       vectorSource.addFeatures(restFeatures);
       const extent = vectorSource.getExtent();
