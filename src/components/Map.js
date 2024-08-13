@@ -374,9 +374,10 @@ const WMTSComponent = ({
         }),
       })));
       vectorSource.clear();
-      vectorSource.addFeatures(nonVisibleFeatures);
-      vectorSource.addFeatures(visibleFeatures);
       vectorSource.addFeatures(restFeatures);
+      //vectorSource.addFeatures(nonVisibleFeatures);
+      vectorSource.addFeatures(visibleFeatures);
+      //vectorSource.addFeatures(restFeatures);
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {

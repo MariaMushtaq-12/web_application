@@ -33,7 +33,7 @@ const Routing = ({ setRoutingParams, clickedCoordinates, onClose }) => {
   };
 
   const fetchRouteDetails = async (startLon, startLat, endLon, endLat) => {
-    const url = `http://127.0.0.1:5003/shortest_path`;
+    const url = `http://192.168.1.200:5003/shortest_path`;
     try {
       const response = await axios.post(url, {
         source_lon: startLon,
