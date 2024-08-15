@@ -202,11 +202,11 @@ const WMTSComponent = ({
     console.log(layers);
     onLayerChange([
       { name: 'base', visible: true },
-      { name: 'DEM', visible: false },
-      { name: 'osm', visible: false },
-      { name: 'ROAD', visible: false },
-      { name: 'WATER', visible: false },
-      { name: 'RAIL', visible: false },
+      { name: 'DEM', visible: true },
+      { name: 'osm', visible: true },
+      { name: 'ROAD', visible: true },
+      { name: 'WATER', visible: true},
+      { name: 'RAIL', visible: true },
       // { name: 'countries', visible: true },
       // { name: 'world', visible: true },
       { name: 'SAT', visible: true },

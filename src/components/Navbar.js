@@ -296,8 +296,10 @@ const fetchPlaceSuggestions = async (cityName) => {
             {activePopup === 'layers' && (
               <div>
                 <h3 className="font-bold">Layers</h3>
+             
                 <ul>
                   {layers.map((layer, index) => (
+                   
                     <li key={index}>
                       <input
                         type="checkbox"
@@ -308,8 +310,10 @@ const fetchPlaceSuggestions = async (cityName) => {
                       />
                       <label htmlFor={`layer-${index}`}>{layer.name}</label>
                     </li>
+                 
                   ))}
                 </ul>
+                
               </div>
             )} 
 
