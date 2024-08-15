@@ -26,13 +26,63 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [output, setOutput] = useState({ lat: '', lon: '' });
   const [map, setMap] = useState(null);
   const [place, setPlace] = useState('');
-  const handlePlaceSearch = () => {
-    if (place) {
-      onPlaceSearch(place);
-    } else {
-      alert('Please enter a place.');
-    }
+  const [suggestions, setSuggestions] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState('');
+
+
+  // const handlePlaceSearch = () => {
+  //   if (place) {
+  //     onPlaceSearch(place);
+  //   } else {
+  //     alert('Please enter a place.');
+  //   }
+  // };
+
+  
+  // Function to fetch place suggestions from the API
+const fetchPlaceSuggestions = async (cityName) => {
+  try {
+  const response = await
+  fetch(`http://192.168.1.200:5004/search?city_name=${cityName}`);
+  const data = await response.json();
+  // Assuming the API returns an array of place names
+  return data.places || [];
+  } catch (error) {
+  console.error('Error fetching place suggestions:', error);
+  return [];
+  }
   };
+  const handleSearch = () => {
+    onPlaceSearch(place);
+    };
+    useEffect(() => {
+    if (place.length > 2) {
+    const fetchSuggestions = async () => {
+    const results = await fetchPlaceSuggestions(place);
+    setSuggestions(results);
+    };
+    fetchSuggestions();
+    } else {
+    setSuggestions([]);
+    }
+    }, [place]);
+    
+    const handleSearchClick = () => {
+      if (onPlaceSearch) {
+        onPlaceSearch(place);
+      } else {
+       
+      }
+    };
+    
+    const handleSuggestionClick = (suggestion) => {
+    setPlace(suggestion.name); // Set the input field value to the selected place
+    setSuggestions([]); // Clear suggestions after selection
+    if (onPlaceSearch) {
+    onPlaceSearch(suggestion.name);
+    }
+    };
 
   useEffect(() => {
     const mapInstance = new Map({
@@ -434,7 +484,7 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
               </div>
             )}
 {/*-------------------------------------Place Search------------------------------------------------------------------------------------------- */}
-{activePopup === 'placeSearch' && (
+{/* {activePopup === 'placeSearch' && (
             <div className="p-2">
               <label htmlFor="place" className="block mb-2 text-sm font-medium text-white dark:text-white">Enter Place Name</label>
               <input
@@ -455,58 +505,46 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
                 Search Place
               </button>
             </div>
-          )}
-         {/* {activePopup === 'placeSearch' && (
-  <div
-    className="relative flex"
-    data-twe-input-wrapper-init
-    data-twe-input-group-ref
-  >
-    <input
-      type="search"
-      name="place"
-      id="place"
-      value={place}
-      onChange={(e) => setPlace(e.target.value)}
-      className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
-      placeholder="Search for a place"
-      aria-label="Search"
-      aria-describedby="basic-addon1"
-      required
-    />
-    <label
-      htmlFor="place"
-      className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[0.9rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-400 dark:peer-focus:text-primary"
-    >
-      Enter Place Name
-    </label>
-    <button
-      type="button"
-      onClick={handlePlaceSearch}
-      className="relative z-[2] -ms-0.5 flex items-center rounded-e bg-primary px-5  text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:bg-green-500 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-      id="button-addon1"
-      data-twe-ripple-init
-      data-twe-ripple-color="light"
-    >
-      <span className="[&>svg]:h-5 [&>svg]:w-5">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="2"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+          )} */}
+        {activePopup === 'placeSearch' && (
+        <div className="p-2">
+          <label htmlFor="place" className="block mb-2 text-sm font-medium text-white">Enter Place Name</label>
+          <input
+            type="text"
+            name="place"
+            id="place"
+            value={place}
+            onChange={(e) => setPlace(e.target.value)} // Update place state on input change
+            className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+            placeholder="Search for a place"
+            required
           />
-        </svg>
-      </span>
-    </button>
-  </div>
-)} */}
-
+          {suggestions.length > 0 && (
+            <ul className="mt-2 max-h-40 overflow-y-auto border border-gray-300 bg-white">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleSuggestionClick(suggestion)} // Set place value on suggestion click
+                  style={{ color: 'black' }}
+                >
+                  {suggestion.name}
+                </li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="button"
+            onClick={handleSearchClick}
+            className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          >
+            Search Place
+              </button>
+            </div>
+          )}
+        
+     
+   
 {/*--------------------------------------Eraser------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'eraser' && (
