@@ -29,6 +29,8 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [suggestions, setSuggestions] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedPlace, setSelectedPlace] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
+
   // Function to fetch place suggestions from the API
 const fetchPlaceSuggestions = async (cityName) => {
   try {
@@ -72,7 +74,16 @@ const fetchPlaceSuggestions = async (cityName) => {
     onPlaceSearch(suggestion.name);
     }
     };
-
+   
+    const handleSelectAllToggle = () => {
+      setSelectAll(!selectAll);
+    }; 
+    useEffect(() => {
+      layers.forEach(layer => {
+        onLayerToggle(layer.name, selectAll);
+      });
+    }, [selectAll]);
+  
   useEffect(() => {
     const mapInstance = new Map({
       target: 'map',
@@ -293,7 +304,7 @@ const fetchPlaceSuggestions = async (cityName) => {
             )}
 {/*--------------------------------------layers------------------------------------------------------------------------------------------- */}
 
-            {activePopup === 'layers' && (
+            {/* {activePopup === 'layers' && (
               <div>
                 <h3 className="font-bold">Layers</h3>
              
@@ -315,9 +326,44 @@ const fetchPlaceSuggestions = async (cityName) => {
                 </ul>
                 
               </div>
-            )} 
+            )}  */}
 
+{activePopup === 'layers' && (
+        <div>
+          <h3 className="font-bold">Layers</h3>
 
+          <ul>
+            <li>
+              <input
+                type="checkbox"
+                id="select-all"
+                checked={selectAll}
+                onChange={handleSelectAllToggle}
+                className="mr-2"
+              />
+              <label htmlFor="select-all">
+                {selectAll ? 'Deselect All' : 'Select All'}
+              </label>
+            </li>
+            {layers.map((layer, index) => (
+              <li key={index}>
+                <input
+                  type="checkbox"
+                  id={`layer-${index}`}
+                  checked={layer.visible || selectAll}
+                  onChange={() => toggleLayer(layer.name)}
+                  className="mr-2"
+                />
+                <label htmlFor={`layer-${index}`}>{layer.name}</label>
+              </li>
+            ))}
+          </ul>
+
+          <button onClick={handleClosePopup}>
+            <FaWindowClose />
+          </button>
+        </div>
+      )}
 {/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'measurement' && (
