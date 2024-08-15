@@ -96,32 +96,7 @@ const WMTSComponent = ({
       matrixIds[z] = z.toString();
     }
 
-    const countries = new ImageLayer({
-      source: new ImageWMS({
-        ratio: 1,
-        url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'STYLES': '',
-          'LAYERS': 'ne:countries',
-        },
-      }),
-    });
-   
-    const world = new TileLayer({
-      source: new TileWMS({
-        url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
-        params: {
-          'FORMAT': 'image/jpeg',
-          'VERSION': '1.1.1',
-          'tiled': true,
-          'STYLES': '',
-          'LAYERS': 'ne:world',
-        },
-      }),
-    });
-
+//pakistan boundary
     const base = new ImageLayer({
       source: new ImageWMS({
         ratio: 1,
@@ -134,7 +109,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+//osm
     const osm = new TileLayer({
       source: new TileWMS({
         url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
@@ -147,7 +122,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+//DEM
     const DEM = new TileLayer({
       source: new TileWMS({
         url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
@@ -160,7 +135,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+//roads
     const ROAD = new TileLayer({
       source: new TileWMS({
         url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
@@ -173,7 +148,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+//water
     const WATER = new TileLayer({
       source: new TileWMS({
         url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
@@ -186,7 +161,7 @@ const WMTSComponent = ({
         },
       }),
     });
-
+//rail
     const RAIL = new TileLayer({
       source: new TileWMS({
         url: 'http://192.168.1.200:8080/geoserver/ne/wms?request=GetCapabilities',
@@ -199,6 +174,7 @@ const WMTSComponent = ({
         },
       }),
     });
+    //satellite imagery
     const SAT = new ImageLayer({
       source: new ImageWMS({
         ratio: 1,
@@ -211,9 +187,10 @@ const WMTSComponent = ({
         },
       }),
     });
+
     const newMap = new Map({
       target: internalMapRef.current,
-    //   layers: [ countries, world, vectorLayer],
+   
       layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT, vectorLayer],
       view: new View({
         projection: projection,
@@ -727,73 +704,80 @@ useEffect(() => {
 
 
 //---------------------------------------------- Routing-------------------------------------------------------------------------------------------------------
-  // useEffect(() => {
-  //   if (routingParams && routingParams.start && routingParams.end) {
-  //     addMarkerPin(map, routingParams.start, 'Start Point');
-  //     addMarkerPin(map, routingParams.end, 'End Point');
-  //     fetchShortestPath(routingParams.start, routingParams.end);
-  //   }
-  // }, [routingParams, map]);
-  // const fetchShortestPath = async (start, end) => {
-  //   if (!start || !end) return;
-  //   try {
-  //     const response = await axios.post('http://192.168.1.200:5003/shortest_path', {
-  //       source_lon: start[0],
-  //       source_lat: start[1],
-  //       dest_lon: end[0],
-  //       dest_lat: end[1],
-  //     });
-  //     const geojson = response.data;
-  //     console.log('Server response:', geojson);
-  //     const coordinates = [];
-  //     geojson.features.forEach((feature) => {
-  //       if (feature.geometry && feature.geometry.type === 'Point') {
-  //         const coord = feature.geometry.coordinates;
-  //         if (coord.length === 2) {
-  //           coordinates.push(coord);
-  //           console.log(`Coordinate: ${coord}`);
-  //         }
-  //       }
-  //     });
-  //     console.log('Fetched coordinates:', coordinates);
-  //     if (coordinates.length < 2) {
-  //       throw new Error('Insufficient coordinates to draw the route');
-  //     }
-  //     const newLineFeature = drawRouteLine(coordinates);
-  //     setLineFeature(newLineFeature);
-  //     const extent = newLineFeature.getGeometry().getExtent();
-  //     console.log('Calculated extent:', extent);
-  //     if (extent.every(value => isFinite(value))) {
-  //       map.getView().fit(extent, {
-  //         padding: [50, 50, 50, 50],
-  //         duration: 1000,
-  //       });
-  //       console.log('Map view updated to fit the route.');
-  //     } else {
-  //       throw new Error('Invalid extent');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching shortest path:', error);
-  //   }
-  // };
-  // const drawRouteLine = (coordinates) => {
-  //   if (!map || !coordinates.length) return;
-  //   const lineFeature = new Feature({
-  //     geometry: new LineString(coordinates),
-  //   });
-  //   const lineStyle = new Style({
-  //     stroke: new Stroke({
-  //       color: 'rgba(255, 0, 0, 1)',
-  //       width: 2,
-  //     }),
-  //   });
-  //   lineFeature.setStyle(lineStyle);
-  //   vectorSource.clear(); // Clear previous features
-  //   vectorSource.addFeature(lineFeature);
-  //   return lineFeature;
-  // };
+  useEffect(() => {
+    if (routingParams && routingParams.start && routingParams.end) {
+      const addMarkerPin = (coords) => {
+        const markerFeature = new Feature({
+          geometry: new Point(coords),
+        });
+      
+        vectorSource.addFeature(markerFeature);  // Ensure vectorSource is a VectorSource instance
+      };
+      addMarkerPin(map, routingParams.start, 'Start Point');
+      // addMarkerPin(map, routingParams.end, 'End Point');
+      fetchShortestPath(routingParams.start, routingParams.end);
+    }
+  }, [routingParams, map]);
+  const fetchShortestPath = async (start, end) => {
+    if (!start || !end) return;
+    try {
+      const response = await axios.post('http://192.168.1.200:5003/shortest_path', {
+        source_lon: start[0],
+        source_lat: start[1],
+        dest_lon: end[0],
+        dest_lat: end[1],
+      });
+      const geojson = response.data;
+      console.log('Server response:', geojson);
+      const coordinates = [];
+      geojson.features.forEach((feature) => {
+        if (feature.geometry && feature.geometry.type === 'Point') {
+          const coord = feature.geometry.coordinates;
+          if (coord.length === 2) {
+            coordinates.push(coord);
+            console.log(`Coordinate: ${coord}`);
+          }
+        }
+      });
+      console.log('Fetched coordinates:', coordinates);
+      if (coordinates.length < 2) {
+        throw new Error('Insufficient coordinates to draw the route');
+      }
+      const newLineFeature = drawRouteLine(coordinates);
+      setLineFeature(newLineFeature);
+      const extent = newLineFeature.getGeometry().getExtent();
+      console.log('Calculated extent:', extent);
+      if (extent.every(value => isFinite(value))) {
+        map.getView().fit(extent, {
+          padding: [50, 50, 50, 50],
+          duration: 1000,
+        });
+        console.log('Map view updated to fit the route.');
+      } else {
+        throw new Error('Invalid extent');
+      }
+    } catch (error) {
+      console.error('Error fetching shortest path:', error);
+    }
+  };
+  const drawRouteLine = (coordinates) => {
+    if (!map || !coordinates.length) return;
+    const lineFeature = new Feature({
+      geometry: new LineString(coordinates),
+    });
+    const lineStyle = new Style({
+      stroke: new Stroke({
+        color: 'rgba(255, 0, 0, 1)',
+        width: 2,
+      }),
+    });
+    lineFeature.setStyle(lineStyle);
+    vectorSource.clear(); // Clear previous features
+    vectorSource.addFeature(lineFeature);
+    return lineFeature;
+  };
 
-
+  
   //-----------------------return function-----------------------------------------
   return (
     <div ref={internalMapRef} style={{ width: '100%', height: '100%' }}>
