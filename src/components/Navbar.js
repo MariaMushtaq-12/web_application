@@ -29,17 +29,6 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [suggestions, setSuggestions] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedPlace, setSelectedPlace] = useState('');
-
-
-  // const handlePlaceSearch = () => {
-  //   if (place) {
-  //     onPlaceSearch(place);
-  //   } else {
-  //     alert('Please enter a place.');
-  //   }
-  // };
-
-  
   // Function to fetch place suggestions from the API
 const fetchPlaceSuggestions = async (cityName) => {
   try {
@@ -323,34 +312,7 @@ const fetchPlaceSuggestions = async (cityName) => {
                 </ul>
               </div>
             )} 
-{/* 
-{activePopup === 'layers' && (
-  <div className="p-2">
-    <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Layers</h2>
-    <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-      {layers.map((layer, index) => (
-        <li key={index} className="flex items-center">
-          <input
-            type="checkbox"
-            id={`layer-${index}`}
-            checked={layer.visible}
-             <svg className="w-3.5 h-3.5 me-2 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-            </svg>
-            onChange={() => toggleLayer(layer.name)}
-            className="mr-2"
-          />
-          <label htmlFor={`layer-${index}`} className="flex items-center">
-            <svg className="w-3.5 h-3.5 me-2 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-            </svg>
-            {layer.name}
-          </label>
-        </li>
-      ))}
-    </ul>
-  </div>
-)} */}
+
 
 {/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
 
@@ -513,28 +475,7 @@ const fetchPlaceSuggestions = async (cityName) => {
               </div>
             )}
 {/*-------------------------------------Place Search------------------------------------------------------------------------------------------- */}
-{/* {activePopup === 'placeSearch' && (
-            <div className="p-2">
-              <label htmlFor="place" className="block mb-2 text-sm font-medium text-white dark:text-white">Enter Place Name</label>
-              <input
-                type="text"
-                name="place"
-                id="place"
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for a place"
-                required
-              />
-              <button
-                type="button"
-                onClick={handlePlaceSearch}
-                className="mt-2 w-full text-white bg-black hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Search Place
-              </button>
-            </div>
-          )} */}
+
         {activePopup === 'placeSearch' && (
         <div className="p-2">
           <label htmlFor="place" className="block mb-2 text-sm font-medium text-white">Enter Place Name</label>
@@ -571,9 +512,7 @@ const fetchPlaceSuggestions = async (cityName) => {
               </button>
             </div>
           )}
-        
-     
-   
+  
 {/*--------------------------------------Eraser------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'eraser' && (
