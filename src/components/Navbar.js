@@ -30,7 +30,9 @@ const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, on
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedPlace, setSelectedPlace] = useState('');
   const [selectAll, setSelectAll] = useState(false);
+//--------------------------------------------------
 
+//-------------------------------------------------
   // Function to fetch place suggestions from the API
 const fetchPlaceSuggestions = async (cityName) => {
   try {
@@ -121,10 +123,15 @@ const fetchPlaceSuggestions = async (cityName) => {
       setActiveMeasurement(measurement);
     }
   };
+//----------------------layers---------------------------------
 
-  const toggleLayer = (layerName) => {
+const toggleLayer = (layerName) => {
     onLayerToggle(layerName);
   };
+
+
+
+  
 //-----------------------------------constants for the coordinate converters---------------------------------------------------------------------
   const handleConversionTypeChange = (type) => {
     setConversionType(type);
@@ -233,7 +240,7 @@ const fetchPlaceSuggestions = async (cityName) => {
       </div>
     );
   };
-
+ 
 //---------------------------------------------returning vertical navbar--------------------------------------------------------------------------------------
   return (
     
@@ -268,7 +275,7 @@ const fetchPlaceSuggestions = async (cityName) => {
 
       {activePopup && (
         <div
-        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-800 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-scroll "
+        className="absolute left-[-320px] top-8 min-w-72 max-h-[70vh]  z-50 bg-gray-800 text-gray-200 p-2 m-2.5 rounded-md shadow-lg overflow-y-auto "
         style={{
           right: (() => {
             switch (activePopup) {
@@ -303,8 +310,8 @@ const fetchPlaceSuggestions = async (cityName) => {
               </div>
             )}
 {/*--------------------------------------layers------------------------------------------------------------------------------------------- */}
-
-            {/* {activePopup === 'layers' && (
+{/* 
+            {activePopup === 'layers' && (
               <div>
                 <h3 className="font-bold">Layers</h3>
              
@@ -330,40 +337,27 @@ const fetchPlaceSuggestions = async (cityName) => {
 
 {activePopup === 'layers' && (
         <div>
-          <h3 className="font-bold">Layers</h3>
+          <h3 className="font-bold">Maps</h3>
 
-          <ul>
-            <li>
-              <input
-                type="checkbox"
-                id="select-all"
-                checked={selectAll}
-                onChange={handleSelectAllToggle}
-                className="mr-2"
-              />
-              <label htmlFor="select-all">
-                {selectAll ? 'Deselect All' : 'Select All'}
-              </label>
-            </li>
+          <ul className="ml-4 list-none">
             {layers.map((layer, index) => (
-              <li key={index}>
+              <li key={index} className="mb-2">
                 <input
                   type="checkbox"
                   id={`layer-${index}`}
-                  checked={layer.visible || selectAll}
+                  checked={layer.visible}
                   onChange={() => toggleLayer(layer.name)}
                   className="mr-2"
                 />
-                <label htmlFor={`layer-${index}`}>{layer.name}</label>
+                <label htmlFor={`layer-${index}`} className="capitalize">{layer.name}</label>
               </li>
             ))}
           </ul>
 
-          <button onClick={handleClosePopup}>
-            <FaWindowClose />
-          </button>
+         
         </div>
       )}
+
 {/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'measurement' && (

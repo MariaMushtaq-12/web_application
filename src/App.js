@@ -218,6 +218,7 @@ useEffect(() => {
           onLayerToggle={handleLayerToggle}
           onJumpToLocation={handleJumpToLocation}
           onPlaceSearch={handleCitySearch} // Pass handleCitySearch here
+          
 
         />
      

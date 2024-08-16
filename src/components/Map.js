@@ -201,15 +201,13 @@ const WMTSComponent = ({
 
     console.log(layers);
     onLayerChange([
-      { name: 'base', visible: false},
+      { name: 'base', visible: true},
       { name: 'DEM', visible: false },
       { name: 'osm', visible: false},
       { name: 'ROAD', visible: false },
       { name: 'WATER', visible: false},
       { name: 'RAIL', visible: false },
-      // { name: 'countries', visible: true },
-      // { name: 'world', visible: true },
-      { name: 'SAT', visible: false },
+      { name: 'SAT', visible: true },
     ]);
 
     newMap.on('click', (evt) => {
@@ -317,6 +315,7 @@ const WMTSComponent = ({
   }, [activeMeasurement, map]);
 
   //---------------------------------viewshed-----------------------------------------------------------------------------------------------
+ 
   useEffect(() => {
     if (viewshedParams) {
       const geojsonFormat = new GeoJSON();
@@ -356,6 +355,29 @@ const WMTSComponent = ({
       //vectorSource.addFeatures(nonVisibleFeatures);
       vectorSource.addFeatures(visibleFeatures);
       //vectorSource.addFeatures(restFeatures);
+      
+      
+        // Add center point marker
+    const centerCoordinates = [viewshedParams.longitude, viewshedParams.latitude];
+    const centerPointFeature = new Feature({
+      geometry: new Point(fromLonLat(centerCoordinates, 'EPSG:4326')),
+    });
+
+    const centerPointStyle = new Style({
+      image: new Circle({
+        radius: 7,
+        fill: new Fill({
+          color: 'rgba(0, 0, 255, 1)', // blue color for the center point
+        }),
+        stroke: new Stroke({
+          color: '#fff',
+          width: 2,
+        }),
+      }),
+    });
+
+    centerPointFeature.setStyle(centerPointStyle);
+    vectorSource.addFeature(centerPointFeature);
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {
@@ -363,7 +385,9 @@ const WMTSComponent = ({
           duration: 1000,
         });
       }
-      
+ 
+    
+       
     }
   }, [viewshedParams, map, vectorSource]);
 //-------------------------------------------buffer-------------------------------------------------------------------------------------------------------------
@@ -524,6 +548,7 @@ const fetchElevationProfile = async (start, end) => {
   } catch (error) {
     console.error('Error fetching elevation profile:', error);
   }
+
 };
 
 useEffect(() => {
@@ -537,8 +562,8 @@ useEffect(() => {
     const startCoords = fromLonLat(epToolParams.start, 'EPSG:4326');
     const endCoords = fromLonLat(epToolParams.end, 'EPSG:4326');
 
-    addMarkerPin(vectorSource, startCoords, 'Start Point');
-    addMarkerPin(vectorSource, endCoords, 'End Point');
+    addMarkerPin(vectorSource, startCoords, 'Start');
+    addMarkerPin(vectorSource, endCoords, 'End');
     
     const newLineFeature = drawStraightLine(vectorSource, startCoords, endCoords);
     setLineFeature(newLineFeature);
@@ -613,6 +638,27 @@ useEffect(() => {
 
     bufferFeature.setStyle(bufferStyle);
     vectorSource.addFeature(bufferFeature);
+
+// Add center point marker
+const centerPointFeature = new Feature({
+  geometry: new Point(center),
+});
+
+const centerPointStyle = new Style({
+  image: new Circle({
+    radius: 7,
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 0.8)', // Red color for the center point
+    }),
+    stroke: new Stroke({
+      color: '#fff',
+      width: 2,
+    }),
+  }),
+});
+
+centerPointFeature.setStyle(centerPointStyle);
+vectorSource.addFeature(centerPointFeature );
 
     // Fetch POIs from API
     const fetchPOIs = async () => {
