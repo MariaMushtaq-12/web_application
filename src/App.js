@@ -8,12 +8,9 @@ import './App.css';
 import './css/Sidebar.css';
 import VectorLayer from 'ol/layer/Vector';
 import { LineString } from 'ol/geom';
-
 import { fromLonLat } from 'ol/proj';
-
 import VectorSource from 'ol/source/Vector';
 import { Vector, Fill, Stroke, Style } from 'ol/style';
-// Import required components in WMTSComponent.js
 import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
@@ -21,8 +18,12 @@ import Overlay from 'ol/Overlay';
 import locationPin from './img/location_pin.png';
 import axios from 'axios';
 import Popup from './components/popup';
-
+import "./App.css"
 const App = () => {
+  
+  
+
+  /////////////add use state of the layers ////////////////////
   const [activeTool, setActiveTool] = useState(null);
   const [viewshedParams, setViewshedParams] = useState(null);
   const [clickedCoordinates, setClickedCoordinates] = useState(null);
@@ -31,19 +32,13 @@ const App = () => {
   const [bufferParams, setBufferParams] = useState(null);
   const [lineOfSightParams, setLineOfSightParams] = useState(null);
   const [rangeRingsParams, setRangeRingsParams] = useState(null);
-  const [epToolParams, setEpToolParams] = useState(null);
-  const [elevationData, setElevationData] = useState(null); // Elevation
+  const [epToolParams, setEpToolParams] = useState(null); //elevation profile
+  const [elevationData, setElevationData] = useState(null); // Elevation data
+  const [routingParams, setRoutingParams] = useState(null); // Add routingParams state
+  const [poiParams, setPointOfInterestParams] = useState(null); // Point of Interest Params
+  const [layers, setLayers] = useState([]); //place search
+  const [cityName, setCityName] = useState('');
 
-  /////////////add use state of the layers ////////////////////
-  const [layers, setLayers] = useState([
-
-    { name: 'countries', visible: true },
-    { name: 'world', visible: true },
-    { name: 'pak', visible: true },
-    { name: 'roads', visible: true },
-    { name: 'pak_osm', visible: true },
-    { name: 'pak_dem', visible: true },
-  ]);
 
   const handleLayerToggle = (layerName) => {
     const updatedLayers = layers.map(layer =>
@@ -68,56 +63,7 @@ const App = () => {
   };
 
   //-----------------------------------jump to location function---------------------------------------------------------------------------
-  // const handleJumpToLocation = (latitude, longitude) => {
-  //   if (mapRef.current) {
-  //     const map = mapRef.current;
-  //     const view = map.getView();
-  //     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
-  //     view.setCenter(coords);
-  //     view.setZoom(10);
-
-  //     // Add a marker
-  //     const markerFeature = new Feature({
-  //       geometry: new Point(coords),
-  //     });
-
-  //     const markerStyle = new Style({
-  //       image: new Icon({
-  //         anchor: [0.5, 1],
-  //         src: locationPin, // Replace with the path to your marker icon
-  //         scale: 0.1, // Adjust the scale to make the icon smaller
-  //       }),
-  //     });
-
-  //     markerFeature.setStyle(markerStyle);
-
-  //     const vectorSource = new VectorSource({
-  //       features: [markerFeature],
-  //     });
-
-  //     const markerLayer = new VectorLayer({
-  //       source: vectorSource,
-  //     });
-
-  //     map.addLayer(markerLayer);
-
-  //     // Add a popup
-  //     const popupContent = `<div> ${latitude}, ${longitude}</div>`;
-  //     const popupElement = document.createElement('div');
-  //     popupElement.innerHTML = popupContent;
-
-  //     const popupOverlay = new Overlay({
-  //       element: popupElement,
-  //       positioning: 'bottom-center',
-  //       stopEvent: false,
-  //       offset: [0, -50],
-  //     });
-
-  //     popupOverlay.setPosition(coords);
-  //     map.addOverlay(popupOverlay);
-  //   }
-  // };
-  const handleJumpToLocation = (latitude, longitude) => {
+    const handleJumpToLocation = (latitude, longitude) => {
     if (mapRef.current) {
       const map = mapRef.current;
       const view = map.getView();
@@ -146,12 +92,10 @@ const App = () => {
       const markerLayer = new VectorLayer({
         source: vectorSource,
       });
-
-
       map.addLayer(markerLayer);
       
 // Add a popup
-const popupContent = `<div> ${latitude}, ${longitude}</div>`;
+const popupContent =  `<div>${latitude}, ${longitude}</div>`;
 const popupElement = document.createElement('div');
 popupElement.innerHTML = popupContent;
       const popupOverlay = new Overlay({
@@ -182,7 +126,6 @@ popupElement.innerHTML = popupContent;
               }
             });
           }
-
           // Add new Line of Sight layers
           features.forEach(feature => {
             const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
@@ -190,20 +133,17 @@ popupElement.innerHTML = popupContent;
             const vectorSource = new VectorSource({
               features: [new Feature({ geometry: lineString })],
             });
-
             const style = new Style({
               stroke: new Stroke({
                 color: feature.properties.visible ? 'red' : 'green',
                 width: 4,
               }),
             });
-
             const vectorLayer = new VectorLayer({
               source: vectorSource,
               style: style,
               name: 'lineOfSight',
             });
-
             if (mapRef.current) {
               mapRef.current.addLayer(vectorLayer);
             }
@@ -216,13 +156,49 @@ popupElement.innerHTML = popupContent;
     }
   }, [lineOfSightParams]);
 
+//---------------------------------->PLACE SEARCH---------------------------------------
+  
+
+const handleCitySearch = (inputCityName) => {
+  if (inputCityName) {
+    console.log('Searching for city:', inputCityName);
+    setCityName(inputCityName);
+  } else {
+    alert('Please enter a city name.');
+  }
+};
+useEffect(() => {
+  const searchCity = async () => {
+    if (cityName) {
+      try {
+        const response = await axios.get(`http://192.168.1.200:5004/search?city_name=${cityName}`);
+        console.log(response.data); 
+        const results = response.data.places;
+
+        if (results.length > 0) {
+          const [longitude, latitude] = [results[0].lng, results[0].lat]; // Adjust according to API response
+          handleJumpToLocation(latitude, longitude);
+        } else {
+          alert('No results found for the specified city.');
+        }
+      } catch (error) {
+        console.error('Error searching for city:', error);
+        alert('An error occurred while searching for the city.');
+      }
+    }
+  };
+
+  searchCity();
+}, [cityName, handleJumpToLocation]);
+
+
+
+
   //-------------------popup of elevation profile--------------------------------------------------------------------
   const handlePopupClose = () => {
     setElevationData(null);
   };
-
 //-------------------switching of measurement tool--------------------------------------------------------------------
-
 useEffect(() => {
   if (activeTool && activeMeasurement) {
     setActiveMeasurement(null);
@@ -240,14 +216,17 @@ useEffect(() => {
           setActiveMeasurement={setActiveMeasurement}
           clearDrawings={clearDrawings}
           onLayerToggle={handleLayerToggle}
-        //  onLayerChange={handleJumpToLocation}
           onJumpToLocation={handleJumpToLocation}
+          onPlaceSearch={handleCitySearch} // Pass handleCitySearch here
+          
+
         />
-        {/* <SearchBar onJumpToLocation={handleJumpToLocation} /> */}
+     
         <Sidebar 
         layers={layers}
         activeTool={activeTool} 
         setActiveTool={setActiveTool} />
+
         <WMTSComponent
           className="z-100"
           mapRef={mapRef}
@@ -261,7 +240,12 @@ useEffect(() => {
           layers={layers}
           epToolParams={epToolParams}
           setElevationData={setElevationData}
+          routingParams={routingParams} // Pass routingParams
+          poiParams={poiParams}
+          setPointofInterestParams={setPointOfInterestParams} 
+
         />
+        
         <Form
           activeTool={activeTool}
           setActiveTool={setActiveTool}
@@ -271,11 +255,23 @@ useEffect(() => {
           setLineOfSightParams={setLineOfSightParams}
           setRangeRingsParams={setRangeRingsParams}
           setEpToolParams={setEpToolParams}
+          setRoutingParams={setRoutingParams} // Pass setRouting
+          setPointofInterestParams={setPointOfInterestParams} 
+
+
         />
-        {elevationData && <Popup elevationData={elevationData} handleClose={handlePopupClose} />}
+        {elevationData && 
+        <Popup elevationData={elevationData} 
+        handleClose={handlePopupClose}
+        map={mapRef.current} />}
+     
+     
+     
       </div>
     </div>
   );
 };
 
 export default App;
+
+

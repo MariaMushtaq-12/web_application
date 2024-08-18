@@ -1,69 +1,98 @@
+// src/components/Form.js
 import React from 'react';
-import ViewshedTool from './Viewshed'; // Ensure this is the correct path to the Viewshed component
-import BufferTool from './Buffer'; // Ensure this is the correct path to the Buffer component
+import ViewshedTool from './Viewshed';
+import BufferTool from './Buffer';
 import LineOfSightTool from './LineOfSight';
 import RangeRingsTool from './RangeRings';
 import Eptool from './Eptool';
+import Routing from './routing';
+import Draggable from 'react-draggable'; // Import Draggable
+import { FaWindowClose } from 'react-icons/fa';
+import PointOfInterest from './PointOfInterest';
 const Form = ({ activeTool, setActiveTool, 
   setViewshedParams, clickedCoordinates,
   setBufferParams, setLineOfSightParams, 
-  setRangeRingsParams,setEpToolParams,
-  setElevationData // Add this prop
-  }) => {
+  setRangeRingsParams, setEpToolParams,
+  setElevationData, setRoutingParams,
+  setPointofInterestParams,poisParams
+}) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
   };
 
   return (
+    <Draggable handle=".modal-header">
     <div className={`modal ${activeTool ? 'active' : ''}`}>
       <div className="modal-content">
-       
-       {/* <h3>{activeTool}</h3>*/}
+
+     
+          <div className="p-4">
+          
+          <div className="modal-header cursor-move bg-gray-100 dark:bg-green-500 p-1 rounded-t-lg flex justify-end">
+          <FaWindowClose className="text-red-600 hover:text-red-900" onClick={handleClose}/>
+          </div>
         {activeTool === 'Viewshed' && (
           <ViewshedTool 
             setViewshedParams={setViewshedParams} 
-            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
-            onClose={handleClose} // Pass the close handler to viewshed tool
+            clickedCoordinates={clickedCoordinates} 
+            onClose={handleClose} 
           />
         )}
 
-
-{activeTool === 'Buffer' && (
+        {activeTool === 'Buffer' && (
           <BufferTool 
             setBufferParams={setBufferParams} 
-            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
-            onClose={handleClose} // Pass the close handler to BufferTool
+            clickedCoordinates={clickedCoordinates} 
+            onClose={handleClose} 
           />
         )}
 
-{activeTool === 'Line of Sight' && (
+        {activeTool === 'Line of Sight' && (
           <LineOfSightTool 
             setLineOfSightParams={setLineOfSightParams} 
             clickedCoordinates={clickedCoordinates}
-            onClose={handleClose} // Pass the close handler to line of sight
+            onClose={handleClose} 
           />
         )}
 
-{activeTool === 'Range Rings' && (
+        {activeTool === 'Range Rings' && (
           <RangeRingsTool 
             setRangeRingsParams={setRangeRingsParams} 
             clickedCoordinates={clickedCoordinates} 
-            onClose={handleClose} // Pass the close handler to range ringsTool
+            onClose={handleClose} 
           />
         )}
-  {activeTool === 'Elevation Profile' && (
+
+        {activeTool === 'Elevation Profile' && (
           <Eptool
             setEpToolParams={setEpToolParams}
             clickedCoordinates={clickedCoordinates}
-            setElevationData={setElevationData} // Pass this prop
-            onClose={handleClose} // Pass the close handler to elevation profile
+            setElevationData={setElevationData} 
+            onClose={handleClose} 
           />
         )}
-        {/* 
-        Add more conditions for other tools if needed */}
 
+        {activeTool === 'Shortest Route' && (
+          <Routing
+            setRoutingParams={setRoutingParams}
+            clickedCoordinates={clickedCoordinates}
+            onClose={handleClose}
+          />
+        )}
+
+{activeTool === 'Point of Interest' && (
+          <PointOfInterest
+          setPointofInterestParams={setPointofInterestParams}
+            clickedCoordinates={clickedCoordinates} // Pass clickedCoordinates
+            onClose={handleClose} // Pass the close handler to PointOfInterest
+            setActiveTool={setActiveTool}
+          />
+        )}
+
+        </div>
       </div>
     </div>
+    </Draggable>
   );
 };
 
