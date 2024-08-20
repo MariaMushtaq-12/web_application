@@ -19,6 +19,7 @@ import locationPin from './img/location_pin.png';
 import axios from 'axios';
 import Popup from './components/popup';
 import "./App.css"
+import { getCenter, boundingExtent } from 'ol/extent'; // Import required functions
 const App = () => {
   
   
@@ -110,12 +111,57 @@ popupElement.innerHTML = popupContent;
     }
   };
   //--------------------------------------------------------line of sight------------------------------------------------
+  // useEffect(() => {
+  //   if (lineOfSightParams) {
+  //     axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
+  //       .then(response => {
+  //         const { features } = response.data;
+
+  //         // Remove existing Line of Sight layers
+  //         if (mapRef.current) {
+  //           const map = mapRef.current;
+  //           const layers = map.getLayers().getArray();
+  //           layers.forEach(layer => {
+  //             if (layer.get('name') === 'lineOfSight') {
+  //               map.removeLayer(layer);
+  //             }
+  //           });
+  //         }
+  //         // Add new Line of Sight layers
+  //         features.forEach(feature => {
+  //           const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
+  //           const lineString = new LineString(coordinates);
+  //           const vectorSource = new VectorSource({
+  //             features: [new Feature({ geometry: lineString })],
+  //           });
+  //           const style = new Style({
+  //             stroke: new Stroke({
+  //               color: feature.properties.visible ? 'red' : 'green',
+  //               width: 4,
+  //             }),
+  //           });
+  //           const vectorLayer = new VectorLayer({
+  //             source: vectorSource,
+  //             style: style,
+  //             name: 'lineOfSight',
+  //           });
+  //           if (mapRef.current) {
+  //             mapRef.current.addLayer(vectorLayer);
+  //           }
+  //         });
+  //       })
+  //       .catch(error => {
+  //         console.error('There was an error calculating the Line of Sight!', error);
+  //       });
+
+  //   }
+  // }, [lineOfSightParams]);
   useEffect(() => {
     if (lineOfSightParams) {
       axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
         .then(response => {
-          const { features } = response.data;
-
+          const feature = response.data; // Updated to match new backend response format
+  
           // Remove existing Line of Sight layers
           if (mapRef.current) {
             const map = mapRef.current;
@@ -126,37 +172,52 @@ popupElement.innerHTML = popupContent;
               }
             });
           }
-          // Add new Line of Sight layers
-          features.forEach(feature => {
-            const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
-            const lineString = new LineString(coordinates);
-            const vectorSource = new VectorSource({
-              features: [new Feature({ geometry: lineString })],
-            });
-            const style = new Style({
-              stroke: new Stroke({
-                color: feature.properties.visible ? 'red' : 'green',
-                width: 4,
-              }),
-            });
-            const vectorLayer = new VectorLayer({
-              source: vectorSource,
-              style: style,
-              name: 'lineOfSight',
-            });
-            if (mapRef.current) {
-              mapRef.current.addLayer(vectorLayer);
-            }
+  
+          // Process and add the Line of Sight layer
+          const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
+          const lineString = new LineString(coordinates);
+          const vectorSource = new VectorSource({
+            features: [new Feature({ geometry: lineString })],
           });
+  
+          
+          // Create a style that varies based on visibility
+          const visibility = feature.properties.visibility;
+          const style = new Style({
+            stroke: new Stroke({
+              color: visibility.every(v => v === 1) ? 'green' : 'red', // Example: green if fully visible, red otherwise
+            
+             width: 4,
+            }),
+          });
+  
+          const vectorLayer = new VectorLayer({
+            source: vectorSource,
+            style: style,
+            name: 'lineOfSight',
+          });
+  
+          if (mapRef.current) {
+            mapRef.current.addLayer(vectorLayer);
+          }
+       // Calculate the extent of the line feature
+       const extent = boundingExtent(coordinates);
+       const view = mapRef.current.getView();
+
+       // Fit the map view to the extent of the line
+       view.fit(extent, {
+         duration: 1000, // Duration of the zoom animation
+         padding: [50, 50, 50, 50], // Padding around the extent
+       });
+
         })
         .catch(error => {
           console.error('There was an error calculating the Line of Sight!', error);
         });
-
     }
+    
   }, [lineOfSightParams]);
-
-//---------------------------------->PLACE SEARCH---------------------------------------
+  //---------------------------------->PLACE SEARCH---------------------------------------
   
 
 const handleCitySearch = (inputCityName) => {
