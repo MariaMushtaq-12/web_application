@@ -71,11 +71,16 @@ const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClo
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setBufferParams({
+
+   setBufferParams({
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
       radius: parseFloat(radius),
     });
+      // Reset form fields after successful submission
+      setLatitude('');
+      setLongitude('');
+      setRadius('');
   };
   const handleClose = () => {
     setActiveTool(null);

@@ -352,32 +352,10 @@ const WMTSComponent = ({
       })));
       vectorSource.clear();
       vectorSource.addFeatures(restFeatures);
-      //vectorSource.addFeatures(nonVisibleFeatures);
       vectorSource.addFeatures(visibleFeatures);
-      //vectorSource.addFeatures(restFeatures);
-      
-      
-        // Add center point marker
-    const centerCoordinates = [viewshedParams.longitude, viewshedParams.latitude];
-    const centerPointFeature = new Feature({
-      geometry: new Point(fromLonLat(centerCoordinates, 'EPSG:4326')),
-    });
+  
+        
 
-    const centerPointStyle = new Style({
-      image: new Circle({
-        radius: 7,
-        fill: new Fill({
-          color: 'rgba(0, 0, 255, 1)', // blue color for the center point
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-    });
-
-    centerPointFeature.setStyle(centerPointStyle);
-    vectorSource.addFeature(centerPointFeature);
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {
@@ -412,7 +390,7 @@ useEffect(() => {
     console.log('Added buffer feature');
 
     // Add a marker at the center of the buffer
-    addMarkerPin(vectorSource, center, 'Center Marker');
+    addMarkerPin(vectorSource, center, 'Center');
     console.log('Added marker feature at center');
 
     // Fit the map to the buffer
@@ -450,7 +428,7 @@ useEffect(() => {
     console.log('Added range ring features');
 
     // Add a marker at the center of the range rings
-    addMarkerPin(vectorSource, center, 'Center Marker');
+    addMarkerPin(vectorSource, center, 'Center');
     console.log('Added marker feature at center of range rings');
 
     // Fit the map to the buffer rings if the extent is valid
@@ -658,7 +636,7 @@ const centerPointStyle = new Style({
 });
 
 centerPointFeature.setStyle(centerPointStyle);
-vectorSource.addFeature(centerPointFeature );
+vectorSource.addFeature(centerPointFeature);
 
     // Fetch POIs from API
     const fetchPOIs = async () => {
@@ -736,7 +714,7 @@ vectorSource.addFeature(centerPointFeature );
       if (feature && feature.get('name')) {
         // Display popup with POI details
         setShowPopup(true);
-        // setElevationData(feature.get('name')); // Set appropriate data to show in popup
+       
       }
     };
 

@@ -96,6 +96,16 @@ const LineOfSightTool = ({ setLineOfSightParams, clickedCoordinates,onClose }) =
       observerHeight: parseFloat(observerHeight),
       targetHeight: parseFloat(targetHeight)
     });
+//clear existing fields
+    setStartLat('');
+    setStartLon('');
+    setEndLat('');
+    setEndLon('');
+    setObserverHeight('');
+    setTargetHeight('');
+
+
+
   };
 
   return (

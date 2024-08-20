@@ -52,6 +52,12 @@ const handleSubmit = async (e) => {
   } finally {
     setLoading(false);
   }
+//clear existing fields
+  setLatitude('');
+  setLongitude('');
+  setRadius('');
+  setType('');
+
 };
 
   return (

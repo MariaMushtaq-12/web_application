@@ -27,6 +27,13 @@ const Routing = ({ setRoutingParams, clickedCoordinates, onClose }) => {
     if (startLat && startLon && endLat && endLon) {
       setRoutingParams({ start: [startLon, startLat], end: [endLon, endLat] });
       fetchRouteDetails(startLon, startLat, endLon, endLat);
+
+
+      //clear existing fields
+      setStartLat('');
+      setStartLon('');
+      setEndLat('');
+      setEndLon('');
     } else {
       alert('Please select both start and end points on the map.');
     }

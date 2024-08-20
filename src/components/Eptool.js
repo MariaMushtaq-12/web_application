@@ -25,6 +25,16 @@ const EpTool = ({ setEpToolParams, clickedCoordinates,onClose }) => {
     e.preventDefault();
     if (startLat && startLon && endLat && endLon) {
       setEpToolParams({ start: [startLon, startLat], end: [endLon, endLat] });
+
+
+
+      // Clear the input fields after submission
+      setStartLat('');
+      setStartLon('');
+      setEndLat('');
+      setEndLon('');
+
+
     } else {
       alert('Please select both start and end points on the map.');
     }

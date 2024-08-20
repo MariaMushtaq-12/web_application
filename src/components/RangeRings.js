@@ -103,6 +103,12 @@ const RangeRingsTool = ({ setRangeRingsParams, clickedCoordinates, onClose }) =>
     } else {
       alert('Please fill in all fields.');
     }
+    //clear existing fields
+    setLatitude('');
+    setLongitude('');
+    setRadius('');
+    setRings('');
+  
   };
 
   return (
