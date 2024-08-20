@@ -20,7 +20,7 @@ import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
 import locationPin from '../img/location_pin.png';
-
+import marker from '../img/marker.jpg';
 
 
 const formatLength = (line) => {
@@ -315,7 +315,7 @@ const WMTSComponent = ({
   }, [activeMeasurement, map]);
 
   //---------------------------------viewshed-----------------------------------------------------------------------------------------------
- 
+
   useEffect(() => {
     if (viewshedParams) {
       const geojsonFormat = new GeoJSON();
@@ -353,9 +353,36 @@ const WMTSComponent = ({
       vectorSource.clear();
       vectorSource.addFeatures(restFeatures);
       vectorSource.addFeatures(visibleFeatures);
-  
-        
+//    // Find the center of the viewshed area and add a marker
+   
+//   const addMarkerAtCenter = (center) => {
+//     if (markerRef.current) {
+//       vectorSource.removeFeature(markerRef.current);
+//     }
 
+//     const marker = new Feature({
+//       geometry: new Point(fromLonLat(center, 'EPSG:4326')),
+//     });
+    
+// console.log('center', marker)
+//     marker.setStyle(
+//       new Style({
+//         image: new Icon({
+//           // anchor: [0.5, 1],
+//           src: locationPin, // Your marker icon image
+//           scale: 0.1,
+//         }),
+//       })
+//     );
+
+//     vectorSource.addFeature(marker);
+//     markerRef.current = marker;
+//   };
+
+//    const center = toLonLat(vectorSource.getExtent(), 'EPSG:4326');
+//    console.log('center',center)
+//    addMarkerAtCenter(center);
+        
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {
@@ -363,11 +390,10 @@ const WMTSComponent = ({
           duration: 1000,
         });
       }
- 
     
-       
     }
   }, [viewshedParams, map, vectorSource]);
+ 
 //-------------------------------------------buffer-------------------------------------------------------------------------------------------------------------
 useEffect(() => {
   console.log('useEffect triggered for bufferParams');
