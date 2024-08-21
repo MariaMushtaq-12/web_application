@@ -47,7 +47,10 @@ const formatArea = (polygon) => {
 
 const WMTSComponent = ({
   mapRef, viewshedParams, setClickedCoordinates, activeMeasurement,
-  clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, routingParams, setRoutingParams, poiParams
+  clearDrawings, bufferParams, onLayerChange, // Retain one occurrence of onLayerChange
+  layers, rangeRingsParams, epToolParams, routingParams, 
+  setRoutingParams, poiParams,
+  onLayerOpacityChange
 }) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
@@ -79,7 +82,7 @@ const WMTSComponent = ({
   const [profileCoords, setProfileCoords] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const markerRef = useRef(null); // Reference for the moving marker
-  
+  const [layerOpacities, setLayerOpacities] = useState({});
  
   const handleClose = () => {
     setShowPopup(false);
@@ -202,11 +205,11 @@ const WMTSComponent = ({
     console.log(layers);
     onLayerChange([
       { name: 'base', visible: true},
-      { name: 'DEM', visible: false },
-      { name: 'osm', visible: false},
-      { name: 'ROAD', visible: false },
-      { name: 'WATER', visible: false},
-      { name: 'RAIL', visible: false },
+      { name: 'DEM', visible: true },
+      { name: 'osm', visible: true},
+      { name: 'ROAD', visible: true },
+      { name: 'WATER', visible: true},
+      { name: 'RAIL', visible: true },
       { name: 'SAT', visible: true },
     ]);
 
@@ -218,6 +221,11 @@ const WMTSComponent = ({
     });
 
     setMap(newMap);
+    setLayerOpacities(Object.keys(onLayerChange).reduce((acc, key) => {
+      acc[key] = 1; // Initial opacity of 1 for all layers
+      return acc;
+    }, {}));
+
     mapRef.current = newMap;
 
     const measureTooltipElement = document.createElement('div');
@@ -234,6 +242,10 @@ const WMTSComponent = ({
     return () => {
       newMap.setTarget(null);
     };
+
+
+
+
   }, []);
 
   useEffect(() => {
@@ -246,7 +258,20 @@ const WMTSComponent = ({
       });
     }
   }, [layers]);
+  
 
+
+
+  // const handleLayerOpacityChange = (layerName, opacity) => {
+  //   const layer = map.getLayers().getArray().find(l => l.get('title') === layerName);
+  //   if (layer) {
+  //     layer.setOpacity(opacity);
+  //     setLayerOpacities(prevOpacities => ({
+  //       ...prevOpacities,
+  //       [layerName]: opacity,
+  //     }));
+  //   }
+  // };
   //----------------------------------measurement---------------------------------------------------------------------------
   useEffect(() => {
     if (draw && map) {

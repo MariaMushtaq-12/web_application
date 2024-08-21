@@ -18,7 +18,7 @@ import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 
-const Header = ({ layers, setActiveMeasurement, clearDrawings, onLayerToggle, onJumpToLocation,onPlaceSearch }) => {
+const Header = ({ layers, setActiveMeasurement, onLayerOpacityChange, clearDrawings, onLayerToggle, onJumpToLocation,onPlaceSearch }) => {
   const [activePopup, setActivePopup] = useState(null);
   const [conversionType, setConversionType] = useState(null);
   const [dmsInput, setDmsInput] = useState({ latDegrees: '', latMinutes: '', latSeconds: '', lonDegrees: '', lonMinutes: '', lonSeconds: '' });
@@ -92,7 +92,6 @@ const fetchPlaceSuggestions = async (cityName) => {
       layers: [
         new TileLayer({
           source: new XYZ({
-            //url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
           })
         })
       ],
@@ -128,10 +127,19 @@ const fetchPlaceSuggestions = async (cityName) => {
 const toggleLayer = (layerName) => {
     onLayerToggle(layerName);
   };
+//--------------------------layers constant------------------------
+
+useEffect(() => {
+  layers.forEach(layer => {
+    onLayerToggle(layer.name, selectAll);
+  });
+}, [selectAll]);
+
+const handleOpacityChange = (layerName, opacity) => {
+  onLayerOpacityChange(layerName, opacity);
+};
 
 
-
-  
 //-----------------------------------constants for the coordinate converters---------------------------------------------------------------------
   const handleConversionTypeChange = (type) => {
     setConversionType(type);
@@ -172,6 +180,7 @@ const toggleLayer = (layerName) => {
       lon: `${lonDms.degrees}° ${lonDms.minutes}' ${lonDms.seconds}"`
     });
   };
+  
 //--------------------------------------jump to location--------------------------------------------------------------------------------------------------
  
   const SearchBar = ({ onJumpToLocation }) => {
@@ -310,32 +319,8 @@ const toggleLayer = (layerName) => {
               </div>
             )}
 {/*--------------------------------------layers------------------------------------------------------------------------------------------- */}
-{/* 
-            {activePopup === 'layers' && (
-              <div>
-                <h3 className="font-bold">Layers</h3>
-             
-                <ul>
-                  {layers.map((layer, index) => (
-                   
-                    <li key={index}>
-                      <input
-                        type="checkbox"
-                        id={`layer-${index}`}
-                        checked={layer.visible}
-                        onChange={() => toggleLayer(layer.name)}
-                        className="mr-2"
-                      />
-                      <label htmlFor={`layer-${index}`}>{layer.name}</label>
-                    </li>
-                 
-                  ))}
-                </ul>
-                
-              </div>
-            )}  */}
 
-{activePopup === 'layers' && (
+{/* {activePopup === 'layers' && (
         <div>
           <h3 className="font-bold">Maps</h3>
 
@@ -356,8 +341,67 @@ const toggleLayer = (layerName) => {
 
          
         </div>
-      )}
+      )} */}
+{/*       
+ {activePopup === 'layers' && (
+              <div>
+                <h3 className="font-bold">Maps</h3>
+                <ul className="ml-4 list-none">
+                  {layers.map((layer, index) => (
+                    <li key={index} className="mb-2">
+                      <input
+                        type="checkbox"
+                        id={`layer-${index}`}
+                        checked={layer.visible}
+                        onChange={() => toggleLayer(layer.name)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`layer-${index}`} className="capitalize">{layer.name}</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={layer.opacity || 1}
+                        onChange={(e) => handleOpacityChange(layer.name, e.target.value)}
+                        className="ml-4 w-full"
+                      />
 
+                    </li>
+                    
+                  ))}
+                </ul>
+              </div>
+            )}
+        */}
+         {activePopup === 'layers' && (
+              <div>
+                <h3 className="font-bold">Maps</h3>
+                <ul className="ml-4 list-none">
+                  {layers.map((layer, index) => (
+                    <li key={index} className="mb-2">
+                      <input
+                        type="checkbox"
+                        id={`layer-${index}`}
+                        checked={layer.visible}
+                        onChange={() => toggleLayer(layer.name)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`layer-${index}`} className="capitalize">{layer.name}</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.1"
+                        value={layer.opacity}
+                        onChange={(e) => handleOpacityChange(layer.name, parseFloat(e.target.value))}
+                        className="ml-4"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 {/*--------------------------------------Measurements------------------------------------------------------------------------------------------- */}
 
             {activePopup === 'measurement' && (
