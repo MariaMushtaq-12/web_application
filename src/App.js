@@ -202,128 +202,6 @@ popupElement.innerHTML = popupContent;
   // }, [lineOfSightParams]);
 
   //--------points enable
-  useEffect(() => {
-    if (lineOfSightParams) {
-      axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
-        .then(response => {
-          const feature = response.data; // Updated to match the new backend response format
-  
-          // Remove existing Line of Sight layers
-          if (mapRef.current) {
-            const map = mapRef.current;
-            const layers = map.getLayers().getArray();
-            layers.forEach(layer => {
-              if (layer.get('name') === 'lineOfSight') {
-                map.removeLayer(layer);
-              }
-            });
-          }
-  
-          const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
-          const visibility = feature.properties.visibility;
-  
-          // Create and add individual line segments with their respective colors
-          const segments = [];
-          for (let i = 0; i < coordinates.length - 1; i++) {
-            const segmentCoordinates = [coordinates[i], coordinates[i + 1]];
-            const lineString = new LineString(segmentCoordinates);
-  
-            const segmentFeature = new Feature({ geometry: lineString });
-  
-            const color = visibility[i] === 1 ? 'green' : 'red';
-            const style = new Style({
-              stroke: new Stroke({
-                color: color,
-                width: 4,
-              }),
-            });
-  
-            segmentFeature.setStyle(style);
-            segments.push(segmentFeature);
-          }
-  
-          const vectorSource = new VectorSource({
-            features: segments,
-          });
-  
-          const vectorLayer = new VectorLayer({
-            source: vectorSource,
-            name: 'lineOfSight',
-          });
-  
-          // Add point markers for start and end
-          const startPoint = new Feature({
-            geometry: new Point(coordinates[0]),
-          });
-          const endPoint = new Feature({
-            geometry: new Point(coordinates[coordinates.length - 1]),
-          });
-  
-          const pointStyle = new Style({
-            image: new CircleStyle({
-              radius: 6,
-              fill: new Fill({ color: 'blue' }),
-              stroke: new Stroke({ color: 'white', width: 2 }),
-            }),
-            text: new Text({
-              text: 'Start',
-              offsetY: -15,
-              font: '12px Calibri,sans-serif',
-              fill: new Fill({ color: 'white' }),
-              stroke: new Stroke({ color: 'black', width: 3 }),
-            }),
-          });
-  
-          const endPointStyle = new Style({
-            image: new CircleStyle({
-              radius: 6,
-              fill: new Fill({ color: 'blue' }),
-              stroke: new Stroke({ color: 'white', width: 2 }),
-            }),
-            text: new Text({
-              text: 'End',
-              offsetY: -15,
-              font: '12px Calibri,sans-serif',
-              fill: new Fill({ color: 'white' }),
-              stroke: new Stroke({ color: 'black', width: 3 }),
-            }),
-          });
-  
-          startPoint.setStyle(pointStyle);
-          endPoint.setStyle(endPointStyle);
-          const pointSource = new VectorSource({
-            features: [startPoint, endPoint],
-          });
-  
-          const pointLayer = new VectorLayer({
-            source: pointSource,
-            name: 'lineOfSightPoints',
-          });
-  
-          if (mapRef.current) {
-            mapRef.current.addLayer(vectorLayer);
-            mapRef.current.addLayer(pointLayer);
-  
-            // Calculate the extent of the line feature
-            const extent = boundingExtent(coordinates);
-            const view = mapRef.current.getView();
-  
-            // Fit the map view to the extent of the line
-            view.fit(extent, {
-              duration: 1000, // Duration of the zoom animation
-              padding: [50, 50, 50, 50], // Padding around the extent
-            });
-          }
-        })
-        .catch(error => {
-          console.error('There was an error calculating the Line of Sight!', error);
-        });
-    }
-  }, [lineOfSightParams]);
-
-
-
-
   // useEffect(() => {
   //   if (lineOfSightParams) {
   //     axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
@@ -335,7 +213,7 @@ popupElement.innerHTML = popupContent;
   //           const map = mapRef.current;
   //           const layers = map.getLayers().getArray();
   //           layers.forEach(layer => {
-  //             if (layer.get('name') === 'lineOfSight' || layer.get('name') === 'lineOfSightPoints') {
+  //             if (layer.get('name') === 'lineOfSight') {
   //               map.removeLayer(layer);
   //             }
   //           });
@@ -413,7 +291,6 @@ popupElement.innerHTML = popupContent;
   
   //         startPoint.setStyle(pointStyle);
   //         endPoint.setStyle(endPointStyle);
-  
   //         const pointSource = new VectorSource({
   //           features: [startPoint, endPoint],
   //         });
@@ -443,6 +320,137 @@ popupElement.innerHTML = popupContent;
   //       });
   //   }
   // }, [lineOfSightParams]);
+
+
+
+useEffect(() => {
+  if (lineOfSightParams) {
+    axios.post('http://192.168.1.200:5001/lineofsight', lineOfSightParams)
+      .then(response => {
+        const feature = response.data; // Updated to match the new backend response format
+
+        // Remove existing Line of Sight layers and Point layers
+        if (mapRef.current) {
+          const map = mapRef.current;
+          const layers = map.getLayers().getArray();
+          layers.forEach(layer => {
+            if (layer.get('name') === 'lineOfSight' || layer.get('name') === 'lineOfSightPoints') {
+              map.removeLayer(layer);
+            }
+          });
+        }
+ // Remove existing Line of Sight layers
+  //         if (mapRef.current) {
+  //           const map = mapRef.current;
+  //           const layers = map.getLayers().getArray();
+  //           layers.forEach(layer => {
+  //             if (layer.get('name') === 'lineOfSight') {
+  //               map.removeLayer(layer);
+  //             }
+  //           });
+  //         }
+        const coordinates = feature.geometry.coordinates.map(coord => fromLonLat(coord, 'EPSG:4326'));
+        const visibility = feature.properties.visibility;
+
+        // Create and add individual line segments with their respective colors
+        const segments = [];
+        for (let i = 0; i < coordinates.length - 1; i++) {
+          const segmentCoordinates = [coordinates[i], coordinates[i + 1]];
+          const lineString = new LineString(segmentCoordinates);
+
+          const segmentFeature = new Feature({ geometry: lineString });
+
+          const color = visibility[i] === 1 ? 'green' : 'red';
+          const style = new Style({
+            stroke: new Stroke({
+              color: color,
+              width: 4,
+            }),
+          });
+
+          segmentFeature.setStyle(style);
+          segments.push(segmentFeature);
+        }
+
+        const vectorSource = new VectorSource({
+          features: segments,
+        });
+
+        const vectorLayer = new VectorLayer({
+          source: vectorSource,
+          name: 'lineOfSight',
+        });
+
+        // Add point markers for start and end
+        const startPoint = new Feature({
+          geometry: new Point(coordinates[0]),
+        });
+        const endPoint = new Feature({
+          geometry: new Point(coordinates[coordinates.length - 1]),
+        });
+
+        const pointStyle = new Style({
+          image: new CircleStyle({
+            radius: 6,
+            fill: new Fill({ color: 'blue' }),
+            stroke: new Stroke({ color: 'white', width: 2 }),
+          }),
+          text: new Text({
+            text: 'Start',
+            offsetY: -15,
+            font: '12px Calibri,sans-serif',
+            fill: new Fill({ color: 'white' }),
+            stroke: new Stroke({ color: 'black', width: 3 }),
+          }),
+        });
+
+        const endPointStyle = new Style({
+          image: new CircleStyle({
+            radius: 6,
+            fill: new Fill({ color: 'blue' }),
+            stroke: new Stroke({ color: 'white', width: 2 }),
+          }),
+          text: new Text({
+            text: 'End',
+            offsetY: -15,
+            font: '12px Calibri,sans-serif',
+            fill: new Fill({ color: 'white' }),
+            stroke: new Stroke({ color: 'black', width: 3 }),
+          }),
+        });
+
+        startPoint.setStyle(pointStyle);
+        endPoint.setStyle(endPointStyle);
+        const pointSource = new VectorSource({
+          features: [startPoint, endPoint],
+        });
+
+        const pointLayer = new VectorLayer({
+          source: pointSource,
+          name: 'lineOfSightPoints',
+        });
+
+        if (mapRef.current) {
+          mapRef.current.addLayer(vectorLayer);
+          mapRef.current.addLayer(pointLayer);
+
+          // Calculate the extent of the line feature
+          const extent = boundingExtent(coordinates);
+          const view = mapRef.current.getView();
+
+          // Fit the map view to the extent of the line
+          view.fit(extent, {
+            duration: 1000, // Duration of the zoom animation
+            padding: [50, 50, 50, 50], // Padding around the extent
+          });
+        }
+      })
+      .catch(error => {
+        console.error('There was an error calculating the Line of Sight!', error);
+      });
+  }
+}, [lineOfSightParams]);
+
   
   //---------------------------------->PLACE SEARCH---------------------------------------
   const handleCitySearch = (inputCityName) => {
