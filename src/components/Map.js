@@ -98,7 +98,19 @@ const WMTSComponent = ({
       resolutions[z] = size / Math.pow(2, z);
       matrixIds[z] = z.toString();
     }
-
+//pakistan boundary
+const world = new ImageLayer({
+  source: new ImageWMS({
+    ratio: 1,
+    url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+    params: {
+      'FORMAT': 'image/jpeg',
+      'VERSION': '1.1.1',
+      'STYLES': '',
+      'LAYERS': 'ne:world',
+    },
+  }),
+});
 //pakistan boundary
     const base = new ImageLayer({
       source: new ImageWMS({
@@ -194,7 +206,7 @@ const WMTSComponent = ({
     const newMap = new Map({
       target: internalMapRef.current,
    
-      layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT, vectorLayer],
+      layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT,world, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -211,6 +223,7 @@ const WMTSComponent = ({
       { name: 'WATER', visible: true},
       { name: 'RAIL', visible: true },
       { name: 'SAT', visible: true },
+      { name: 'world', visible: true },
     ]);
 
     newMap.on('click', (evt) => {
