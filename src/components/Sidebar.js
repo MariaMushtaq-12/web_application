@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaEye, FaLine, FaChartLine, FaCircle, FaCompass } from 'react-icons/fa';
+import { FaAngleDoubleLeft,FaRoute, FaMapPin, FaAngleDoubleRight,FaExclamationTriangle , FaEye, FaLine, FaChartLine,  FaCompass} from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { GiCircle } from 'react-icons/gi';
 const itemVariants = {
   open: {
     opacity: 1,
@@ -56,10 +56,11 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
     { id: 1, name: 'Viewshed', icon: <FaEye />, description: 'Analyze the visible area from a point' },
     { id: 2, name: 'Line of Sight', icon: <FaLine />, description: 'Calculate the line of sight between two points' },
     { id: 3, name: 'Elevation Profile', icon: <FaChartLine />, description: 'Generate an elevation profile along a path' },
-    { id: 4, name: 'Buffer', icon: <FaCircle />, description: 'Create a buffer zone around a feature' },
+    { id: 4, name: 'Buffer', icon: <GiCircle/>, description: 'Create a buffer zone around a feature' },
     { id: 5, name: 'Range Rings', icon: <FaCompass />, description: 'Create range rings around a point' },
-    { id: 6, name: 'Point of Interest', icon: <FaCompass />, description: 'Create range rings around a point' },
-    { id: 7, name: 'Shortest Route', icon: <FaCompass />, description: 'Find the shortest route' },
+    { id: 6, name: 'Point of Interest', icon: < FaMapPin />, description: 'Create range rings around a point' },
+    { id: 7, name: 'Shortest Route', icon: <FaRoute />, description: 'Find the shortest route' },
+    { id: 8, name: 'Incident Reporting', icon: <FaExclamationTriangle />, description: 'Report the incidents on the specific place' },
   ];
 
   return (
@@ -222,7 +223,54 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
                 )}
               </AnimatePresence>
             </li>
-          
+          {/* incident reporting */}
+          <li
+              className="relative mb-2.5 group flex-grow"
+              onMouseEnter={() => handleDropdownToggle('Reports')}
+              onMouseLeave={() => handleDropdownToggle(null)}
+            >
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                className="w-full text-left bg-green-600 text-white py-2.5 px-5 rounded cursor-pointer"
+                onClick={() => handleDropdownToggle('Reports')}
+              >
+                Reports
+                <motion.div
+                  variants={{
+                    open: { rotate: 180 },
+                    closed: { rotate: 0 },
+                  }}
+                  transition={{ duration: 0.2 }}
+                  style={{ originY: 0.55 }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 20 20">
+                    <path d="M0 7 L 20 7 L 10 16" />
+                  </svg>
+                </motion.div>
+              </motion.button>
+              <AnimatePresence>
+                {openDropdown === 'Reports' && (
+                  <motion.ul
+                    initial="closed"
+                    animate="open"
+                    exit="closed"
+                    variants={menuVariants}
+                    className="absolute left-1/2 transform -translate-x-1/2 top-full bg-white min-w-[200px] border border-gray-300 z-50 overflow-y-auto max-h-60"
+                    style={{ pointerEvents: openDropdown === 'Reports' ? 'auto' : 'none' }}
+                  >
+                    {tools
+                      .filter((tool) => tool.name === 'Incident Reporting')
+                      .map((tool) => (
+                        <motion.li key={tool.id} variants={itemVariants} className="border-b border-gray-300 last:border-b-0">
+                          <button className="w-full text-left py-2 px-5 cursor-pointer bg-gray-300 hover:bg-green-500" onClick={() => handleToolClick(tool.name)}>
+                            {tool.icon} {tool.name}
+                          </button>
+                        </motion.li>
+                      ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </li>
           </ul>
         </div>
       </div>

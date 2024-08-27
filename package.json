@@ -9,6 +9,8 @@
   "proxy5": "http://192.168.1.200:5004",
   "proxy4": "http://192.168.1.200:5005/",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -27,6 +29,7 @@
     "react-draggable": "^4.4.6",
     "react-icons": "^5.2.1",
     "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
