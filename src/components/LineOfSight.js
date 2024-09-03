@@ -1,71 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-
-// const LineOfSightTool = ({ setLineOfSightParams, clickedCoordinates }) => {
-//   const [startLat, setStartLat] = useState('');
-//   const [startLon, setStartLon] = useState('');
-//   const [endLat, setEndLat] = useState('');
-//   const [endLon, setEndLon] = useState('');
-//   const [observerHeight, setObserverHeight] = useState('');
-//   const [targetHeight, setTargetHeight] = useState('');
-
-//   useEffect(() => {
-//     if (clickedCoordinates) {
-//       if (!startLat && !startLon) {
-//         setStartLat(clickedCoordinates[1]);
-//         setStartLon(clickedCoordinates[0]);
-//       } else {
-//         setEndLat(clickedCoordinates[1]);
-//         setEndLon(clickedCoordinates[0]);
-//       }
-//     }
-//   }, [clickedCoordinates]);
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setLineOfSightParams({
-//       start: [startLon, startLat],
-//       end: [endLon, endLat],
-//       observerHeight: parseFloat(observerHeight),
-//       targetHeight: parseFloat(targetHeight)
-//     });
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         Start Latitude:
-//         <input type="number" value={startLat} onChange={(e) => setStartLat(e.target.value)} />
-//       </label>
-//       <label>
-//         Start Longitude:
-//         <input type="number" value={startLon} onChange={(e) => setStartLon(e.target.value)} />
-//       </label>
-//       <label>
-//         End Latitude:
-//         <input type="number" value={endLat} onChange={(e) => setEndLat(e.target.value)} />
-//       </label>
-//       <label>
-//         End Longitude:
-//         <input type="number" value={endLon} onChange={(e) => setEndLon(e.target.value)} />
-//       </label>
-//       <label>
-//         Observer Height:
-//         <input type="number" value={observerHeight} onChange={(e) => setObserverHeight(e.target.value)} />
-//       </label>
-//       <label>
-//         Target Height:
-//         <input type="number" value={targetHeight} onChange={(e) => setTargetHeight(e.target.value)} />
-//       </label>
-//       <button type="submit">Calculate Line of Sight</button>
-//     </form>
-//   );
-// };
-
-// export default LineOfSightTool;
-
-//styled one line of sight
-
-
 import React, { useState, useEffect } from 'react';
 
 const LineOfSightTool = ({ setLineOfSightParams, clickedCoordinates,onClose }) => {
@@ -96,6 +28,16 @@ const LineOfSightTool = ({ setLineOfSightParams, clickedCoordinates,onClose }) =
       observerHeight: parseFloat(observerHeight),
       targetHeight: parseFloat(targetHeight)
     });
+//clear existing fields
+    setStartLat('');
+    setStartLon('');
+    setEndLat('');
+    setEndLon('');
+    setObserverHeight('');
+    setTargetHeight('');
+
+
+
   };
 
   return (
@@ -183,12 +125,14 @@ const LineOfSightTool = ({ setLineOfSightParams, clickedCoordinates,onClose }) =
                 />
               </div>
 </div>
-              <button type="submit" className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+<div className='flex items-center justify-between'>
+              <button type="submit" className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                 Calculate Line of Sight
               </button>
-              <button onClick={onClose} className="w-full text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+              <button onClick={onClose} className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
             Close
           </button>
+          </div>
             </form>
           </div>
         </div>

@@ -9,12 +9,15 @@ import Routing from './routing';
 import Draggable from 'react-draggable'; // Import Draggable
 import { FaWindowClose } from 'react-icons/fa';
 import PointOfInterest from './PointOfInterest';
+import IncidentForm from './IncidentReporting'; // Import IncidentForm
+
 const Form = ({ activeTool, setActiveTool, 
   setViewshedParams, clickedCoordinates,
   setBufferParams, setLineOfSightParams, 
   setRangeRingsParams, setEpToolParams,
   setElevationData, setRoutingParams,
-  setPointofInterestParams,poisParams
+  setPointofInterestParams,poisParams,
+  setIncidentParams  // Add this line for IncidentForm
 }) => {
   const handleClose = () => {
     setActiveTool(null); // Close the form by setting activeTool to null
@@ -88,6 +91,16 @@ const Form = ({ activeTool, setActiveTool,
             setActiveTool={setActiveTool}
           />
         )}
+
+
+{activeTool === 'Incident Reporting' && ( // Add this block for IncidentForm
+              <IncidentForm
+                setIncidentParams={setIncidentParams}
+                clickedCoordinates={clickedCoordinates}
+                onClose={handleClose}
+                setActiveTool={setActiveTool}
+              />
+            )}
 
         </div>
       </div>

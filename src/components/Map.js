@@ -20,7 +20,7 @@ import { Circle as CircleGeom, Point, LineString } from 'ol/geom';
 import axios from 'axios';
 import Popup from './popup';
 import locationPin from '../img/location_pin.png';
-
+import marker from '../img/marker.jpg';
 
 
 const formatLength = (line) => {
@@ -47,7 +47,10 @@ const formatArea = (polygon) => {
 
 const WMTSComponent = ({
   mapRef, viewshedParams, setClickedCoordinates, activeMeasurement,
-  clearDrawings, bufferParams, onLayerChange, layers, rangeRingsParams, epToolParams, routingParams, setRoutingParams, poiParams
+  clearDrawings, bufferParams, onLayerChange, // Retain one occurrence of onLayerChange
+  layers, rangeRingsParams, epToolParams, routingParams, 
+  setRoutingParams, poiParams,
+  onLayerOpacityChange
 }) => {
   const internalMapRef = useRef();
   const [vectorSource] = useState(new VectorSource());
@@ -79,7 +82,7 @@ const WMTSComponent = ({
   const [profileCoords, setProfileCoords] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const markerRef = useRef(null); // Reference for the moving marker
-  
+  const [layerOpacities, setLayerOpacities] = useState({});
  
   const handleClose = () => {
     setShowPopup(false);
@@ -95,7 +98,19 @@ const WMTSComponent = ({
       resolutions[z] = size / Math.pow(2, z);
       matrixIds[z] = z.toString();
     }
-
+//pakistan boundary
+const world = new ImageLayer({
+  source: new ImageWMS({
+    ratio: 1,
+    url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+    params: {
+      'FORMAT': 'image/jpeg',
+      'VERSION': '1.1.1',
+      'STYLES': '',
+      'LAYERS': 'ne:world',
+    },
+  }),
+});
 //pakistan boundary
     const base = new ImageLayer({
       source: new ImageWMS({
@@ -191,7 +206,7 @@ const WMTSComponent = ({
     const newMap = new Map({
       target: internalMapRef.current,
    
-      layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT, vectorLayer],
+      layers: [base, DEM, osm, ROAD, WATER, RAIL,SAT,world, vectorLayer],
       view: new View({
         projection: projection,
         center: [70, 30],
@@ -202,12 +217,13 @@ const WMTSComponent = ({
     console.log(layers);
     onLayerChange([
       { name: 'base', visible: true},
-      { name: 'DEM', visible: false },
-      { name: 'osm', visible: false},
-      { name: 'ROAD', visible: false },
-      { name: 'WATER', visible: false},
-      { name: 'RAIL', visible: false },
+      { name: 'DEM', visible: true },
+      { name: 'osm', visible: true},
+      { name: 'ROAD', visible: true },
+      { name: 'WATER', visible: true},
+      { name: 'RAIL', visible: true },
       { name: 'SAT', visible: true },
+      { name: 'world', visible: true },
     ]);
 
     newMap.on('click', (evt) => {
@@ -218,6 +234,11 @@ const WMTSComponent = ({
     });
 
     setMap(newMap);
+    setLayerOpacities(Object.keys(onLayerChange).reduce((acc, key) => {
+      acc[key] = 1; // Initial opacity of 1 for all layers
+      return acc;
+    }, {}));
+
     mapRef.current = newMap;
 
     const measureTooltipElement = document.createElement('div');
@@ -234,6 +255,10 @@ const WMTSComponent = ({
     return () => {
       newMap.setTarget(null);
     };
+
+
+
+
   }, []);
 
   useEffect(() => {
@@ -246,7 +271,20 @@ const WMTSComponent = ({
       });
     }
   }, [layers]);
+  
 
+
+
+  // const handleLayerOpacityChange = (layerName, opacity) => {
+  //   const layer = map.getLayers().getArray().find(l => l.get('title') === layerName);
+  //   if (layer) {
+  //     layer.setOpacity(opacity);
+  //     setLayerOpacities(prevOpacities => ({
+  //       ...prevOpacities,
+  //       [layerName]: opacity,
+  //     }));
+  //   }
+  // };
   //----------------------------------measurement---------------------------------------------------------------------------
   useEffect(() => {
     if (draw && map) {
@@ -315,7 +353,7 @@ const WMTSComponent = ({
   }, [activeMeasurement, map]);
 
   //---------------------------------viewshed-----------------------------------------------------------------------------------------------
- 
+
   useEffect(() => {
     if (viewshedParams) {
       const geojsonFormat = new GeoJSON();
@@ -352,32 +390,37 @@ const WMTSComponent = ({
       })));
       vectorSource.clear();
       vectorSource.addFeatures(restFeatures);
-      //vectorSource.addFeatures(nonVisibleFeatures);
       vectorSource.addFeatures(visibleFeatures);
-      //vectorSource.addFeatures(restFeatures);
-      
-      
-        // Add center point marker
-    const centerCoordinates = [viewshedParams.longitude, viewshedParams.latitude];
-    const centerPointFeature = new Feature({
-      geometry: new Point(fromLonLat(centerCoordinates, 'EPSG:4326')),
-    });
+//    // Find the center of the viewshed area and add a marker
+   
+//   const addMarkerAtCenter = (center) => {
+//     if (markerRef.current) {
+//       vectorSource.removeFeature(markerRef.current);
+//     }
 
-    const centerPointStyle = new Style({
-      image: new Circle({
-        radius: 7,
-        fill: new Fill({
-          color: 'rgba(0, 0, 255, 1)', // blue color for the center point
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-      }),
-    });
+//     const marker = new Feature({
+//       geometry: new Point(fromLonLat(center, 'EPSG:4326')),
+//     });
+    
+// console.log('center', marker)
+//     marker.setStyle(
+//       new Style({
+//         image: new Icon({
+//           // anchor: [0.5, 1],
+//           src: locationPin, // Your marker icon image
+//           scale: 0.1,
+//         }),
+//       })
+//     );
 
-    centerPointFeature.setStyle(centerPointStyle);
-    vectorSource.addFeature(centerPointFeature);
+//     vectorSource.addFeature(marker);
+//     markerRef.current = marker;
+//   };
+
+//    const center = toLonLat(vectorSource.getExtent(), 'EPSG:4326');
+//    console.log('center',center)
+//    addMarkerAtCenter(center);
+        
       const extent = vectorSource.getExtent();
       if (extent) {
         map.getView().fit(extent, {
@@ -385,11 +428,10 @@ const WMTSComponent = ({
           duration: 1000,
         });
       }
- 
     
-       
     }
   }, [viewshedParams, map, vectorSource]);
+ 
 //-------------------------------------------buffer-------------------------------------------------------------------------------------------------------------
 useEffect(() => {
   console.log('useEffect triggered for bufferParams');
@@ -412,7 +454,7 @@ useEffect(() => {
     console.log('Added buffer feature');
 
     // Add a marker at the center of the buffer
-    addMarkerPin(vectorSource, center, 'Center Marker');
+    addMarkerPin(vectorSource, center, 'Center');
     console.log('Added marker feature at center');
 
     // Fit the map to the buffer
@@ -450,7 +492,7 @@ useEffect(() => {
     console.log('Added range ring features');
 
     // Add a marker at the center of the range rings
-    addMarkerPin(vectorSource, center, 'Center Marker');
+    addMarkerPin(vectorSource, center, 'Center');
     console.log('Added marker feature at center of range rings');
 
     // Fit the map to the buffer rings if the extent is valid
@@ -658,7 +700,7 @@ const centerPointStyle = new Style({
 });
 
 centerPointFeature.setStyle(centerPointStyle);
-vectorSource.addFeature(centerPointFeature );
+vectorSource.addFeature(centerPointFeature);
 
     // Fetch POIs from API
     const fetchPOIs = async () => {
@@ -736,7 +778,7 @@ vectorSource.addFeature(centerPointFeature );
       if (feature && feature.get('name')) {
         // Display popup with POI details
         setShowPopup(true);
-        // setElevationData(feature.get('name')); // Set appropriate data to show in popup
+       
       }
     };
 

@@ -1,60 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-
-// const BufferTool = ({ setBufferParams, clickedCoordinates }) => {
-//   const [latitude, setLatitude] = useState('');
-//   const [longitude, setLongitude] = useState('');
-//   const [radius, setRadius] = useState('');
-
-//   useEffect(() => {
-//     if (clickedCoordinates) {
-//       setLatitude(clickedCoordinates[1]);
-//       setLongitude(clickedCoordinates[0]);
-//     }
-//   }, [clickedCoordinates]);
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setBufferParams({
-//       latitude: parseFloat(latitude),
-//       longitude: parseFloat(longitude),
-//       radius: parseFloat(radius),
-//     });
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <div>
-//         <label>Latitude:</label>
-//         <input
-//           type="text"
-//           value={latitude}
-//           onChange={(e) => setLatitude(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <label>Longitude:</label>
-//         <input
-//           type="text"
-//           value={longitude}
-//           onChange={(e) => setLongitude(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <label>Radius (meters):</label>
-//         <input
-//           type="text"
-//           value={radius}
-//           onChange={(e) => setRadius(e.target.value)}
-//         />
-//       </div>
-//       <button type="submit">Create Buffer</button>
-//     </form>
-//   );
-// };
-
-// export default BufferTool;
-
-
 import React, { useState, useEffect } from 'react';
 
 const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClose   }) => {
@@ -71,11 +14,16 @@ const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClo
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setBufferParams({
+
+   setBufferParams({
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
       radius: parseFloat(radius),
     });
+      // Reset form fields after successful submission
+      setLatitude('');
+      setLongitude('');
+      setRadius('');
   };
   const handleClose = () => {
     setActiveTool(null);
@@ -127,12 +75,14 @@ const BufferTool = ({ setBufferParams, clickedCoordinates, setActiveTool,  onClo
                   required
                 />
               </div>
-              <button type="submit" className="w-full text-white bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              <div className="flex items-center justify-between">
+              <button type="submit" className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 bg-black  hover:bg-green-500 hover:text-gray-900 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                 Create Buffer
               </button>
-              <button onClick={onClose} className="w-full text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+              <button onClick={onClose} className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
             Close
           </button>
+          </div>
             </form>
           </div>
         </div>
