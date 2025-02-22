@@ -547,6 +547,18 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
     matrixIds[z] = z.toString();
   }
 
+  const countries= new ImageLayer({
+    source: new ImageWMS({
+      ratio: 1,
+      url: 'http://localhost:8080/geoserver/ne/wms/wmts?request=GetCapabilities',
+      params: {
+        'FORMAT': 'image/jpeg',
+        'VERSION': '1.1.1',
+        'STYLES': '',
+        'LAYERS': 'ne:countries',
+      },
+    }),
+  });
   const base= new ImageLayer({
     source: new ImageWMS({
       ratio: 1,
@@ -624,7 +636,7 @@ const WMTSComponent = ({ mapRef, viewshedParams, setClickedCoordinates, activeMe
 
   const newMap = new Map({
     target: internalMapRef.current,
-    layers: [base, Waterways,dem,road, railway,osm, vectorLayer], //add their the additional layers name
+    layers: [countries,base, Waterways,dem,road, railway,osm, vectorLayer], //add their the additional layers name
     view: new View({
       projection: projection,
       center: [70, 30],
@@ -643,7 +655,7 @@ console.log(layers);
     { name: 'railway', visible: false },
    { name: 'osm', visible: false },
 //  { name: 'pak_osm', visible: true },  //add here original layer name it will fetch it directly from geoserver
-// { name: 'pak_dem', visible: true },
+ { name: 'countries', visible: true },
   ]);
 
   newMap.on('click', (evt) => {
